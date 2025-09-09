@@ -14,6 +14,7 @@ import SkillChatPage from "./pages/ChatAppPage";
 import ChatAssitantShare from "./pages/ChatAppPage/chatAssitantShare";
 import ChatShare from "./pages/ChatAppPage/chatShare";
 import ChatPro from "./pages/ChatAppPage/chatWebview";
+import ChatBox from "./pages/ChatAppPage/chatBox";
 import DataSetPage from "./pages/DataSetPage";
 import DiffFlowPage from "./pages/DiffFlowPage";
 import EvaluatingPage from "./pages/EvaluationPage";
@@ -120,7 +121,7 @@ const privateRouter = [
   },
   // 独立会话页
   { path: "/chat/assistant/auth/:id/", element: <ChatPro type={AppNumType.ASSISTANT} /> },
-  { path: "/chat/flow/auth/:id/", element: <ChatPro type={AppNumType.FLOW} /> },
+  { path: "/chat/flow/auth/:id/", element: <ChatBox type={AppNumType.FLOW} /> },
   { path: "/chat/skill/auth/:id/", element: <ChatPro /> },
   { path: "/chat", element: <SkillChatPage /> },
   { path: "/chat/:id/", element: <ChatShare /> },
