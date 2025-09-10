@@ -1,11 +1,9 @@
 
-import { TitleLogo } from "@/components/bs-comp/cardComponent";
 import ChatComponent from "@/components/bs-comp/chatComponent";
 import { useMessageStore } from "@/components/bs-comp/chatComponent/messageStore";
-import { AssistantIcon } from "@/components/bs-icons";
 import { useToast } from "@/components/bs-ui/toast/use-toast";
 import { locationContext } from "@/contexts/locationContext";
-import ChatPane from "@/pages/BuildPage/flow/FlowChat/ChatPane";
+import ChatPane from "./ChatPane";
 import { useMessageStore as useFlowMessageStore } from "@/pages/BuildPage/flow/FlowChat/messageStore";
 import { useAssistantStore } from "@/store/assistantStore";
 import { AppNumType } from "@/types/app";
@@ -16,7 +14,7 @@ import { postBuildInit } from "@/controllers/API";
 import { Variable, getFlowApi } from "@/controllers/API/flow";
 import { FlowType, NodeType } from "@/types/flow";
 import { validateNode } from "@/utils";
-import ChatReportForm from "../components/ChatReportForm";
+import ChatReportForm from "./ChatReportForm";
 import ForcePrompt from "./ForcePrompt";
 
 export default function ChatRoom({ customWsHost = '', appendHistory = false, data, version = 'v1' }) {
@@ -101,6 +99,7 @@ export default function ChatRoom({ customWsHost = '', appendHistory = false, dat
 
             if (isV1) {
                 const res = await loadFlowHistoryMsg(_flow.id, chatId, {
+                    appendHistory: false,
                     lastMsg: ''
                 });
                 setAutoRun(true);
@@ -230,15 +229,11 @@ export default function ChatRoom({ customWsHost = '', appendHistory = false, dat
     }
 
     return (
-        <div className="flex-1 min-w-0 min-h-0 bs-chat-bg" >
+        <div className="chat-room">
             {/* 技能会话 */}
             {
                 flow && <div className={`w-full chat-box h-full relative px-6 ${type === AppNumType.SKILL ? 'block' : 'hidden'}`}>
                     {/* {flow && <ChatPanne chatId={chatId} flow={flow} />} */}
-                    <div className="absolute flex top-2 gap-2 items-center z-10 bg-[rgba(255,255,255,0.8)] px-2 py-1 dark:bg-[#1B1B1B]">
-                        <TitleLogo url={flow.logo} className="" id={flow.id}></TitleLogo>
-                        <span className="text-sm">{flow.name}</span>
-                    </div>
                     <ChatComponent
                         form={flowSate.isForm}
                         logo={flow.logo}
@@ -259,10 +254,6 @@ export default function ChatRoom({ customWsHost = '', appendHistory = false, dat
             {
                 assistant && <div className={`w-full chat-box h-full relative px-6 ${type === AppNumType.ASSISTANT ? 'block' : 'hidden'}`}>
                     {/* {flow && <ChatPanne chatId={chatId} flow={flow} />} */}
-                    <div className="absolute flex top-2 gap-2 items-center z-10 bg-[rgba(255,255,255,0.8)] px-2 py-1 dark:bg-[#1B1B1B]">
-                        <TitleLogo url={assistant.logo} className="" id={assistant.id}><AssistantIcon /></TitleLogo>
-                        <span className="text-sm">{assistant.name}</span>
-                    </div>
                     <ChatComponent
                         stop
                         logo={assistant.logo}
@@ -280,13 +271,7 @@ export default function ChatRoom({ customWsHost = '', appendHistory = false, dat
             }
             {/* 工作流会话 */}
             {
-                workflow && <div className={`w-full chat-box h-full relative ${type === AppNumType.FLOW ? 'block' : 'hidden'}`}>
-                    <div className="absolute flex top-2 gap-2 items-center z-10 bg-[rgba(255,255,255,0.8)] px-6 py-1 dark:bg-[#1B1B1B]">
-                        <TitleLogo url={workflow.logo} className="" id={workflow.id}></TitleLogo>
-                        <span className="text-sm">{workflow.name}</span>
-                    </div>
-                    <ChatPane autoRun={autoRun} chatId={flowChatId} flow={workflow} wsUrl={wsUrl} />
-                </div>
+                workflow && <ChatPane autoRun={autoRun} chatId={flowChatId} flow={workflow} wsUrl={wsUrl} />
             }
         </div>
     )

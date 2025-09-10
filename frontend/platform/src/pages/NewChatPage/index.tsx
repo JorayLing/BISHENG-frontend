@@ -2,9 +2,6 @@
 import {useContext, useEffect, useRef, useState} from "react";
 import {useParams} from "react-router-dom";
 import {useTranslation} from "react-i18next";
-import {AssistantIcon, SkillIcon} from "@/components/bs-icons";
-import {PlusBoxIcon, PlusBoxIconDark} from "@/components/bs-icons/plusBox";
-import {TitleLogo} from "@/components/bs-comp/cardComponent";
 import {useMessageStore} from "@/components/bs-comp/chatComponent/messageStore";
 import {useMessageStore as useFlowMessageStore} from "@/pages/BuildPage/flow/FlowChat/messageStore";
 import {captureAndAlertRequestErrorHoc} from "@/controllers/request";
@@ -51,7 +48,7 @@ const ChatItem = ({chat, chatId, location, handleSelectChat, handleDeleteChat, _
 };
 
 // assistant workflow flow
-export default function ChatBox({type = AppNumType.SKILL}) {
+export default function NewChatPro({type = AppNumType.SKILL}) {
     const {t} = useTranslation();
     const {id: flowId} = useParams()
     const {user} = useContext(userContext);
@@ -293,9 +290,7 @@ export default function ChatBox({type = AppNumType.SKILL}) {
                 </div>
             </div>
             {/* 聊天面板 */}
-            <div className="chatBox-right">
-                {!location && <ChatRoom appendHistory data={selectChat}/>}
-            </div>
+            {!location && <ChatRoom appendHistory data={selectChat}/>}
         </div>
     )
 };
