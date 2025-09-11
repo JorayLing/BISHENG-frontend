@@ -16,6 +16,7 @@ import remarkGfm from "remark-gfm";
 import remarkMath from "remark-math";
 import ChatFile from "./ChatFileFile";
 import { useMessageStore } from "@/pages/BuildPage/flow/FlowChat/messageStore";
+import aiAvatar from '@/pages/NewChatPage/images/aiAvatar.png'
 
 // 颜色列表
 const colorList = [
@@ -121,64 +122,68 @@ export default function MessageBs({ debug, mark = false, logo, data, onUnlike = 
         copyText(messageRef.current)
     }
     const chatId = useMessageStore(state => state.chatId)
-    return <div className="flex w-full">
-        <div className="w-fit group max-w-[90%]">
-            <ReasoningLog loading={!data.end && data.reasoning_log} msg={data.reasoning_log} />
-            {!(data.reasoning_log && !message && !data.files.length) && <>
-                <div className="flex justify-between items-center mb-1">
-                    {data.sender ? <p className="text-gray-600 text-xs">{data.sender}</p> : <p />}
-                    <div className={`text-right group-hover:opacity-100 opacity-0`}>
-                        <span className="text-slate-400 text-sm">{formatStrTime(data.create_time, 'MM 月 dd 日 HH:mm')}</span>
-                    </div>
-                </div>
-                <div className="min-h-8 px-6 py-4 rounded-2xl bg-[#F5F6F8] dark:bg-[#313336]">
-                    <div className="flex gap-2">
-                        {logo ? <div className="max-w-6 min-w-6 max-h-6 rounded-full overflow-hidden">
-                            <img className="w-6 h-6" src={logo} />
+    return (
+        <div className="flex w-full">
+            <div className="w-fit group max-w-[90%]">
+                <ReasoningLog loading={!data.end && data.reasoning_log} msg={data.reasoning_log} />
+                {!(data.reasoning_log && !message && !data.files.length) && <>
+                    <div className="flex justify-between items-center mb-1">
+                        {data.sender ? <p className="text-gray-600 text-xs">{data.sender}</p> : <p />}
+                        <div className={`text-right group-hover:opacity-100 opacity-0`}>
+                            <span className="text-slate-400 text-sm">{formatStrTime(data.create_time, 'MM 月 dd 日 HH:mm')}</span>
                         </div>
-                            : <div className="w-6 h-6 min-w-6 flex justify-center items-center rounded-full" style={{ background: avatarColor }} >
-                                <AvatarIcon />
-                            </div>}
-                        {message || data.files.length ?
-                            <div ref={messageRef} className="text-sm max-w-[calc(100%-24px)]">
-                                {message && mkdown}
-                                {data.files.length > 0 && data.files.map(file => <ChatFile key={file.path} fileName={file.name} filePath={file.path} />)}
-                                {/* @user */}
-                                {data.receiver && <p className="text-blue-500 text-sm">@ {data.receiver.user_name}</p>}
-                                {/* 光标 */}
-                                {/* {data.message.toString() && !data.end && <div className="animate-cursor absolute w-2 h-5 ml-1 bg-gray-600" style={{ left: cursor.x, top: cursor.y }}></div>} */}
-                            </div>
-                            : <div>{
-                                !data.end && <LoadingIcon className="size-6 text-primary" />
-                            }</div>
-                        }
                     </div>
-                </div>
-            </>}
-            {/* 附加信息 */}
-            {
-                data.end && <div className="flex justify-between mt-2">
-                    <SourceEntry
-                        extra={data.extra || {}}
-                        end={data.end}
-                        source={data.source}
-                        className="pl-4"
-                        onSource={() => onSource?.({
-                            chatId,
-                            messageId: data.id || data.message_id,
-                            message,
-                        })}
-                    />
-                    {!debug && <MessageButtons
-                        mark={mark}
-                        id={data.id || data.message_id}
-                        data={data.liked}
-                        onUnlike={onUnlike}
-                        onCopy={handleCopyMessage}
-                        onMarkClick={onMarkClick}
-                    ></MessageButtons>}
-                </div>
-            }
+                    <div className="min-h-8">
+                        <div className="flex gap-2">
+                            {
+                                logo ?
+                                <div className="w-[40px] h-[40px] rounded-full overflow-hidden">
+                                    <img className="w-[40px] h-[40px]" src={logo}  alt=""/>
+                                </div> :
+                                <div className="w-[40px] h-[40px] flex justify-center items-center rounded-full">
+                                    <img className="w-full h-full" src={aiAvatar} alt=""/>
+                                    {/*<AvatarIcon />*/}
+                                </div>
+                            }
+                            { message || data.files.length ?
+                                <div ref={messageRef} className="text-sm max-w-[calc(100%-64px)] chat-ai-msg">
+                                    { message && mkdown }
+                                    { data.files.length > 0 && data.files.map(file => <ChatFile key={file.path} fileName={file.name} filePath={file.path} />) }
+                                    {/* @user */}
+                                    { data.receiver && <p className="text-blue-500 text-sm">@ {data.receiver.user_name}</p> }
+                                    {/* 光标 */}
+                                    {/* {data.message.toString() && !data.end && <div className="animate-cursor absolute w-2 h-5 ml-1 bg-gray-600" style={{ left: cursor.x, top: cursor.y }}></div>} */}
+                                </div> :
+                                <div> { !data.end && <LoadingIcon className="size-6 text-primary" /> } </div>
+                            }
+                        </div>
+                    </div>
+                </>}
+                {/* 附加信息 */}
+                {
+                    data.end && <div className="flex justify-between mt-2">
+                        <SourceEntry
+                            extra={data.extra || {}}
+                            end={data.end}
+                            source={data.source}
+                            className="pl-4"
+                            onSource={() => onSource?.({
+                                chatId,
+                                messageId: data.id || data.message_id,
+                                message,
+                            })}
+                        />
+                        {!debug && <MessageButtons
+                            mark={mark}
+                            id={data.id || data.message_id}
+                            data={data.liked}
+                            onUnlike={onUnlike}
+                            onCopy={handleCopyMessage}
+                            onMarkClick={onMarkClick}
+                        ></MessageButtons>}
+                    </div>
+                }
+            </div>
         </div>
-    </div>
+    )
 };

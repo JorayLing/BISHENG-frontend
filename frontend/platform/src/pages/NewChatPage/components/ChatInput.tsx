@@ -1,17 +1,23 @@
-import { FormIcon } from "@/components/bs-icons/form";
-import { SendIcon } from "@/components/bs-icons/send";
-import { Button } from "@/components/bs-ui/button";
-import { Textarea } from "@/components/bs-ui/input";
-import { useToast } from "@/components/bs-ui/toast/use-toast";
-import { locationContext } from "@/contexts/locationContext";
-import { useContext, useEffect, useMemo, useRef, useState } from "react";
-import { useTranslation } from "react-i18next";
+import {FormIcon} from "@/components/bs-icons/form";
+import {SendIcon} from "@/components/bs-icons/send";
+import {Button} from "@/components/bs-ui/button";
+import {Textarea} from "@/components/bs-ui/input";
+import {useToast} from "@/components/bs-ui/toast/use-toast";
+import {locationContext} from "@/contexts/locationContext";
+import {useContext, useEffect, useMemo, useRef, useState} from "react";
+import {useTranslation} from "react-i18next";
 import Tip from "@/components/bs-ui/tooltip/tip";
-import { RefreshCw } from "lucide-react";
+import {RefreshCw} from "lucide-react";
 import useFlowStore from "@/pages/BuildPage/flow/flowStore";
 import ChatFiles from "./ChatFiles";
 import GuideQuestions from "./GuideQuestions";
-import { useMessageStore } from "@/pages/BuildPage/flow/FlowChat/messageStore";
+import {useMessageStore} from "@/pages/BuildPage/flow/FlowChat/messageStore";
+import icon from '@/pages/NewChatPage/images/icon.png'
+import notSend from '@/pages/NewChatPage/images/notSend.png'
+import send from '@/pages/NewChatPage/images/send.png'
+import sendDisabled from '@/pages/NewChatPage/images/sendDisabled.png'
+import attachment from '@/pages/NewChatPage/images/attachment.png'
+
 
 export const FileTypes = {
     ALL: ['.PNG', '.JPEG', '.JPG', '.BMP', '.PDF', '.TXT', '.MD', '.HTML', '.XLS', '.XLSX', '.CSV', '.DOC', '.DOCX', '.PPT', '.PPTX'],
@@ -19,12 +25,12 @@ export const FileTypes = {
     FILE: ['.PDF', '.TXT', '.MD', '.HTML', '.XLS', '.XLSX', '.CSV', '.DOC', '.DOCX', '.PPT', '.PPTX'],
 }
 
-export default function ChatInput({ autoRun, clear, form, wsUrl, onBeforSend, onLoad }) {
-    const { toast } = useToast()
-    const { t } = useTranslation()
-    const { appConfig } = useContext(locationContext)
+export default function ChatInput({autoRun, clear, form, wsUrl, onBeforSend, onLoad}) {
+    const {toast} = useToast()
+    const {t} = useTranslation()
+    const {appConfig} = useContext(locationContext)
 
-    const [inputLock, setInputLock] = useState({ locked: true, reason: '' })
+    const [inputLock, setInputLock] = useState({locked: true, reason: ''})
     const questionsRef = useRef(null)
     const inputNodeIdRef = useRef('') // 当前输入框节点id
     const messageIdRef = useRef('') // 当前输入框节点messageId
@@ -122,7 +128,7 @@ export default function ChatInput({ autoRun, clear, form, wsUrl, onBeforSend, on
         if (_value.trim() === '' && filePath.length === 0) return
         const value = fileNames.length > 0 ? fileNames.join('\n') + '\n' + _value : _value;
 
-        const event = new Event('input', { bubbles: true, cancelable: true });
+        const event = new Event('input', {bubbles: true, cancelable: true});
         inputRef.current.value = ''
         inputRef.current.dispatchEvent(event); // 触发调节input高度
         // const contunue = continueRef.current ? 'continue' : ''
@@ -139,7 +145,7 @@ export default function ChatInput({ autoRun, clear, form, wsUrl, onBeforSend, on
         // msg to store
         createSendMsg(value)
         // 锁定 input
-        setInputLock({ locked: true, reason: '' })
+        setInputLock({locked: true, reason: ''})
         await createWebSocket()
         sendWsMsg(wsMsg)
 
@@ -187,11 +193,11 @@ export default function ChatInput({ autoRun, clear, form, wsUrl, onBeforSend, on
                     }
 
                     if (data.type === 'begin') {
-                        setStop({ show: true, disable: false })
+                        setStop({show: true, disable: false})
                     } else if (data.type === 'close' && data.category === 'processing') {
                         if (!reRunStateRef.current) {
                             // 重试时阻止关闭stop
-                            setStop({ show: false, disable: false })
+                            setStop({show: false, disable: false})
                         }
                         reRunStateRef.current = false
                     }
@@ -214,7 +220,7 @@ export default function ChatInput({ autoRun, clear, form, wsUrl, onBeforSend, on
                     // setStop({ show: false, disable: false })
 
                     if ([1005, 1008, 1009].includes(event.code)) {
-                        setInputLock({ locked: true, reason: event.reason })
+                        setInputLock({locked: true, reason: event.reason})
                     } else {
                         if (event.reason) {
                             toast({
@@ -223,7 +229,7 @@ export default function ChatInput({ autoRun, clear, form, wsUrl, onBeforSend, on
                                 description: event.reason
                             });
                         }
-                        setInputLock({ locked: true, reason: '' })
+                        setInputLock({locked: true, reason: ''})
                     }
                     event.reason && addNotification({
                         type: 'error',
@@ -244,7 +250,7 @@ export default function ChatInput({ autoRun, clear, form, wsUrl, onBeforSend, on
                     //         t('chat.networkErrorList3')
                     //     ]
                     // });
-                    setInputLock({ locked: true, reason: '' })
+                    setInputLock({locked: true, reason: ''})
                 };
             } catch (err) {
                 console.error('创建链接异常', err);
@@ -258,11 +264,11 @@ export default function ChatInput({ autoRun, clear, form, wsUrl, onBeforSend, on
     // 接受 ws 消息
     const handleWsMessage = (data) => {
         if (data.category === 'error') {
-            const { code, message } = data.message
-            setInputLock({ locked: true, reason: '' })
+            const {code, message} = data.message
+            setInputLock({locked: true, reason: ''})
 
             // 记录
-            const errorMsg = code == 500 ? message : t(`errors.${code}`, { type: message })
+            const errorMsg = code == 500 ? message : t(`errors.${code}`, {type: message})
             addNotification({
                 type: 'error',
                 title: '运行异常',
@@ -285,7 +291,7 @@ export default function ChatInput({ autoRun, clear, form, wsUrl, onBeforSend, on
         } else if (data.category === "guide_word") {
             data.message.msg = data.message.guide_word
         } else if (data.category === 'input') {
-            const { node_id, input_schema } = data.message
+            const {node_id, input_schema} = data.message
             inputNodeIdRef.current = node_id
             messageIdRef.current = data.message_id
             // 限制文件类型
@@ -301,7 +307,7 @@ export default function ChatInput({ autoRun, clear, form, wsUrl, onBeforSend, on
                 }
             }
             // 待用户输入
-            input_schema.tab === 'form_input' ? setInputForm(input_schema) : setInputLock({ locked: false, reason: '' })
+            input_schema.tab === 'form_input' ? setInputForm(input_schema) : setInputLock({locked: false, reason: ''})
             setTimeout(() => {
                 inputRef.current.focus()
             }, 60);
@@ -311,15 +317,15 @@ export default function ChatInput({ autoRun, clear, form, wsUrl, onBeforSend, on
         } else if (data.category === 'stream_msg') {
             streamWsMsg(data)
         } else if (data.category === 'end_cover' && data.type === 'end_cover') {
-            setInputLock({ locked: true, reason: '' })
-            sendWsMsg({ "action": "stop" });
+            setInputLock({locked: true, reason: ''})
+            sendWsMsg({"action": "stop"});
             return overWsMsg(data)
             // return handleRestartClick()
         }
 
         if (data.type === 'close' && data.category === 'processing') {
             insetSeparator(t('chat.chatEndMessage'))
-            setInputLock({ locked: true, reason: '' })
+            setInputLock({locked: true, reason: ''})
             // 重启会话按钮,接收close确认后端处理结束后重启会话
             if (restartCallBackRef.current[data.chat_id]) {
                 restartCallBackRef.current[data.chat_id]()
@@ -332,13 +338,13 @@ export default function ChatInput({ autoRun, clear, form, wsUrl, onBeforSend, on
 
     // 日志广播->nodes
     const sendNodeLogEvent = (data) => {
-        const { node_id } = data.message
+        const {node_id} = data.message
         const isError = !!data.message.reason
         const event = new CustomEvent('nodeLogEvent', {
             detail: {
                 nodeId: node_id,
                 action: isError ? '' : data.type === 'start' ? 'loading' : 'success',
-                data: isError ? { 'error': data.message.reason } : data.message.log_data // 缓存TODO
+                data: isError ? {'error': data.message.reason} : data.message.log_data // 缓存TODO
             }
         })
         window.dispatchEvent(event)
@@ -348,13 +354,13 @@ export default function ChatInput({ autoRun, clear, form, wsUrl, onBeforSend, on
     useEffect(() => {
         const handleCustomEvent = (e) => {
             if (!showWhenLocked && inputLock.locked) return console.error('弹窗已锁定，消息无法发送')
-            const { send, message } = e.detail
+            const {send, message} = e.detail
             inputRef.current.value = message
             if (send) handleSendClick()
         }
         const handleOutPutEvent = async (e) => {
-            const { nodeId, data, message } = e.detail
-            const { flow_id, chat_id } = onBeforSend('flowInfo', {})
+            const {nodeId, data, message} = e.detail
+            const {flow_id, chat_id} = onBeforSend('flowInfo', {})
             await createWebSocket()
             sendWsMsg({
                 action: 'input',
@@ -374,11 +380,11 @@ export default function ChatInput({ autoRun, clear, form, wsUrl, onBeforSend, on
             })
         }
         const handleSendForm = async (e) => {
-            const { data, msg } = e.detail
+            const {data, msg} = e.detail
             setInputForm(null)
             createSendMsg(msg)
             await createWebSocket()
-            const { flow_id, chat_id } = onBeforSend('flowInfo', {})
+            const {flow_id, chat_id} = onBeforSend('flowInfo', {})
             sendWsMsg({
                 action: 'input',
                 flow_id,
@@ -423,15 +429,15 @@ export default function ChatInput({ autoRun, clear, form, wsUrl, onBeforSend, on
     // stop click
     const handleStopClick = () => {
         if (stop.disable) return
-        setStop({ show: true, disable: true });
-        setInputLock({ locked: true, reason: '' })
-        sendWsMsg({ "action": "stop" });
+        setStop({show: true, disable: true});
+        setInputLock({locked: true, reason: ''})
+        sendWsMsg({"action": "stop"});
     }
     // restart
     const restartCallBackRef = useRef({})
     const [restarted, setRestarted] = useState(false)
     const handleRestartClick = () => {
-        sendWsMsg({ "action": "stop" });
+        sendWsMsg({"action": "stop"});
         setInputForm(null)
         setRestarted(true)
         const chatId = currentChatIdRef.current.startsWith('test') ? '' : currentChatIdRef.current
@@ -464,60 +470,26 @@ export default function ChatInput({ autoRun, clear, form, wsUrl, onBeforSend, on
     }, [inputForm, inputLock])
 
     // 文件上传状态
-    const { fileUploading, getFileIds, loadingChange } = useFileLoading(inputLock.locked)
+    const {fileUploading, getFileIds, loadingChange} = useFileLoading(inputLock.locked)
 
     return (
-        <div className="chat-input">
-            {/* 引导问题 */}
+        <div className="chat-input chat-input-disabled">
+            {/*/!* 引导问题 *!/*/}
             <GuideQuestions
                 ref={questionsRef}
                 locked={inputLock.locked}
                 onClick={handleClickGuideWord}
             />
-            {/* restart */}
-            <div>
-                <Tip side='top-right' content={"重新运行"}>
-                    <Button className="rounded-full" disabled={restarted} variant="ghost" size="icon" onClick={handleRestartClick}><RefreshCw size={18} /></Button>
-                </Tip>
-            </div>
-            {/* form switch */}
-            <div>
-                {
-                    form && <div
-                        className={`w-6 h-6 rounded-sm hover:bg-gray-200 cursor-pointer flex justify-center items-center `}
-                        // onClick={() => (showWhenLocked || !inputLock.locked) && setFormShow(!formShow)}
-                    ><FormIcon className={!showWhenLocked && inputLock.locked ? 'text-muted-foreground' : 'text-foreground'}></FormIcon></div>
-                }
-            </div>
-            {/* 附件 */}
-            {!inputLock.locked && <ChatFiles accepts={accepts} v={location.href.indexOf('/chat/flow/') === -1 ? 'v1' : 'v2'} onChange={loadingChange} />}
-            {/* send */}
-            <div>
-                <div
-                    id="bs-send-btn"
-                    className="w-6 h-6 rounded-sm hover:bg-gray-200 dark:hover:bg-gray-950 cursor-pointer flex justify-center items-center"
-                    onClick={() => { !inputLock.locked && !fileUploading && handleSendClick() }}>
-                    <SendIcon className={`${inputLock.locked || fileUploading ? 'text-muted-foreground' : 'text-foreground'}`} />
-                </div>
-            </div>
-            {/* stop & 重置 */}
-            <div>
-                {!stop.show && <Button
-                    className="rounded-full bg-[#fff] dark:bg-[#1B1B1B]"
-                    variant="outline"
-                    disabled={restarted}
-                    onClick={handleRestartClick}>
-                    <RefreshCw className="mr-1" size={16} />
-                    {t('chat.runNewWorkflow')}
-                </Button>
-                }
-            </div>
-            {/* question */}
+
+            {/*icon*/}
+            <img className="icon" src={icon} alt=""/>
+
+            {/*输入框*/}
             <Textarea
+                className="chat-textarea"
                 id="bs-send-input"
                 ref={inputRef}
                 rows={1}
-                style={{ height: 56 }}
                 disabled={inputLock.locked}
                 onInput={handleTextAreaHeight}
                 placeholder={placholder}
@@ -528,10 +500,57 @@ export default function ChatInput({ autoRun, clear, form, wsUrl, onBeforSend, on
                     }
                 }}
             ></Textarea>
+
+            {/*/!* form switch *!/*/}
+            <div>
+                {
+                    // form &&
+                    <div className={`w-6 h-6 rounded-sm hover:bg-gray-200 cursor-pointer flex justify-center items-center mr-[12px] `}
+                        // onClick={() => (showWhenLocked || !inputLock.locked) && setFormShow(!formShow)}
+                    >
+                        <FormIcon className={!showWhenLocked && inputLock.locked ? 'text-muted-foreground' : 'text-foreground'}></FormIcon>
+                    </div>
+                }
+            </div>
+
+            {/*附件*/}
+            { !inputLock.locked && <ChatFiles accepts={accepts} v={location.href.indexOf('/chat/flow/') === -1 ? 'v1' : 'v2'} onChange={loadingChange} /> }
+
+            {/*/!* restart *!/*/}
+            <div className="mr-[16px]">
+                <Tip side='top-right' content={"重新运行"}>
+                    <Button className="rounded-full" disabled={restarted} variant="ghost" size="icon" onClick={handleRestartClick}><RefreshCw size={18} /></Button>
+                </Tip>
+            </div>
+
+            {/*/!*发送按钮*!/*/}
+            {/*{ inputLock.locked ? <img className="send" src={sendDisabled} alt=""/> : <img className="send" src={send} alt=""/> }*/}
+
+
+            {/* send */}
+            <div>
+                <div
+                    id="bs-send-btn"
+                    className="w-6 h-6 rounded-sm hover:bg-gray-200 dark:hover:bg-gray-950 cursor-pointer flex justify-center items-center"
+                    onClick={() => { !inputLock.locked && !fileUploading && handleSendClick() }}>
+                    <SendIcon className={`${inputLock.locked || fileUploading ? 'text-muted-foreground' : 'text-foreground'}`} />
+                </div>
+            </div>
+            {/* stop & 重置 */}
+            <div className="chat-new-work-flow">
+                {!stop.show && <Button
+                    className="rounded-full bg-[#fff] dark:bg-[#1B1B1B]"
+                    variant="outline"
+                    disabled={restarted}
+                    onClick={handleRestartClick}>
+                    <RefreshCw className="mr-1" size={16} />
+                    {t('chat.runNewWorkflow')}
+                </Button>
+                }
+            </div>
         </div>
     )
 };
-
 
 
 const useFileLoading = (locked) => {

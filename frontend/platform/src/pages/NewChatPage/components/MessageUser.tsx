@@ -35,12 +35,13 @@ export default function MessageUser({ mark = false, useName = '', data, onMarkCl
                 </div>
                 {useName && <p className="text-gray-600 text-sm">{useName}</p>}
             </div>
-            <div className="rounded-2xl px-6 py-4 bg-[#EEF2FF] dark:bg-[#333A48]">
-                <div className="flex gap-2 ">
-                    <div className="text-[#0D1638] dark:text-[#CFD5E8] text-sm break-all whitespace-break-spaces">{typeof data.message === 'string' ? data.message : data.message[data.chatKey]}</div>
-                    <div className="w-6 h-6 min-w-6"><img src={__APP_ENV__.BASE_URL + '/user.png'} alt="" /></div>
+            <div className="flex">
+                <div className="flex gap-2 chat-msg" >
+                    <div className="text-sm break-all whitespace-break-spaces">{typeof data.message === 'string' ? data.message : data.message[data.chatKey]}</div>
                 </div>
+                <div className="w-[48px] h-[48px]"><img src={__APP_ENV__.BASE_URL + '/user.png'} alt="" /></div>
             </div>
+
             {/* 附加信息 */}
             {
                 // 数组类型的 data通常是文件上传消息，不展示附加按钮
