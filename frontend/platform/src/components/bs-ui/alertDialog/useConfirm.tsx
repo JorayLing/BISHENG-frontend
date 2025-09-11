@@ -5,6 +5,9 @@ import { X } from "lucide-react"
 import { useRef, useState } from "react"
 import { createRoot } from "react-dom/client"
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "."
+import './index.less'
+import robot from './images/robot.png'
+import closeIcon from './images/close.png'
 
 interface ConfirmParams {
     title?: string
@@ -50,19 +53,36 @@ function ConfirmWrapper() {
 
     return (
         <AlertDialog open={open} onOpenChange={setOpen}>
-            <AlertDialogContent>
-                <AlertDialogHeader className="relative">
-                    <div><TipIcon /></div>
-                    {showClose && <X onClick={close} className="absolute right-0 top-[-0.5rem] cursor-pointer text-gray-400 hover:text-gray-600"></X>}
-                    <AlertDialogTitle>{title}</AlertDialogTitle>
-                    <AlertDialogDescription className="text-popover-foreground">
-                        {desc}
-                    </AlertDialogDescription>
-                </AlertDialogHeader>
-                <AlertDialogFooter>
-                    <AlertDialogCancel onClick={handleCancelClick} className="px-11">{canelTxt}</AlertDialogCancel>
-                    <AlertDialogAction onClick={handleOkClick} className="px-11">{okTxt}</AlertDialogAction>
-                </AlertDialogFooter>
+            <AlertDialogContent className="max-w-[458px] p-0 bg-transparent border-0">
+                <div className="alert-dialog">
+                    <img className="robot" src={robot} alt=""/>
+                    {showClose && <img onClick={close} className="close" src={closeIcon} alt=""/>}
+                    <div className="alert-dialog-content">
+                        <p className="alert-dialog-desc">
+                            {
+                                desc.split('').map((item) => {
+                                    return <span className={item === '删' || item === '除'? "text-red-500":''}>{item}</span>
+                                })
+                            }
+                        </p>
+                        <div className="alert-dialog-footer">
+                            <div onClick={handleCancelClick} className="alert-dialog-cancel">{canelTxt}</div>
+                            <div onClick={handleOkClick} className="alert-dialog-ok">{okTxt}</div>
+                        </div>
+                    </div>
+                </div>
+                {/*<AlertDialogHeader className="relative">*/}
+                {/*    <div><TipIcon /></div>*/}
+                {/*    {showClose && <X onClick={close} className="absolute right-0 top-[-0.5rem] cursor-pointer text-gray-400 hover:text-gray-600"></X>}*/}
+                {/*    <AlertDialogTitle>{title}</AlertDialogTitle>*/}
+                {/*    <AlertDialogDescription className="text-popover-foreground">*/}
+                {/*        {desc}*/}
+                {/*    </AlertDialogDescription>*/}
+                {/*</AlertDialogHeader>*/}
+                {/*<AlertDialogFooter>*/}
+                {/*    <AlertDialogCancel onClick={handleCancelClick} className="px-11">{canelTxt}</AlertDialogCancel>*/}
+                {/*    <AlertDialogAction onClick={handleOkClick} className="px-11">{okTxt}</AlertDialogAction>*/}
+                {/*</AlertDialogFooter>*/}
             </AlertDialogContent>
         </AlertDialog>
     )

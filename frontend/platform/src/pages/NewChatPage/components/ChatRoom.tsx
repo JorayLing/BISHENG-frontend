@@ -1,5 +1,5 @@
 
-import ChatComponent from "@/components/bs-comp/chatComponent";
+import ChatComponent from "@/pages/NewChatPage/components/chatComponent/index";
 import { useMessageStore } from "@/components/bs-comp/chatComponent/messageStore";
 import { useToast } from "@/components/bs-ui/toast/use-toast";
 import { locationContext } from "@/contexts/locationContext";
@@ -245,6 +245,7 @@ export default function ChatRoom({ customWsHost = '', appendHistory = false, dat
                         onBeforSend={getWsParamData}
                         loadMore={() => loadMoreHistoryMsg(flow.id, appendHistory)}
                         inputForm={flowSate.isForm ? <ChatReportForm flow={flow} onStart={sendReport} /> : null}
+                        onClickClear={null}
                     />
                     {/* 强制提醒 */}
                     <ForcePrompt id={flow.id} />
@@ -252,7 +253,8 @@ export default function ChatRoom({ customWsHost = '', appendHistory = false, dat
             }
             {/* 助手会话 */}
             {
-                assistant && <div className={`w-full chat-box h-full relative px-6 ${type === AppNumType.ASSISTANT ? 'block' : 'hidden'}`}>
+                assistant &&
+                <div className={`w-full h-full ${type === AppNumType.ASSISTANT ? 'block' : 'hidden'}`}>
                     {/* {flow && <ChatPanne chatId={chatId} flow={flow} />} */}
                     <ChatComponent
                         stop
@@ -264,6 +266,7 @@ export default function ChatRoom({ customWsHost = '', appendHistory = false, dat
                         onBeforSend={getWsParamData}
                         loadMore={() => loadMoreHistoryMsg(assistant.id, appendHistory)}
                         inputForm={null}
+                        onClickClear={null}
                     />
                     {/* 强制提醒 */}
                     <ForcePrompt id={assistant.id} />

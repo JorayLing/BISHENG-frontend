@@ -29,6 +29,7 @@
       margin: 24px 16px 0 16px;
       cursor: pointer;
 
+      //noinspection CssNoGenericFontName
       > span:nth-child(1) {
         background: -webkit-radial-gradient(circle, #9A2FFF, #156FFF);
         -webkit-background-clip: text;
@@ -127,6 +128,7 @@
         }
       }
 
+
       .chat-item:hover {
         .chat-item-delete {
           display: flex;
@@ -219,15 +221,21 @@
 
         .chat-textarea {
           flex: 1;
-          border: none;
+          border: none !important;
           resize: none;
           background: #FFF;
           min-height: 32px !important;
           box-sizing: border-box;
           padding: 0 8px !important;
+          line-height: 32px !important;
 
           :disabled {
             background: #FFF;
+          }
+
+          :focus {
+            outline: none !important;
+            border: 1px solid transparent;
           }
         }
 

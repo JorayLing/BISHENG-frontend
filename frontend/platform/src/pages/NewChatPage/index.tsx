@@ -21,12 +21,12 @@ import './style/chatBox.less'
 const ChatItem = ({chat, chatId, location, handleSelectChat, handleDeleteChat, _k}) => {
     return (
         <div
-            className="chat-item"
+            className={chatId === chat.chat_id ? 'chat-item Activate' : 'chat-item'}
             key={chat.chat_id}
             onClick={() => handleSelectChat(chat)}
         >
             <span className="chat-item-title">
-               {chat.earliest_message?.message || ""}
+               {chat.earliest_message?.remark || chat.latest_message?.message || ""}
             </span>
             <div className="chat-item-time">
                 <span >

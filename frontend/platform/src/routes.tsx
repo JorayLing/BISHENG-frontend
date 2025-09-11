@@ -120,12 +120,12 @@ const privateRouter = [
     element: <ResoucePage />
   },
   // 独立会话页
-  { path: "/chat/assistant/auth/:id/", element: <ChatPro type={AppNumType.ASSISTANT} /> },
+  { path: "/chat/assistant/auth/:id/", element: <NewChatPro type={AppNumType.ASSISTANT} /> },
     // 旧的
     // { path: "/chat/flow/auth/:id/", element: <ChatPro type={AppNumType.FLOW} /> },
     // 新的
   { path: "/chat/flow/auth/:id/", element: <NewChatPro type={AppNumType.FLOW} /> },
-  { path: "/chat/skill/auth/:id/", element: <ChatPro /> },
+  { path: "/chat/skill/auth/:id/", element: <NewChatPro /> },
   { path: "/chat", element: <SkillChatPage /> },
   { path: "/chat/:id/", element: <ChatShare /> },
   { path: "/chat/flow/:id/", element: <ChatShare type={AppNumType.FLOW} /> },

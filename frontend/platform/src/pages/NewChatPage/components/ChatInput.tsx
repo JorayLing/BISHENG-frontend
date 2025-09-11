@@ -473,7 +473,7 @@ export default function ChatInput({autoRun, clear, form, wsUrl, onBeforSend, onL
     const {fileUploading, getFileIds, loadingChange} = useFileLoading(inputLock.locked)
 
     return (
-        <div className="chat-input chat-input-disabled">
+        <div className={`chat-input ${inputLock.locked ? 'chat-input-disabled' :''}`}>
             {/*/!* 引导问题 *!/*/}
             <GuideQuestions
                 ref={questionsRef}
@@ -486,7 +486,7 @@ export default function ChatInput({autoRun, clear, form, wsUrl, onBeforSend, onL
 
             {/*输入框*/}
             <Textarea
-                className="chat-textarea"
+                className="chat-textarea focus-visible: none"
                 id="bs-send-input"
                 ref={inputRef}
                 rows={1}
@@ -504,7 +504,7 @@ export default function ChatInput({autoRun, clear, form, wsUrl, onBeforSend, onL
             {/*/!* form switch *!/*/}
             <div>
                 {
-                    // form &&
+                    form &&
                     <div className={`w-6 h-6 rounded-sm hover:bg-gray-200 cursor-pointer flex justify-center items-center mr-[12px] `}
                         // onClick={() => (showWhenLocked || !inputLock.locked) && setFormShow(!formShow)}
                     >
@@ -523,17 +523,14 @@ export default function ChatInput({autoRun, clear, form, wsUrl, onBeforSend, onL
                 </Tip>
             </div>
 
-            {/*/!*发送按钮*!/*/}
-            {/*{ inputLock.locked ? <img className="send" src={sendDisabled} alt=""/> : <img className="send" src={send} alt=""/> }*/}
-
-
             {/* send */}
             <div>
                 <div
                     id="bs-send-btn"
-                    className="w-6 h-6 rounded-sm hover:bg-gray-200 dark:hover:bg-gray-950 cursor-pointer flex justify-center items-center"
+                    className="w-[38px] h-[38px] rounded-sm  dark:hover:bg-gray-950 cursor-pointer flex justify-center items-center"
                     onClick={() => { !inputLock.locked && !fileUploading && handleSendClick() }}>
-                    <SendIcon className={`${inputLock.locked || fileUploading ? 'text-muted-foreground' : 'text-foreground'}`} />
+                    { inputLock.locked ? <img className="send" src={sendDisabled} alt=""/> : <img className="send" src={send} alt=""/> }
+                    {/*<SendIcon className={`${inputLock.locked || fileUploading ? 'text-muted-foreground' : 'text-foreground'}`} />*/}
                 </div>
             </div>
             {/* stop & 重置 */}
