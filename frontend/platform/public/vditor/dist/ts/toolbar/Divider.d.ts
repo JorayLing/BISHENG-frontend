@@ -1,4 +1,4 @@
 export declare class Divider {
-    element: HTMLElement;
-    constructor();
+  element: HTMLElement;
+  constructor();
 }

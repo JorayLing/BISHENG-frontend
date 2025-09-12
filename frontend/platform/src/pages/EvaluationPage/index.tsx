@@ -10,6 +10,8 @@ import {
 import { Tabs, TabsContent } from "@/components/bs-ui/tabs";
 import { useNavigate } from "react-router-dom";
 
+import { checkSassUrl } from "@/components/bs-comp/FileView";
+import { LoadingIcon } from "@/components/bs-icons/loading";
 import { bsConfirm } from "@/components/bs-ui/alertDialog/useConfirm";
 import { Badge } from "@/components/bs-ui/badge";
 import AutoPagination from "@/components/bs-ui/pagination/autoPagination";
@@ -33,8 +35,6 @@ import {
   EvaluationType,
   EvaluationTypeLabelMap,
 } from "./types";
-import { checkSassUrl } from "@/components/bs-comp/FileView";
-import { LoadingIcon } from "@/components/bs-icons/loading";
 
 export default function EvaluationPage() {
   const navigate = useNavigate();
@@ -50,7 +50,7 @@ export default function EvaluationPage() {
     search,
     reload,
   } = useTable({ cancelLoadingWhenReload: true }, (param) =>
-    getEvaluationApi(param.page, param.pageSize)
+    getEvaluationApi(param.page, param.pageSize),
   );
 
   useEffect(() => {
@@ -69,7 +69,7 @@ export default function EvaluationPage() {
         captureAndAlertRequestErrorHoc(
           deleteEvaluationApi(id).then((res) => {
             reload();
-          })
+          }),
         );
         next();
       },
@@ -132,10 +132,10 @@ export default function EvaluationPage() {
                     <TableCell>
                       <div className="flex items-center">
                         <Badge className="whitespace-nowrap">
-                          {
-                            t(EvaluationTypeLabelMap[EvaluationType[el.exec_type]]
-                              .label)
-                          }
+                          {t(
+                            EvaluationTypeLabelMap[EvaluationType[el.exec_type]]
+                              .label,
+                          )}
                         </Badge>
                         &nbsp;
                         <span className="whitespace-nowrap text-medium-indigo">
@@ -164,17 +164,17 @@ export default function EvaluationPage() {
                       <div className="flex flex-wrap">
                         {el.result_score
                           ? map(el.result_score, (value, key) => {
-                            return (
-                              <span className="whitespace-nowrap">
-                                {
-                                  EvaluationScoreLabelMap[
-                                    EvaluationScore[key]
-                                  ].label
-                                }
-                                :{value}&nbsp;
-                              </span>
-                            );
-                          })
+                              return (
+                                <span className="whitespace-nowrap">
+                                  {
+                                    EvaluationScoreLabelMap[
+                                      EvaluationScore[key]
+                                    ].label
+                                  }
+                                  :{value}&nbsp;
+                                </span>
+                              );
+                            })
                           : "-"}
                       </div>
                     </TableCell>

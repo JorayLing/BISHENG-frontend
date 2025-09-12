@@ -8,7 +8,12 @@ import { typesContext } from "@/contexts/typesContext";
 import { undoRedoContext } from "@/contexts/undoRedoContext";
 import { APIClassType } from "@/types/api";
 import { FlowType, NodeType } from "@/types/flow";
-import { generateFlow, generateNodeFromFlow, reconnectEdges, validateSelection } from "@/util/reactflowUtils";
+import {
+  generateFlow,
+  generateNodeFromFlow,
+  reconnectEdges,
+  validateSelection,
+} from "@/util/reactflowUtils";
 import { intersectArrays } from "@/util/utils";
 import { isValidConnection } from "@/utils";
 import {
@@ -38,33 +43,32 @@ import Header from "../Header";
 import SelectionMenu from "../SelectionMenuComponent";
 import ExtraSidebar from "../extraSidebarComponent";
 
-
 const nodeTypes = { genericNode: GenericNode };
-export default function Page({ flow, preFlow }: { flow: FlowType, preFlow: string }) {
-
-  let {
-    version,
-    setFlow,
-    setTabsState,
-    saveFlow,
-    uploadFlow,
-    getNodeId,
-  } = useContext(TabsContext);
+export default function Page({
+  flow,
+  preFlow,
+}: {
+  flow: FlowType;
+  preFlow: string;
+}) {
+  let { version, setFlow, setTabsState, saveFlow, uploadFlow, getNodeId } =
+    useContext(TabsContext);
   const { setErrorData } = useContext(alertContext);
 
-
   const reactFlowWrapper = useRef(null);
-  const { data, types, reactFlowInstance, setReactFlowInstance, templates } = useContext(typesContext);
+  const { data, types, reactFlowInstance, setReactFlowInstance, templates } =
+    useContext(typesContext);
   useEffect(() => {
     return () => {
-      setReactFlowInstance(null) // 销毁reactflow实例
-    }
-  }, [])
+      setReactFlowInstance(null); // 销毁reactflow实例
+    };
+  }, []);
 
   // 记录快照
   const { takeSnapshot } = useContext(undoRedoContext);
   // 快捷键
-  const { keyBoardPanneRef, lastSelection, setLastSelection } = useKeyBoard(reactFlowWrapper)
+  const { keyBoardPanneRef, lastSelection, setLastSelection } =
+    useKeyBoard(reactFlowWrapper);
   const onSelectionChange = useCallback((flow) => {
     setLastSelection(flow);
   }, []);
@@ -82,10 +86,10 @@ export default function Page({ flow, preFlow }: { flow: FlowType, preFlow: strin
   }, [selectionEnded, lastSelection]);
 
   const [nodes, setNodes, onNodesChange] = useNodesState(
-    flow.data?.nodes ?? []
+    flow.data?.nodes ?? [],
   );
   const [edges, setEdges, onEdgesChange] = useEdgesState(
-    flow.data?.edges ?? []
+    flow.data?.edges ?? [],
   );
   const { setViewport } = useReactFlow();
   useEffect(() => {
@@ -126,7 +130,7 @@ export default function Page({ flow, preFlow }: { flow: FlowType, preFlow: strin
         };
       });
     },
-    [onEdgesChange, setNodes, setTabsState, flow.id]
+    [onEdgesChange, setNodes, setTabsState, flow.id],
   );
 
   const onNodesChangeMod = useCallback(
@@ -142,7 +146,7 @@ export default function Page({ flow, preFlow }: { flow: FlowType, preFlow: strin
         };
       });
     },
-    [onNodesChange, setTabsState, flow.id]
+    [onNodesChange, setTabsState, flow.id],
   );
 
   const onConnect = useCallback(
@@ -158,30 +162,40 @@ export default function Page({ flow, preFlow }: { flow: FlowType, preFlow: strin
                 ? "stroke-foreground "
                 : "stroke-foreground ") + " stroke-connection",
             // type: 'smoothstep',
-            animated: true // params.targetHandle.split("|")[0] === "Text",
+            animated: true, // params.targetHandle.split("|")[0] === "Text",
           },
-          eds
-        )
+          eds,
+        );
       });
 
       setNodes((x) => {
         let newX = cloneDeep(x);
         // inputFileNode类型跟随下游组件决定上传文件类型
-        const inputNodeId = params.source
-        if (inputNodeId.split('-')[0] === 'InputFileNode') {
-          const inputNode = newX.find(el => el.id === params.source);
-          const nextEdgs = [...edges, params].filter(el => el.source === params.source);
-          const targetNodes = newX.filter(el => nextEdgs.find(edg => edg.target === el.id));
+        const inputNodeId = params.source;
+        if (inputNodeId.split("-")[0] === "InputFileNode") {
+          const inputNode = newX.find((el) => el.id === params.source);
+          const nextEdgs = [...edges, params].filter(
+            (el) => el.source === params.source,
+          );
+          const targetNodes = newX.filter((el) =>
+            nextEdgs.find((edg) => edg.target === el.id),
+          );
           // 取下游节点交集
-          let result = intersectArrays(...targetNodes.map(el => el.data.node.template.file_path.fileTypes))
-          result = result.length ? result : ['xxx'] // 无效后缀
-          inputNode.data.node.template.file_path.fileTypes = result
-          inputNode.data.node.template.file_path.suffixes = result.map(el => `.${el}`) // 上传文件类型；
+          let result = intersectArrays(
+            ...targetNodes.map(
+              (el) => el.data.node.template.file_path.fileTypes,
+            ),
+          );
+          result = result.length ? result : ["xxx"]; // 无效后缀
+          inputNode.data.node.template.file_path.fileTypes = result;
+          inputNode.data.node.template.file_path.suffixes = result.map(
+            (el) => `.${el}`,
+          ); // 上传文件类型；
         }
         return newX;
       });
     },
-    [setEdges, setNodes, takeSnapshot]
+    [setEdges, setNodes, takeSnapshot],
   );
 
   const onNodeDragStart = useCallback(() => {
@@ -216,11 +230,12 @@ export default function Page({ flow, preFlow }: { flow: FlowType, preFlow: strin
         takeSnapshot();
 
         // Get the current bounds of the ReactFlow wrapper element
-        const reactflowBounds = reactFlowWrapper.current.getBoundingClientRect();
+        const reactflowBounds =
+          reactFlowWrapper.current.getBoundingClientRect();
 
         // Extract the data from the drag event and parse it as a JSON object
         let data: { type: string; node?: APIClassType } = JSON.parse(
-          event.dataTransfer.getData("nodedata")
+          event.dataTransfer.getData("nodedata"),
         );
 
         // If data type is not "chatInput" or if there are no "chatInputNode" nodes present in the ReactFlow instance, create a new node
@@ -241,7 +256,7 @@ export default function Page({ flow, preFlow }: { flow: FlowType, preFlow: strin
             id: newId,
             type: "genericNode",
             position,
-            data: { ...data, id: newId, value: null }
+            data: { ...data, id: newId, value: null },
           };
         } else {
           // Create a new node object
@@ -249,7 +264,7 @@ export default function Page({ flow, preFlow }: { flow: FlowType, preFlow: strin
             id: newId,
             type: "genericNode",
             position,
-            data: { ...data, id: newId, value: null }
+            data: { ...data, id: newId, value: null },
           };
           // Add the new node to the list of nodes in state
         }
@@ -261,7 +276,7 @@ export default function Page({ flow, preFlow }: { flow: FlowType, preFlow: strin
       }
     },
     // Specify dependencies for useCallback
-    [getNodeId, reactFlowInstance, setNodes, takeSnapshot]
+    [getNodeId, reactFlowInstance, setNodes, takeSnapshot],
   );
 
   const onDelete = useCallback(
@@ -269,11 +284,12 @@ export default function Page({ flow, preFlow }: { flow: FlowType, preFlow: strin
       takeSnapshot();
       setEdges(
         edges.filter(
-          (ns) => !mynodes.some((n) => ns.source === n.id || ns.target === n.id)
-        )
+          (ns) =>
+            !mynodes.some((n) => ns.source === n.id || ns.target === n.id),
+        ),
       );
     },
-    [takeSnapshot, edges, setEdges]
+    [takeSnapshot, edges, setEdges],
   );
 
   const edgeUpdateSuccessful = useRef(true);
@@ -288,7 +304,7 @@ export default function Page({ flow, preFlow }: { flow: FlowType, preFlow: strin
         setEdges((els) => reconnectEdge(oldEdge, newConnection, els));
       }
     },
-    [reactFlowInstance, setEdges]
+    [reactFlowInstance, setEdges],
   );
 
   const onEdgeUpdateEnd = useCallback((_, edge) => {
@@ -299,42 +315,51 @@ export default function Page({ flow, preFlow }: { flow: FlowType, preFlow: strin
     edgeUpdateSuccessful.current = true;
   }, []);
 
-  const { t } = useTranslation()
+  const { t } = useTranslation();
 
   // 修改组件id
   useEffect(() => {
     const handleChangeId = (data) => {
-      const detail = data.detail
-      const node = flow.data.nodes.find((node) => node.data.id === detail[1])
-      node.id = detail[0]
-      node.data.id = detail[0]
+      const detail = data.detail;
+      const node = flow.data.nodes.find((node) => node.data.id === detail[1]);
+      node.id = detail[0];
+      node.data.id = detail[0];
       // 更新线上 id 信息
-      flow.data.edges.forEach(edge => {
-        ['id', 'source', 'sourceHandle', 'target', 'targetHandle'].forEach(prop => {
-          if (edge[prop]) {
-            edge[prop] = edge[prop].replaceAll(detail[1], detail[0]);
-          }
-        });
+      flow.data.edges.forEach((edge) => {
+        ["id", "source", "sourceHandle", "target", "targetHandle"].forEach(
+          (prop) => {
+            if (edge[prop]) {
+              edge[prop] = edge[prop].replaceAll(detail[1], detail[0]);
+            }
+          },
+        );
       });
       // TODO 修改 setNodes 来更新
-      setFlow('changeid', { ...flow })
-    }
-    document.addEventListener('idChange', handleChangeId)
-    return () => document.removeEventListener('idChange', handleChangeId)
+      setFlow("changeid", { ...flow });
+    };
+    document.addEventListener("idChange", handleChangeId);
+    return () => document.removeEventListener("idChange", handleChangeId);
   }, [flow.data]); // 修改 id后, 需要监听 data这一层
 
-  const [showApiPage, setShowApiPage] = useState(false)
+  const [showApiPage, setShowApiPage] = useState(false);
   return (
     <div id="flow-page" className="flex flex-col h-full overflow-hidden">
-      <Header flow={flow} preFlow={preFlow} onTabChange={(t) => setShowApiPage(t === 'api')}></Header>
-      <div className={`flex flex-1 min-h-0 overflow-hidden ${showApiPage ? 'hidden' : ''}`}>
+      <Header
+        flow={flow}
+        preFlow={preFlow}
+        onTabChange={(t) => setShowApiPage(t === "api")}
+      ></Header>
+      <div
+        className={`flex flex-1 min-h-0 overflow-hidden ${showApiPage ? "hidden" : ""}`}
+      >
         {Object.keys(data).length ? <ExtraSidebar flow={flow} /> : <></>}
         {/* Main area */}
         <main className="flex flex-1" ref={keyBoardPanneRef}>
           {/* Primary column */}
           <div className="h-full w-full">
             <div className="h-full w-full" ref={reactFlowWrapper}>
-              {Object.keys(templates).length > 0 && Object.keys(types).length > 0 ? (
+              {Object.keys(templates).length > 0 &&
+              Object.keys(types).length > 0 ? (
                 <div className="h-full w-full">
                   <ReactFlow
                     nodes={nodes}
@@ -342,7 +367,7 @@ export default function Page({ flow, preFlow }: { flow: FlowType, preFlow: strin
                     onMove={() => {
                       if (reactFlowInstance)
                         // 无用 待删
-                        flow = { ...flow, data: reactFlowInstance.toObject() }
+                        flow = { ...flow, data: reactFlowInstance.toObject() };
                     }}
                     onNodesChange={onNodesChangeMod}
                     onEdgesChange={onEdgesChangeMod}
@@ -355,7 +380,10 @@ export default function Page({ flow, preFlow }: { flow: FlowType, preFlow: strin
                     onReconnectEnd={onEdgeUpdateEnd}
                     onNodeDragStart={onNodeDragStart}
                     onSelectionDragStart={onSelectionDragStart}
-                    onSelectionStart={(e) => { e.preventDefault(); setSelectionEnded(false) }}
+                    onSelectionStart={(e) => {
+                      e.preventDefault();
+                      setSelectionEnded(false);
+                    }}
                     onSelectionEnd={() => setSelectionEnded(true)}
                     onEdgesDelete={onEdgesDelete}
                     connectionLineComponent={ConnectionLineComponent}
@@ -368,8 +396,13 @@ export default function Page({ flow, preFlow }: { flow: FlowType, preFlow: strin
                     maxZoom={8}
                     fitView
                   >
-                    <Background className="bg-gray-100 dark:bg-gray-950" color='#999' variant={BackgroundVariant.Dots} />
-                    <Controls showInteractive={false}
+                    <Background
+                      className="bg-gray-100 dark:bg-gray-950"
+                      color="#999"
+                      variant={BackgroundVariant.Dots}
+                    />
+                    <Controls
+                      showInteractive={false}
                       className="bg-muted fill-foreground stroke-foreground text-primary
                    [&>button]:border-b-border hover:[&>button]:bg-border"
                     ></Controls>
@@ -378,24 +411,27 @@ export default function Page({ flow, preFlow }: { flow: FlowType, preFlow: strin
                       nodes={lastSelection?.nodes}
                       onClick={() => {
                         takeSnapshot();
-                        const valiDateRes = validateSelection(lastSelection!, edges)
+                        const valiDateRes = validateSelection(
+                          lastSelection!,
+                          edges,
+                        );
                         if (valiDateRes.length === 0) {
                           // groupFlow
                           const { newFlow, removedEdges } = generateFlow(
                             lastSelection!,
                             nodes,
                             edges,
-                            ''
+                            "",
                           );
                           // newGroupNode（inset groupFlow）
                           const newGroupNode = generateNodeFromFlow(
                             newFlow,
-                            getNodeId
+                            getNodeId,
                           );
                           // group之外的线
                           const newEdges = reconnectEdges(
                             newGroupNode,
-                            removedEdges
+                            removedEdges,
                           );
                           // 更新节点，过滤重复 node
                           setNodes((oldNodes) => [
@@ -403,8 +439,8 @@ export default function Page({ flow, preFlow }: { flow: FlowType, preFlow: strin
                               (oldNodes) =>
                                 !lastSelection?.nodes.some(
                                   (selectionNode) =>
-                                    selectionNode.id === oldNodes.id
-                                )
+                                    selectionNode.id === oldNodes.id,
+                                ),
                             ),
                             newGroupNode,
                           ]);
@@ -414,8 +450,8 @@ export default function Page({ flow, preFlow }: { flow: FlowType, preFlow: strin
                                 !lastSelection!.nodes.some(
                                   (selectionNode) =>
                                     selectionNode.id === oldEdge.target ||
-                                    selectionNode.id === oldEdge.source
-                                )
+                                    selectionNode.id === oldEdge.source,
+                                ),
                             ),
                             ...newEdges,
                           ]);
@@ -431,7 +467,11 @@ export default function Page({ flow, preFlow }: { flow: FlowType, preFlow: strin
                   <Chat flow={flow} reactFlowInstance={reactFlowInstance} />
                   <div className="absolute top-20 left-[220px] text-xs mt-2 text-gray-500">
                     <p className="mb-2">{flow.name}</p>
-                    <Badge variant="outline"><Layers className="mr-1 size-4" />{t('skills.currentVersion')}{version?.name}</Badge>
+                    <Badge variant="outline">
+                      <Layers className="mr-1 size-4" />
+                      {t("skills.currentVersion")}
+                      {version?.name}
+                    </Badge>
                   </div>
                 </div>
               ) : (
@@ -441,8 +481,10 @@ export default function Page({ flow, preFlow }: { flow: FlowType, preFlow: strin
           </div>
         </main>
       </div>
-      <div className={`flex flex-1 min-h-0 overflow-hidden ${showApiPage ? '' : 'hidden'}`}>
-        <ApiMainPage type={'skill'} />
+      <div
+        className={`flex flex-1 min-h-0 overflow-hidden ${showApiPage ? "" : "hidden"}`}
+      >
+        <ApiMainPage type={"skill"} />
       </div>
     </div>
   );
@@ -450,21 +492,18 @@ export default function Page({ flow, preFlow }: { flow: FlowType, preFlow: strin
 
 // 复制粘贴组件，支持跨技能粘贴
 const useKeyBoard = (reactFlowWrapper) => {
-  const keyBoardPanneRef = useRef(null)
+  const keyBoardPanneRef = useRef(null);
 
   const position = useRef({ x: 0, y: 0 });
   const [lastSelection, setLastSelection] =
     useState<OnSelectionChangeParams | null>(null);
-  let {
-    lastCopiedSelection,
-    paste,
-    setLastCopiedSelection,
-  } = useContext(TabsContext);
+  let { lastCopiedSelection, paste, setLastCopiedSelection } =
+    useContext(TabsContext);
 
   useEffect(() => {
     // this effect is used to attach the global event handlers
     const onKeyDown = (event: KeyboardEvent) => {
-      if (event.target.tagName === 'INPUT') return // 排除输入框内复制粘贴
+      if (event.target.tagName === "INPUT") return; // 排除输入框内复制粘贴
 
       if (
         (event.ctrlKey || event.metaKey) &&
@@ -508,10 +547,12 @@ const useKeyBoard = (reactFlowWrapper) => {
 
     return () => {
       keyBoardPanneRef.current?.removeEventListener("keydown", onKeyDown);
-      keyBoardPanneRef.current?.removeEventListener("mousemove", handleMouseMove);
+      keyBoardPanneRef.current?.removeEventListener(
+        "mousemove",
+        handleMouseMove,
+      );
     };
   }, [position, lastCopiedSelection, lastSelection]);
 
-  return { lastSelection, keyBoardPanneRef, setLastSelection }
-}
-
+  return { lastSelection, keyBoardPanneRef, setLastSelection };
+};

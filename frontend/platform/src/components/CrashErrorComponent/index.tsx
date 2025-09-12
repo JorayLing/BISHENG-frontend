@@ -1,13 +1,12 @@
 export default function CrashErrorComponent({ error, resetErrorBoundary }) {
-
   return (
     <div className="fixed left-0 top-0 z-50 flex h-full w-full items-center justify-center bg-background-main">
       <div className="flex min-h-fit max-w-2xl flex-col justify-evenly rounded-lg bg-card p-8 text-start shadow-lg">
-        <h1 className="mb-4 text-2xl text-status-red">
-          {error.toString()}
-        </h1>
+        <h1 className="mb-4 text-2xl text-status-red">{error.toString()}</h1>
         <p className="mb-4 text-lg text-foreground">
-          Please click the 'Reset Application' button to restore the application's state.If the error persists, please contact us.We apologize for any inconvenience this may have caused.
+          Please click the 'Reset Application' button to restore the
+          application's state.If the error persists, please contact us.We
+          apologize for any inconvenience this may have caused.
         </p>
         <div className="flex justify-center gap-4">
           <a

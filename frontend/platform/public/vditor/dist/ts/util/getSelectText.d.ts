@@ -1,1 +1,4 @@
-export declare const getSelectText: (editor: HTMLElement, range?: Range) => string;
+export declare const getSelectText: (
+  editor: HTMLElement,
+  range?: Range,
+) => string;

@@ -19,7 +19,10 @@ export default function DisclosureComponent({
               </div>
               <div className="components-disclosure-div">
                 {buttons.map((x, index) => (
-                  <button key={index} onClick={x.onClick}> {x.Icon} </button>
+                  <button key={index} onClick={x.onClick}>
+                    {" "}
+                    {x.Icon}{" "}
+                  </button>
                 ))}
                 <div>
                   <ChevronRight className={`h-4 w-4 text-foreground`} />

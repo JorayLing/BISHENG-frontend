@@ -1,4 +1,4 @@
-import { Download, Check, Clipboard } from 'lucide-react';
+import { Check, Clipboard, Download } from "lucide-react";
 import { useState } from "react";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { oneDark } from "react-syntax-highlighter/dist/cjs/styles/prism";
@@ -18,7 +18,7 @@ export function CodeBlock({ language, value }) {
       setTimeout(() => {
         setIsCopied(false);
       }, 2000);
-    })
+    });
   };
   const downloadAsFile = () => {
     const fileExtension = programmingLanguages[language] || ".file";

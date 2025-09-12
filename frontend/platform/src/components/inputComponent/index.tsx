@@ -8,7 +8,7 @@ export default function InputComponent({
   onChange,
   disabled,
   password,
-  type = 'input',
+  type = "input",
   maxLength = 150,
   editNode = false,
 }: InputComponentType) {
@@ -29,49 +29,52 @@ export default function InputComponent({
 
   return (
     <div className={disabled ? "input-component-div" : "relative"}>
-      {type === 'textarea' ? <textarea
-        value={myValue}
-        // maxLength={maxLength}
-        className={classNames(
-          "whitespace-normal",
-          disabled ? " input-disable " : "",
-          password && !pwdVisible && myValue !== ""
-            ? " text-clip password "
-            : "",
-          editNode ? " input-edit-node " : " input-primary ",
-          password && editNode ? "pr-8" : "",
-          password && !editNode ? "pr-10" : ""
-        )}
-        placeholder={password && editNode ? "Key" : "input..."}
-        onChange={(e) => {
-          setMyValue(e.target.value);
-          onChange(e.target.value);
-        }}
-      />
-        : <input value={myValue}
-          maxLength={maxLength}
-          className={
-            classNames(
-              disabled ? " input-disable " : "",
-              password && !pwdVisible && myValue !== ""
-                ? " text-clip password "
-                : "",
-              editNode ? " input-edit-node " : " input-primary ",
-              password && editNode ? "pr-8" : "",
-              password && !editNode ? "pr-10" : ""
-            )}
+      {type === "textarea" ? (
+        <textarea
+          value={myValue}
+          // maxLength={maxLength}
+          className={classNames(
+            "whitespace-normal",
+            disabled ? " input-disable " : "",
+            password && !pwdVisible && myValue !== ""
+              ? " text-clip password "
+              : "",
+            editNode ? " input-edit-node " : " input-primary ",
+            password && editNode ? "pr-8" : "",
+            password && !editNode ? "pr-10" : "",
+          )}
           placeholder={password && editNode ? "Key" : "input..."}
           onChange={(e) => {
             setMyValue(e.target.value);
             onChange(e.target.value);
           }}
-        />}
+        />
+      ) : (
+        <input
+          value={myValue}
+          maxLength={maxLength}
+          className={classNames(
+            disabled ? " input-disable " : "",
+            password && !pwdVisible && myValue !== ""
+              ? " text-clip password "
+              : "",
+            editNode ? " input-edit-node " : " input-primary ",
+            password && editNode ? "pr-8" : "",
+            password && !editNode ? "pr-10" : "",
+          )}
+          placeholder={password && editNode ? "Key" : "input..."}
+          onChange={(e) => {
+            setMyValue(e.target.value);
+            onChange(e.target.value);
+          }}
+        />
+      )}
       {password && (
         <button
           className={classNames(
             editNode
               ? "input-component-true-button"
-              : "input-component-false-button"
+              : "input-component-false-button",
           )}
           onClick={() => {
             setPwdVisible(!pwdVisible);
@@ -88,7 +91,7 @@ export default function InputComponent({
                 className={classNames(
                   editNode
                     ? "input-component-true-svg"
-                    : "input-component-false-svg"
+                    : "input-component-false-svg",
                 )}
               >
                 <path
@@ -107,7 +110,7 @@ export default function InputComponent({
                 className={classNames(
                   editNode
                     ? "input-component-true-svg"
-                    : "input-component-false-svg"
+                    : "input-component-false-svg",
                 )}
               >
                 <path

@@ -1,39 +1,39 @@
+import { addEdge } from "@xyflow/react";
 import cloneDeep from "lodash-es/cloneDeep";
 import { ReactNode, createContext, useContext, useState } from "react";
-import { addEdge } from "@xyflow/react";
 import { updateFlowApi } from "../controllers/API/flow";
+import { captureAndAlertRequestErrorHoc } from "../controllers/request";
 import { APIClassType, APITemplateType } from "../types/api";
 import { FlowType, FlowVersionItem, NodeType } from "../types/flow";
 import { TabsContextType, TabsState } from "../types/tabs";
 import { generateUUID, updateTemplate } from "../utils";
 import { alertContext } from "./alertContext";
 import { typesContext } from "./typesContext";
-import { captureAndAlertRequestErrorHoc } from "../controllers/request";
 
 const TabsContextInitialValue: TabsContextType = {
   flow: null,
   tabsState: {}, // keyform isPending
-  setFlow: (ac, f) => { },
-  setTabsState: (state: TabsState) => { },
+  setFlow: (ac, f) => {},
+  setTabsState: (state: TabsState) => {},
   saveFlow: async (flow: FlowType) => Promise.resolve(),
-  uploadFlow: () => { },
-  setTweak: (tweak: any) => { },
+  uploadFlow: () => {},
+  setTweak: (tweak: any) => {},
   getTweak: [],
   // 跨组件粘贴
   lastCopiedSelection: null,
-  setLastCopiedSelection: (selection: any) => { },
-  downloadFlow: (flow: FlowType) => { },
+  setLastCopiedSelection: (selection: any) => {},
+  downloadFlow: (flow: FlowType) => {},
   getNodeId: (nodeType: string) => "",
   paste: (
     selection: { nodes: any; edges: any },
-    position: { x: number; y: number; paneX?: number; paneY?: number }
-  ) => { },
+    position: { x: number; y: number; paneX?: number; paneY?: number },
+  ) => {},
   version: null,
-  setVersion: (version: FlowVersionItem | null) => ""
+  setVersion: (version: FlowVersionItem | null) => "",
 };
 
 export const TabsContext = createContext<TabsContextType>(
-  TabsContextInitialValue
+  TabsContextInitialValue,
 );
 
 export function TabsProvider({ children }: { children: ReactNode }) {
@@ -49,11 +49,11 @@ export function TabsProvider({ children }: { children: ReactNode }) {
 
   async function saveFlow(flow: FlowType) {
     // save api
-    const {data, ...info} = flow
-    const newFlow = await captureAndAlertRequestErrorHoc(updateFlowApi(info))
+    const { data, ...info } = flow;
+    const newFlow = await captureAndAlertRequestErrorHoc(updateFlowApi(info));
     if (!newFlow) return null;
-    console.log('action :>> ', 'save');
-    setFlow((flow) => ({...newFlow, data: flow.data}))
+    console.log("action :>> ", "save");
+    setFlow((flow) => ({ ...newFlow, data: flow.data }));
     setTabsState((prev) => {
       return {
         ...prev,
@@ -63,7 +63,7 @@ export function TabsProvider({ children }: { children: ReactNode }) {
         },
       };
     });
-    return newFlow
+    return newFlow;
   }
 
   /**
@@ -80,7 +80,7 @@ export function TabsProvider({ children }: { children: ReactNode }) {
         paste(
           { nodes: flow.data.nodes, edges: flow.data.edges },
           { x: 10, y: 10 },
-          true
+          true,
         );
         // 覆盖
         // setFlow(flow);
@@ -106,7 +106,7 @@ export function TabsProvider({ children }: { children: ReactNode }) {
             paste(
               { nodes: flow.data.nodes, edges: flow.data.edges },
               { x: 10, y: 10 },
-              true
+              true,
             );
           });
         }
@@ -121,16 +121,16 @@ export function TabsProvider({ children }: { children: ReactNode }) {
   }
 
   /**
- * Downloads the current flow as a JSON file
- */
+   * Downloads the current flow as a JSON file
+   */
   function downloadFlow(
     flow: FlowType,
     flowName: string,
-    flowDescription?: string
+    flowDescription?: string,
   ) {
     // create a data URI with the current flow data
     const jsonString = `data:text/json;chatset=utf-8,${encodeURIComponent(
-      JSON.stringify({ ...flow, name: flowName, description: flowDescription })
+      JSON.stringify({ ...flow, name: flowName, description: flowDescription }),
     )}`;
 
     // create a link element and set its properties
@@ -146,14 +146,14 @@ export function TabsProvider({ children }: { children: ReactNode }) {
   }
 
   /**
- * Add a new flow to the list of flows.
- * @param flow Optional flow to add.
- */
+   * Add a new flow to the list of flows.
+   * @param flow Optional flow to add.
+   */
 
   function paste(
     selectionInstance,
     position: { x: number; y: number; paneX?: number; paneY?: number },
-    keepId: boolean = false // keep id
+    keepId: boolean = false, // keep id
   ) {
     let minimumX = Infinity;
     let minimumY = Infinity;
@@ -171,13 +171,16 @@ export function TabsProvider({ children }: { children: ReactNode }) {
 
     const insidePosition = position.paneX
       ? { x: position.paneX + position.x, y: position.paneY + position.y }
-      : reactFlowInstance.screenToFlowPosition({ x: position.x, y: position.y });
+      : reactFlowInstance.screenToFlowPosition({
+          x: position.x,
+          y: position.y,
+        });
 
     selectionInstance.nodes.forEach((n: NodeType) => {
       // Generate a unique node ID
       let newId = getNodeId(n.data.type);
       // 保留原id； 重复 id除外
-      if (keepId && !nodes.find(node => node.id === n.id)) {
+      if (keepId && !nodes.find((node) => node.id === n.id)) {
         newId = n.id;
       }
       idsMap[n.id] = newId;
@@ -201,7 +204,7 @@ export function TabsProvider({ children }: { children: ReactNode }) {
         .map((e) => ({ ...e, selected: false }))
         .concat({ ...newNode, selected: false });
     });
-    console.log(nodes)
+    console.log(nodes);
     reactFlowInstance.setNodes(nodes);
 
     selectionInstance.edges.forEach((e) => {
@@ -239,7 +242,7 @@ export function TabsProvider({ children }: { children: ReactNode }) {
           animated: targetHandle.split("|")[0] === "Text",
           selected: false,
         },
-        edges.map((e) => ({ ...e, selected: false }))
+        edges.map((e) => ({ ...e, selected: false })),
       );
     });
     reactFlowInstance.setEdges(edges);
@@ -249,7 +252,7 @@ export function TabsProvider({ children }: { children: ReactNode }) {
   function updateNodeEdges(
     flow: FlowType,
     node: NodeType,
-    template: APIClassType
+    template: APIClassType,
   ) {
     flow.data.edges.forEach((edge) => {
       if (edge.source === node.id) {
@@ -276,18 +279,19 @@ export function TabsProvider({ children }: { children: ReactNode }) {
       const template = templates[node.data.type];
       if (!template) {
         // setErrorData({ title: `Unknown node type: ${node.data.type}` });
-        console.warn(`Unknown node type: ${node.data.type}`)
+        console.warn(`Unknown node type: ${node.data.type}`);
         return;
       }
       if (Object.keys(template["template"]).length > 0) {
-        node.data.node.display_name = template["display_name"] || node.data.type;
+        node.data.node.display_name =
+          template["display_name"] || node.data.type;
         node.data.node.base_classes = template["base_classes"];
         node.data.node.description = template["description"];
         node.data.node.documentation = template["documentation"];
         updateNodeEdges(flow, node, template);
         node.data.node.template = updateTemplate(
           template["template"] as unknown as APITemplateType,
-          node.data.node.template as APITemplateType
+          node.data.node.template as APITemplateType,
         );
       }
     });
@@ -297,14 +301,14 @@ export function TabsProvider({ children }: { children: ReactNode }) {
   const [onlineVid, setOnlineVid] = useState(0);
   const updateOnlineVid = (vid: number) => {
     setOnlineVid(flow.status === 2 ? vid : 0);
-  }
+  };
 
   return (
     <TabsContext.Provider
       value={{
         flow,
         setFlow: (action, flow) => {
-          console.log('action :>> ', action);
+          console.log("action :>> ", action);
           if (action === "flow_init") {
             // 按模板矫正数据格式
             processFlowEdges(flow);
@@ -327,7 +331,7 @@ export function TabsProvider({ children }: { children: ReactNode }) {
         version,
         setVersion,
         isOnlineVersion: () => version.id === onlineVid,
-        updateOnlineVid
+        updateOnlineVid,
       }}
     >
       {children}

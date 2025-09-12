@@ -1,11 +1,18 @@
 import KnowledgeSelect from "@/components/bs-comp/selectComponent/knowledge";
 import ModelSelect from "@/pages/BuildPage/assistant/editAssistant/ModelSelect";
 import CollectionNameComponent from "@/pages/BuildPage/skills/editSkill/CollectionNameComponent";
+import { Handle, Position, useUpdateNodeInternals } from "@xyflow/react";
 import cloneDeep from "lodash-es/cloneDeep";
 import { Info } from "lucide-react";
-import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { useParams } from "react-router-dom";
-import { Handle, Position, useUpdateNodeInternals } from "@xyflow/react";
 import ShadTooltip from "../../../../components/ShadTooltipComponent";
 import VariablesComponent from "../../../../components/VariablesComponent";
 import CodeAreaComponent from "../../../../components/codeAreaComponent";
@@ -26,14 +33,19 @@ import { typesContext } from "../../../../contexts/typesContext";
 import { reloadCustom } from "../../../../controllers/API/flow";
 import { captureAndAlertRequestErrorHoc } from "../../../../controllers/request";
 import { ParameterComponentType } from "../../../../types/components";
-import { cleanEdges, convertObjToArray, convertValuesToNumbers, hasDuplicateKeys } from "../../../../util/reactflowUtils";
+import {
+  cleanEdges,
+  convertObjToArray,
+  convertValuesToNumbers,
+  hasDuplicateKeys,
+} from "../../../../util/reactflowUtils";
 import {
   classNames,
   getNodeNames,
   groupByFamily,
   isValidConnection,
   nodeColors,
-  nodeIconsLucide
+  nodeIconsLucide,
 } from "../../../../utils";
 
 export default function ParameterComponent({
@@ -49,7 +61,7 @@ export default function ParameterComponent({
   optionalHandle = null,
   info = "",
   isGroup = false,
-  onChange
+  onChange,
 }: ParameterComponentType) {
   // console.log('data, id :>> ', name, optionalHandle);
   const { id: flowId } = useParams();
@@ -76,53 +88,73 @@ export default function ParameterComponent({
     updateNodeInternals(data.id);
   }, [data.id, position, updateNodeInternals]);
 
-  useEffect(() => { }, [closePopUp, data.node.template]);
+  useEffect(() => {}, [closePopUp, data.node.template]);
 
   const { reactFlowInstance } = useContext(typesContext);
   const disabled = useMemo(() => {
-    let dis = reactFlowInstance?.getEdges().some((e) => e.targetHandle === id) ?? false;
+    let dis =
+      reactFlowInstance?.getEdges().some((e) => e.targetHandle === id) ?? false;
     // 特殊处理含有知识库组件的 disabled
-    if (['index_name', 'collection_name'].includes(name)
-      && reactFlowInstance?.getEdges().some((e) => e.targetHandle.indexOf('documents') !== -1
-        && e.targetHandle.indexOf(data.id) !== -1)) {
-      dis = true
+    if (
+      ["index_name", "collection_name"].includes(name) &&
+      reactFlowInstance
+        ?.getEdges()
+        .some(
+          (e) =>
+            e.targetHandle.indexOf("documents") !== -1 &&
+            e.targetHandle.indexOf(data.id) !== -1,
+        )
+    ) {
+      dis = true;
     }
-    return dis
-  }, [id, data, reactFlowInstance])
+    return dis;
+  }, [id, data, reactFlowInstance]);
   // milvus 组件，知识库不为空是 embbeding取消必填限制
   useEffect(() => {
-    const { embedding, index_name, collection_name, connection_args } = data.node.template
+    const { embedding, index_name, collection_name, connection_args } =
+      data.node.template;
     if ((index_name || collection_name) && embedding) {
-      const hidden = disabled ? false : !!(collection_name || index_name).value
-      data.node.template.embedding.required = !hidden
-      data.node.template.embedding.show = !hidden
-      if (hidden && connection_args) data.node.template.connection_args.value = ''
-      onChange?.()
+      const hidden = disabled ? false : !!(collection_name || index_name).value;
+      data.node.template.embedding.required = !hidden;
+      data.node.template.embedding.show = !hidden;
+      if (hidden && connection_args)
+        data.node.template.connection_args.value = "";
+      onChange?.();
     }
-  }, [data, disabled])
+  }, [data, disabled]);
   const handleRemoveMilvusEmbeddingEdge = (nodeId) => {
-    const edges = reactFlowInstance.getEdges().filter(edge => edge.targetHandle.indexOf('Embeddings|embedding|' + nodeId) === -1)
-    reactFlowInstance.setEdges(edges)
-  }
+    const edges = reactFlowInstance
+      .getEdges()
+      .filter(
+        (edge) =>
+          edge.targetHandle.indexOf("Embeddings|embedding|" + nodeId) === -1,
+      );
+    reactFlowInstance.setEdges(edges);
+  };
   const [myData, setMyData] = useState(useContext(typesContext).data);
 
-  const handleOnNewValue = useCallback((newValue: any) => {
-    // TODO 使用setNodes 保存修改（onChange）
-    data.node.template[name].value = ['float', 'int'].includes(type) ? Number(newValue) : newValue;
-    // Set state to pending
-    setTabsState((prev) => {
-      return {
-        ...prev,
-        [flow.id]: {
-          ...prev[flow.id],
-          isPending: true,
-        },
-      };
-    });
-  }, [data, flow.id]);
+  const handleOnNewValue = useCallback(
+    (newValue: any) => {
+      // TODO 使用setNodes 保存修改（onChange）
+      data.node.template[name].value = ["float", "int"].includes(type)
+        ? Number(newValue)
+        : newValue;
+      // Set state to pending
+      setTabsState((prev) => {
+        return {
+          ...prev,
+          [flow.id]: {
+            ...prev[flow.id],
+            isPending: true,
+          },
+        };
+      });
+    },
+    [data, flow.id],
+  );
 
   // 临时处理知识库保存方法, 类似方法多了需要抽象
-  const handleOnNewLibValue = (newValue: string, collectionId: number | '') => {
+  const handleOnNewLibValue = (newValue: string, collectionId: number | "") => {
     // TODO 使用setNodes 保存修改（onChange）
     data.node.template[name].value = newValue;
     data.node.template[name].collection_id = collectionId;
@@ -140,29 +172,29 @@ export default function ParameterComponent({
 
   // custom 组件 reload
   const handleReloadCustom = (code) => {
-    captureAndAlertRequestErrorHoc(reloadCustom(code)).then(res => {
+    captureAndAlertRequestErrorHoc(reloadCustom(code)).then((res) => {
       if (res) {
         reactFlowInstance.setNodes((nds) =>
           nds.map((nd) => {
             if (nd.id === data.id) {
               let newNode = cloneDeep(nd);
-              newNode.data.node = res
+              newNode.data.node = res;
               return newNode;
             }
-            return nd
-          })
-        )
+            return nd;
+          }),
+        );
         // 清理线
         setTimeout(() => {
           const edges = cleanEdges(
             reactFlowInstance.getNodes(),
-            reactFlowInstance.getEdges()
-          )
-          reactFlowInstance.setEdges(edges)
+            reactFlowInstance.getEdges(),
+          );
+          reactFlowInstance.setEdges(edges);
         }, 60);
       }
-    })
-  }
+    });
+  };
 
   useEffect(() => {
     infoHtml.current = (
@@ -179,7 +211,12 @@ export default function ParameterComponent({
   const [errorDuplicateKey, setErrorDuplicateKey] = useState(false);
 
   useEffect(() => {
-    let groupedObj: any = groupByFamily(myData, tooltipTitle!, left, flow.data?.nodes || []);
+    let groupedObj: any = groupByFamily(
+      myData,
+      tooltipTitle!,
+      left,
+      flow.data?.nodes || [],
+    );
     groupedEdge.current = groupedObj;
 
     if (groupedObj && groupedObj.length > 0) {
@@ -200,7 +237,7 @@ export default function ParameterComponent({
             <span
               key={index}
               className={classNames(
-                index > 0 ? "mt-2 flex items-center" : "mt-3 flex items-center"
+                index > 0 ? "mt-2 flex items-center" : "mt-3 flex items-center",
               )}
             >
               <div
@@ -225,15 +262,15 @@ export default function ParameterComponent({
                     {item.display_name === "" ? "" : " - "}
                     {item.display_name.split(", ").length > 2
                       ? item.display_name.split(", ").map((el, index) => (
-                        <React.Fragment key={el + index}>
-                          <span>
-                            {index ===
+                          <React.Fragment key={el + index}>
+                            <span>
+                              {index ===
                               item.display_name.split(", ").length - 1
-                              ? el
-                              : (el += `, `)}
-                          </span>
-                        </React.Fragment>
-                      ))
+                                ? el
+                                : (el += `, `)}
+                            </span>
+                          </React.Fragment>
+                        ))
                       : item.display_name}
                   </span>
                 ) : (
@@ -242,14 +279,14 @@ export default function ParameterComponent({
                     {item.type === "" ? "" : " - "}
                     {item.type.split(", ").length > 2
                       ? item.type.split(", ").map((el, index) => (
-                        <React.Fragment key={el + index}>
-                          <span>
-                            {index === item.type.split(", ").length - 1
-                              ? el
-                              : (el += `, `)}
-                          </span>
-                        </React.Fragment>
-                      ))
+                          <React.Fragment key={el + index}>
+                            <span>
+                              {index === item.type.split(", ").length - 1
+                                ? el
+                                : (el += `, `)}
+                            </span>
+                          </React.Fragment>
+                        ))
                       : item.type}
                   </span>
                 )}
@@ -289,47 +326,48 @@ export default function ParameterComponent({
         </div>
         {/* 触点 */}
         {left &&
-          (type === "str" ||
-            type === "bool" ||
-            type === "float" ||
-            type === "code" ||
-            type === "prompt" ||
-            type === "file" ||
-            type === "int" ||
-            type === "variable" ||
-            type === "button" ||
-            type === "knowledge_one" ||
-            type === "knowledge_list" ||
-            type === "NestedDict" ||
-            type === "dict" ||
-            type === "bisheng_model" ||
-            type === "bisheng_embedding") &&
-          !optionalHandle ? (<></>)
-          : (
-            <ShadTooltip
-              styleClasses={"tooltip-fixed-width custom-scroll nowheel"}
-              delayDuration={0}
-              content={refHtml.current}
-              side={left ? "left" : "right"}
-            >
-              <Handle
-                type={left ? "target" : "source"}
-                position={left ? Position.Left : Position.Right}
-                id={id}
-                isValidConnection={(connection) =>
-                  isValidConnection(connection, reactFlowInstance)
-                }
-                className={classNames(
-                  left ? "-ml-0.5 " : "-mr-0.5 ",
-                  "h-3 w-3 rounded-full border-2 bg-background"
-                )}
-                style={{
-                  borderColor: color,
-                  top: position,
-                }}
-              ></Handle>
-            </ShadTooltip>
-          )}
+        (type === "str" ||
+          type === "bool" ||
+          type === "float" ||
+          type === "code" ||
+          type === "prompt" ||
+          type === "file" ||
+          type === "int" ||
+          type === "variable" ||
+          type === "button" ||
+          type === "knowledge_one" ||
+          type === "knowledge_list" ||
+          type === "NestedDict" ||
+          type === "dict" ||
+          type === "bisheng_model" ||
+          type === "bisheng_embedding") &&
+        !optionalHandle ? (
+          <></>
+        ) : (
+          <ShadTooltip
+            styleClasses={"tooltip-fixed-width custom-scroll nowheel"}
+            delayDuration={0}
+            content={refHtml.current}
+            side={left ? "left" : "right"}
+          >
+            <Handle
+              type={left ? "target" : "source"}
+              position={left ? Position.Left : Position.Right}
+              id={id}
+              isValidConnection={(connection) =>
+                isValidConnection(connection, reactFlowInstance)
+              }
+              className={classNames(
+                left ? "-ml-0.5 " : "-mr-0.5 ",
+                "h-3 w-3 rounded-full border-2 bg-background",
+              )}
+              style={{
+                borderColor: color,
+                top: position,
+              }}
+            ></Handle>
+          </ShadTooltip>
+        )}
 
         {/* 左侧input输入项 */}
         {!data.node.template[name] ? null : left === true &&
@@ -343,7 +381,7 @@ export default function ParameterComponent({
                 disabled={disabled}
                 value={
                   !data.node.template[name].value ||
-                    data.node.template[name].value === ""
+                  data.node.template[name].value === ""
                     ? [""]
                     : data.node.template[name].value
                 }
@@ -356,14 +394,17 @@ export default function ParameterComponent({
                 value={data.node.template[name].value ?? ""}
                 onChange={handleOnNewValue}
               />
-            ) : ['index_name', 'collection_name'].includes(name) ? (
+            ) : ["index_name", "collection_name"].includes(name) ? (
               // 知识库选择
               <CollectionNameComponent
                 disabled={disabled}
                 id={data.node.template[name].collection_id ?? ""}
                 value={data.node.template[name].value ?? ""}
-                onSelect={(val, id) => { handleOnNewLibValue(val, id); val && handleRemoveMilvusEmbeddingEdge(data.id) }}
-                onChange={() => { }}
+                onSelect={(val, id) => {
+                  handleOnNewLibValue(val, id);
+                  val && handleRemoveMilvusEmbeddingEdge(data.id);
+                }}
+                onChange={() => {}}
               />
             ) : (
               // 单行输入
@@ -382,8 +423,11 @@ export default function ParameterComponent({
               disabled={disabled}
               id={data.node.template[name].collection_id ?? ""}
               value={data.node.template[name].value ?? ""}
-              onSelect={(val, id) => { handleOnNewLibValue(val, id); val && handleRemoveMilvusEmbeddingEdge(data.id) }}
-              onChange={() => { }}
+              onSelect={(val, id) => {
+                handleOnNewLibValue(val, id);
+                val && handleRemoveMilvusEmbeddingEdge(data.id);
+              }}
+              onChange={() => {}}
             />
           </div>
         ) : left === true && type === "knowledge_list" ? (
@@ -392,15 +436,19 @@ export default function ParameterComponent({
             <KnowledgeSelect
               multiple
               disabled={disabled}
-              value={data.node.template[name].value?.map?.((item) => ({
-                label: item.value,
-                value: item.key,
-              })) || []}
+              value={
+                data.node.template[name].value?.map?.((item) => ({
+                  label: item.value,
+                  value: item.key,
+                })) || []
+              }
               onChange={(vals) => {
-                handleOnNewValue(vals.map(v => ({
-                  key: v.value,
-                  value: v.label
-                })))
+                handleOnNewValue(
+                  vals.map((v) => ({
+                    key: v.value,
+                    value: v.label,
+                  })),
+                );
               }}
             />
           </div>
@@ -444,7 +492,9 @@ export default function ParameterComponent({
               nodeClass={data.node}
               disabled={disabled}
               value={data.node.template[name].value ?? ""}
-              onChange={data.type === 'Data' ? handleReloadCustom : handleOnNewValue}
+              onChange={
+                data.type === "Data" ? handleReloadCustom : handleOnNewValue
+              }
             />
           </div>
         ) : left === true && type === "file" ? (
@@ -479,20 +529,20 @@ export default function ParameterComponent({
                     nds.map((nd) => {
                       if (nd.id === data.id) {
                         let newNode = cloneDeep(nd);
-                        newNode.data.node = nodeClass
+                        newNode.data.node = nodeClass;
                         newNode.data.node.template[name].value = code;
                         return newNode;
                       }
-                      return nd
-                    })
-                  )
+                      return nd;
+                    }),
+                  );
                   // 清理线
                   setTimeout(() => {
                     const edges = cleanEdges(
                       reactFlowInstance.getNodes(),
-                      reactFlowInstance.getEdges()
-                    )
-                    reactFlowInstance.setEdges(edges)
+                      reactFlowInstance.getEdges(),
+                    );
+                    reactFlowInstance.setEdges(edges);
                   }, 60);
                 }
               }}
@@ -509,7 +559,7 @@ export default function ParameterComponent({
               editNode={false}
               value={
                 !data.node!.template[name].value ||
-                  data.node!.template[name].value?.toString() === "{}"
+                data.node!.template[name].value?.toString() === "{}"
                   ? '{"yourkey": "value"}'
                   : data.node!.template[name].value
               }
@@ -526,7 +576,7 @@ export default function ParameterComponent({
               editNode={false}
               value={
                 data.node!.template[name].value?.length === 0 ||
-                  !data.node!.template[name].value
+                !data.node!.template[name].value
                   ? [{ "": "" }]
                   : convertObjToArray(data.node!.template[name].value)
               }
@@ -541,15 +591,20 @@ export default function ParameterComponent({
           </div>
         ) : left === true && type === "variable" ? (
           <div className="mt-2 w-full">
-            <VariablesComponent vid={version?.id} nodeId={data.id} flowId={flowId} onChange={(newValue) => {
-              data.node!.template[name].value = newValue;
-              handleOnNewValue(newValue);
-            }} />
+            <VariablesComponent
+              vid={version?.id}
+              nodeId={data.id}
+              flowId={flowId}
+              onChange={(newValue) => {
+                data.node!.template[name].value = newValue;
+                handleOnNewValue(newValue);
+              }}
+            />
           </div>
         ) : left === true && type === "bisheng_model" ? (
           <div className="mt-2 w-full">
             <ModelSelect
-              type='flow'
+              type="flow"
               value={data.node!.template[name].value || null}
               onChange={(newValue) => {
                 data.node!.template[name].value = newValue;
@@ -560,7 +615,7 @@ export default function ParameterComponent({
         ) : left === true && type === "bisheng_embedding" ? (
           <div className="mt-2 w-full">
             <ModelSelect
-              type='flow'
+              type="flow"
               modelType="embedding"
               value={data.node!.template[name].value || null}
               onChange={(newValue) => {

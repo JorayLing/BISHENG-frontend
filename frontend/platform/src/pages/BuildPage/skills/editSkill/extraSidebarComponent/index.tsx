@@ -1,4 +1,9 @@
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/bs-ui/tooltip";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/bs-ui/tooltip";
 import { alertContext } from "@/contexts/alertContext";
 import { TabsContext } from "@/contexts/tabsContext";
 import { typesContext } from "@/contexts/typesContext";
@@ -13,7 +18,7 @@ import DisclosureComponent from "../DisclosureComponent";
 import PersonalComponents from "./PersonalComponents";
 
 export default function ExtraSidebar({ flow }: { flow: FlowType }) {
-  const { t } = useTranslation()
+  const { t } = useTranslation();
 
   const { data } = useContext(typesContext);
   const { saveFlow } = useContext(TabsContext);
@@ -21,11 +26,11 @@ export default function ExtraSidebar({ flow }: { flow: FlowType }) {
   const [dataFilter, setFilterData] = useState(data);
   const [search, setSearch] = useState("");
 
-  const [open, setOpen] = useState(false)
+  const [open, setOpen] = useState(false);
 
   function onDragStart(
     event: React.DragEvent<any>,
-    data: { type: string; node?: APIClassType }
+    data: { type: string; node?: APIClassType },
   ) {
     // start drag event
     var crt = event.currentTarget.cloneNode(true);
@@ -44,7 +49,7 @@ export default function ExtraSidebar({ flow }: { flow: FlowType }) {
       Object.keys(data).forEach((d: keyof APIObjectType, i) => {
         ret[d] = {};
         let keys = Object.keys(data[d]).filter((nd) =>
-          nd.toLowerCase().includes(e.toLowerCase())
+          nd.toLowerCase().includes(e.toLowerCase()),
         );
         keys.forEach((element) => {
           ret[d][element] = data[d][element];
@@ -54,7 +59,7 @@ export default function ExtraSidebar({ flow }: { flow: FlowType }) {
     });
   }
 
-  const nodeNames = getNodeNames()
+  const nodeNames = getNodeNames();
   return (
     <div className="side-bar-arrangement">
       {/* 简化 */}
@@ -119,7 +124,12 @@ export default function ExtraSidebar({ flow }: { flow: FlowType }) {
       </div> */}
       {/* <Separator /> */}
       <div className="side-bar-search-div-placement">
-        <input type="text" name="search" id="search" placeholder={t('flow.searchComponent')} className="input-search rounded-full"
+        <input
+          type="text"
+          name="search"
+          id="search"
+          placeholder={t("flow.searchComponent")}
+          className="input-search rounded-full"
           onChange={(e) => {
             handleSearchInput(e.target.value);
             setSearch(e.target.value);
@@ -137,7 +147,11 @@ export default function ExtraSidebar({ flow }: { flow: FlowType }) {
           .sort()
           .map((d: keyof APIObjectType, i) =>
             Object.keys(dataFilter[d]).length > 0 ? (
-              <TooltipProvider delayDuration={0} skipDelayDuration={200} key={i}>
+              <TooltipProvider
+                delayDuration={0}
+                skipDelayDuration={200}
+                key={i}
+              >
                 <Tooltip>
                   <TooltipTrigger>
                     <DisclosureComponent
@@ -146,52 +160,76 @@ export default function ExtraSidebar({ flow }: { flow: FlowType }) {
                       button={{
                         title: nodeNames[d] ?? nodeNames.unknown,
                         Icon: nodeIconsLucide[d] ?? nodeIconsLucide.unknown,
-                        color: nodeColors[d] ?? nodeColors.unknown
+                        color: nodeColors[d] ?? nodeColors.unknown,
                       }}
-                    > </DisclosureComponent>
+                    >
+                      {" "}
+                    </DisclosureComponent>
                   </TooltipTrigger>
-                  <TooltipContent className="bg-gray-0 rounded-md max-h-[600px] overflow-y-auto no-scrollbar" side="right" collisionPadding={20}>
+                  <TooltipContent
+                    className="bg-gray-0 rounded-md max-h-[600px] overflow-y-auto no-scrollbar"
+                    side="right"
+                    collisionPadding={20}
+                  >
                     {Object.keys(dataFilter[d])
                       .sort()
-                      .map((t: string, k) => (
-                        d === 'input_output' && t === 'OutputNode' ? <></> :
+                      .map((t: string, k) =>
+                        d === "input_output" && t === "OutputNode" ? (
+                          <></>
+                        ) : (
                           <div key={data[d][t].display_name}>
                             <div key={k} data-tooltip-id={t}>
-                              <div draggable
+                              <div
+                                draggable
                                 className="side-bar-components-border bg-background mt-1 rounded-full"
-                                style={{ borderLeftColor: nodeColors[d] ?? nodeColors.unknown, }}
+                                style={{
+                                  borderLeftColor:
+                                    nodeColors[d] ?? nodeColors.unknown,
+                                }}
                                 onDragStart={(event) =>
-                                  onDragStart(event, { type: t, node: data[d][t], })
+                                  onDragStart(event, {
+                                    type: t,
+                                    node: data[d][t],
+                                  })
                                 }
                                 onDragEnd={() => {
                                   document.body.removeChild(
                                     document.getElementsByClassName(
-                                      "cursor-grabbing"
-                                    )[0]
+                                      "cursor-grabbing",
+                                    )[0],
                                   );
                                 }}
                               >
                                 <div className="side-bar-components-div-form border-solid rounded-full">
-                                  <span className="side-bar-components-text"> {data[d][t].display_name} </span>
+                                  <span className="side-bar-components-text">
+                                    {" "}
+                                    {data[d][t].display_name}{" "}
+                                  </span>
                                   <Menu className="side-bar-components-icon " />
                                 </div>
                               </div>
                             </div>
                           </div>
-                      ))}
+                        ),
+                      )}
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>
             ) : (
               <div key={i}></div>
-            )
+            ),
           )}
       </div>
       {/* 高级配置l2配置 */}
-      <L2ParamsModal data={flow} open={open} setOpen={setOpen} onSave={() => {
-        saveFlow(flow);
-        setSuccessData({ title: t('saved') });
-      }}></L2ParamsModal>
-    </div >
+      <L2ParamsModal
+        data={flow}
+        open={open}
+        setOpen={setOpen}
+        onSave={() => {
+          saveFlow(flow);
+          setSuccessData({ title: t("saved") });
+        }}
+      ></L2ParamsModal>
+    </div>
   );
 }

@@ -1,3 +1,4 @@
+import { Edge, Node, useReactFlow } from "@xyflow/react";
 import cloneDeep from "lodash-es/cloneDeep";
 import {
   createContext,
@@ -6,7 +7,6 @@ import {
   useEffect,
   useState,
 } from "react";
-import { Edge, Node, useReactFlow } from "@xyflow/react";
 import { TabsContext } from "./tabsContext";
 
 type undoRedoContextType = {
@@ -34,9 +34,9 @@ type HistoryItem = {
 };
 
 const initialValue = {
-  undo: () => { },
-  redo: () => { },
-  takeSnapshot: () => { },
+  undo: () => {},
+  redo: () => {},
+  takeSnapshot: () => {},
 };
 
 const defaultOptions: UseUndoRedoOptions = {
@@ -67,7 +67,7 @@ export function UndoRedoProvider({ children }) {
       let newPast = cloneDeep(old);
       newPast = old.slice(
         old.length - defaultOptions.maxHistorySize + 1,
-        old.length
+        old.length,
       );
       newPast.push({ nodes: getNodes(), edges: getEdges() });
       return newPast;
@@ -95,10 +95,10 @@ export function UndoRedoProvider({ children }) {
         newFuture.push({ nodes: getNodes(), edges: getEdges() });
         return newFuture;
       });
-      // keep same id 
-      pastState.nodes.forEach(el => {
-        el.data.id = el.id
-      })
+      // keep same id
+      pastState.nodes.forEach((el) => {
+        el.data.id = el.id;
+      });
       // now we can set the graph to the past state
       setNodes(pastState.nodes);
       setEdges(pastState.edges);
@@ -111,7 +111,7 @@ export function UndoRedoProvider({ children }) {
     future,
     past,
     setFuture,
-    setPast
+    setPast,
   ]);
 
   const redo = useCallback(() => {
@@ -128,10 +128,10 @@ export function UndoRedoProvider({ children }) {
         newPast.push({ nodes: getNodes(), edges: getEdges() });
         return newPast;
       });
-      // keep same id 
-      futureState.nodes.forEach(el => {
-        el.data.id = el.id
-      })
+      // keep same id
+      futureState.nodes.forEach((el) => {
+        el.data.id = el.id;
+      });
       setNodes(futureState.nodes);
       setEdges(futureState.edges);
     }
@@ -144,7 +144,7 @@ export function UndoRedoProvider({ children }) {
     setEdges,
     getNodes,
     getEdges,
-    future
+    future,
   ]);
 
   useEffect(() => {

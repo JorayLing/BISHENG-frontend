@@ -21,7 +21,13 @@ import {
 } from "@/components/bs-ui/tooltip";
 import { locationContext } from "@/contexts/locationContext";
 import { useAssistantStore } from "@/store/assistantStore";
-import { CircleHelp, CircleMinus, CirclePlus, Plus, RefreshCw } from "lucide-react";
+import {
+  CircleHelp,
+  CircleMinus,
+  CirclePlus,
+  Plus,
+  RefreshCw,
+} from "lucide-react";
 import { useContext } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
@@ -31,7 +37,7 @@ import Temperature from "./Temperature";
 export default function Setting() {
   const { t } = useTranslation();
 
-  const { appConfig } = useContext(locationContext)
+  const { appConfig } = useContext(locationContext);
   let { assistantState, dispatchAssistant } = useAssistantStore();
 
   return (
@@ -74,11 +80,22 @@ export default function Setting() {
             <div className="mb-4 px-6">
               <label htmlFor="slider" className="bisheng-label flex gap-1">
                 {t("build.maxToken")}
-                <QuestionTooltip content={t("build.maxTokenTip")}></QuestionTooltip>
+                <QuestionTooltip
+                  content={t("build.maxTokenTip")}
+                ></QuestionTooltip>
               </label>
-              <Input value={assistantState.max_token} type="number" className="mt-2" defaultValue={32000} min={0} onChange={e =>
-                dispatchAssistant("setting", { max_token: Number(e.target.value) })
-              }></Input>
+              <Input
+                value={assistantState.max_token}
+                type="number"
+                className="mt-2"
+                defaultValue={32000}
+                min={0}
+                onChange={(e) =>
+                  dispatchAssistant("setting", {
+                    max_token: Number(e.target.value),
+                  })
+                }
+              ></Input>
             </div>
           </AccordionContent>
         </AccordionItem>
@@ -135,7 +152,9 @@ export default function Setting() {
           </AccordionContent>
         </AccordionItem>
         {/* 内容安全审查 */}
-        {appConfig.isPro && <AssistantSetting id={assistantState.id} type={3} />}
+        {appConfig.isPro && (
+          <AssistantSetting id={assistantState.id} type={3} />
+        )}
       </Accordion>
       <h1 className="border-b bg-background-login indent-4 text-sm leading-8 text-muted-foreground">
         {t("build.knowledge")}
@@ -168,9 +187,17 @@ export default function Setting() {
                 <KnowledgeSelect
                   type="file"
                   multiple
-                  value={assistantState.knowledge_list.map(el => ({ label: el.name, value: el.id }))}
+                  value={assistantState.knowledge_list.map((el) => ({
+                    label: el.name,
+                    value: el.id,
+                  }))}
                   onChange={(vals) =>
-                    dispatchAssistant("setting", { knowledge_list: vals.map(el => ({ name: el.label, id: el.value })) })
+                    dispatchAssistant("setting", {
+                      knowledge_list: vals.map((el) => ({
+                        name: el.label,
+                        id: el.value,
+                      })),
+                    })
                   }
                 >
                   {(reload) => (
@@ -181,8 +208,9 @@ export default function Setting() {
                           {t("build.createNewKnowledge")}
                         </Button>
                       </Link>
-                      <Button variant="link" onClick={() => reload(1, '')}>
-                        <RefreshCw size={16} className="mr-1" /> {t("build.refresh")}
+                      <Button variant="link" onClick={() => reload(1, "")}>
+                        <RefreshCw size={16} className="mr-1" />{" "}
+                        {t("build.refresh")}
                       </Button>
                     </div>
                   )}
@@ -241,7 +269,7 @@ export default function Setting() {
                     onClick={() =>
                       dispatchAssistant("setting", {
                         tool_list: assistantState.tool_list.filter(
-                          (t) => t.id !== tool.id
+                          (t) => t.id !== tool.id,
                         ),
                       })
                     }
@@ -263,7 +291,9 @@ export default function Setting() {
                       <CircleHelp className="w-4 h-4" />
                     </TooltipTrigger>
                     <TooltipContent>
-                      <p className="text-slate-50">{t("build.skillDescription")}</p>
+                      <p className="text-slate-50">
+                        {t("build.skillDescription")}
+                      </p>
                     </TooltipContent>
                   </Tooltip>
                 </TooltipProvider>
@@ -291,7 +321,11 @@ export default function Setting() {
                   className="group mt-2 flex cursor-pointer items-center justify-between"
                 >
                   <div className="flex items-center gap-2">
-                    <TitleLogo url={flow.logo} id={flow.id} className="h-7 w-7"></TitleLogo>
+                    <TitleLogo
+                      url={flow.logo}
+                      id={flow.id}
+                      className="h-7 w-7"
+                    ></TitleLogo>
                     <p className="text-sm">{flow.name}</p>
                   </div>
                   <CircleMinus
@@ -299,7 +333,7 @@ export default function Setting() {
                     onClick={() =>
                       dispatchAssistant("setting", {
                         flow_list: assistantState.flow_list.filter(
-                          (t) => t.id !== flow.id
+                          (t) => t.id !== flow.id,
                         ),
                       })
                     }

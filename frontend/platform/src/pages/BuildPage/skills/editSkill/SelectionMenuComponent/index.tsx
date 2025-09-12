@@ -1,6 +1,6 @@
+import { NodeToolbar } from "@xyflow/react";
 import { Combine } from "lucide-react";
 import { useEffect, useState } from "react";
-import { NodeToolbar } from "@xyflow/react";
 export default function SelectionMenu({ onClick, nodes, isVisible }) {
   const [isOpen, setIsOpen] = useState(false);
   const [isTransitioning, setIsTransitioning] = useState(false);
@@ -45,11 +45,7 @@ export default function SelectionMenu({ onClick, nodes, isVisible }) {
             className="flex gap-2 leading-8 items-center justify-between text-sm hover:scale-110 transition-all ease-in-out"
             onClick={onClick}
           >
-            <Combine
-              strokeWidth={2}
-              size={16}
-              className="text-primary"
-            />
+            <Combine strokeWidth={2} size={16} className="text-primary" />
             Group
           </button>
         </div>

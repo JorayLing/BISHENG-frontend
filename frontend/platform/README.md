@@ -5,6 +5,7 @@
 ### 环境准备
 
 在开始之前，请确保你已经安装了以下工具：
+
 - Node.js (建议使用 LTS 版本)
 - npm 或 yarn 包管理工具
 
@@ -35,6 +36,7 @@ npm run start
 ### 代理配置
 
 开发环境下，以下代理已配置：
+
 - `target` 代理到 后端接口
 - `/bisheng` 代理到 文件服务器地址
 - `/custom_base/api` 开启子路由时需要配置此代理，并重写路径 `/custom_base/api` 为 `/api`
@@ -126,20 +128,20 @@ VITE_PROXY_TARGET=http://new-target-address:port
 可以在 `vite.config.js` 文件中的 `proxyTargets` 对象中添加新的代理路径：
 
 ```javascript
-proxyTargets['/new-path'] = {
+proxyTargets["/new-path"] = {
   target: "http://new-target-address:port",
   changeOrigin: true,
   withCredentials: true,
-  secure: false
+  secure: false,
 };
 ```
 
 添加后会自动更新开发服务器以应用新的代理配置。
 
-(?<![\*/\u4e00-\u9fa5\s])[\u4e00-\u9fa5]+(?![*/])
-
+(?<![*/\u4e00-\u9fa5\s])[\u4e00-\u9fa5]+(?![*/])
 
 ##### 开发模式下，无法访问到静态资源，注释掉以下代码
+
 目录：node_modules/vite-plugin-html/dist/index.mjs
 
 ```javascript

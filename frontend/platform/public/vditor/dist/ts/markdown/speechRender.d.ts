@@ -1,6 +1,9 @@
 declare global {
-    interface Window {
-        vditorSpeechRange: Range;
-    }
+  interface Window {
+    vditorSpeechRange: Range;
+  }
 }
-export declare const speechRender: (element: HTMLElement, lang?: keyof II18n) => void;
+export declare const speechRender: (
+  element: HTMLElement,
+  lang?: keyof II18n,
+) => void;

@@ -10,7 +10,7 @@ export default function InputListComponent({
   onChange,
   disabled,
   isGroup = false,
-  editNode = false
+  editNode = false,
 }: InputListComponentType) {
   const [inputList, setInputList] = useState(value ?? [""]);
   const { closePopUp } = useContext(PopUpContext);
@@ -34,18 +34,17 @@ export default function InputListComponent({
       if (!event.ctrlKey) {
         event.stopPropagation();
       }
-    }
-    scrollBodyRef.current.addEventListener('wheel', scrollFun);
-    return () => scrollBodyRef.current?.removeEventListener('wheel', scrollFun);
-  }, [])
+    };
+    scrollBodyRef.current.addEventListener("wheel", scrollFun);
+    return () => scrollBodyRef.current?.removeEventListener("wheel", scrollFun);
+  }, []);
 
   return (
     <div
       ref={scrollBodyRef}
       className={`${disabled ? "pointer-events-none cursor-not-allowed" : ""}
        flex flex-col gap-3 template-scrollbar 
-       ${isGroup && "max-h-[170px]"}`
-      }
+       ${isGroup && "max-h-[170px]"}`}
     >
       {inputList.map((i, idx) => {
         return (
@@ -82,8 +81,8 @@ export default function InputListComponent({
                 <Plus className={"h-4 w-4 hover:text-accent-foreground"} />
               </button>
             )}
-            {
-              inputList.length !== 1 && <button
+            {inputList.length !== 1 && (
+              <button
                 onClick={() => {
                   setInputList((old) => {
                     let newInputList = cloneDeep(old);
@@ -95,7 +94,7 @@ export default function InputListComponent({
               >
                 <X className="h-4 w-4 hover:text-status-red" />
               </button>
-            }
+            )}
           </div>
         );
       })}

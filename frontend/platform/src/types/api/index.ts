@@ -104,4 +104,4 @@ export type RTServer = {
   create_time: string;
   server: string;
   id: number;
-}
+};

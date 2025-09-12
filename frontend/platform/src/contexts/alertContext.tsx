@@ -1,7 +1,7 @@
-import { createContext, ReactNode, useState } from "react";
-import { AlertItemType } from "../types/alerts";
 import cloneDeep from "lodash-es/cloneDeep";
 import uniqueId from "lodash-es/uniqueId";
+import { createContext, ReactNode, useState } from "react";
+import { AlertItemType } from "../types/alerts";
 
 //types for alertContextType
 type alertContextType = {
@@ -28,23 +28,23 @@ type alertContextType = {
 //initial values to alertContextType
 const initialValue: alertContextType = {
   errorData: { title: "", list: [] },
-  setErrorData: () => { },
+  setErrorData: () => {},
   errorOpen: false,
-  setErrorOpen: () => { },
+  setErrorOpen: () => {},
   noticeData: { title: "", link: "" },
-  setNoticeData: () => { },
+  setNoticeData: () => {},
   noticeOpen: false,
-  setNoticeOpen: () => { },
+  setNoticeOpen: () => {},
   successData: { title: "" },
-  setSuccessData: () => { },
+  setSuccessData: () => {},
   successOpen: false,
-  setSuccessOpen: () => { },
+  setSuccessOpen: () => {},
   notificationCenter: false,
-  setNotificationCenter: () => { },
+  setNotificationCenter: () => {},
   notificationList: [],
-  pushNotificationList: () => { },
-  clearNotificationList: () => { },
-  removeFromNotificationList: () => { },
+  pushNotificationList: () => {},
+  clearNotificationList: () => {},
+  removeFromNotificationList: () => {},
 };
 
 export const alertContext = createContext<alertContextType>(initialValue);
@@ -130,7 +130,7 @@ export function AlertProvider({ children }: { children: ReactNode }) {
   function removeFromNotificationList(index: string) {
     // set the notification list to a new array that filters out the alert with the matching id
     setNotificationList((prevAlertsList) =>
-      prevAlertsList.filter((alert) => alert.id !== index)
+      prevAlertsList.filter((alert) => alert.id !== index),
     );
   }
   return (

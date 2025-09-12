@@ -19,7 +19,7 @@ import { TabsContext } from "../../contexts/tabsContext";
 import { removeApiKeys } from "../../utils";
 
 export default function ExportModal() {
-  const { t } = useTranslation()
+  const { t } = useTranslation();
 
   const { closePopUp } = useContext(PopUpContext);
 
@@ -38,41 +38,30 @@ export default function ExportModal() {
   const [description, setDescription] = useState(flow.description);
 
   const handleClose = () => {
-    if (name === '') return setErrorData({
-      title: t('code.keyInformationMissing'),
-      list: [
-        t('code.skillNameMissing')
-      ],
-    });
-    if (checked)
-      downloadFlow(
-        flow,
-        name,
-        description
-      );
-    else
-      downloadFlow(
-        removeApiKeys(flow),
-        name,
-        description
-      );
+    if (name === "")
+      return setErrorData({
+        title: t("code.keyInformationMissing"),
+        list: [t("code.skillNameMissing")],
+      });
+    if (checked) downloadFlow(flow, name, description);
+    else downloadFlow(removeApiKeys(flow), name, description);
 
     closePopUp();
-  }
+  };
   return (
     <Dialog open={true} onOpenChange={setModalOpen}>
       <DialogTrigger asChild></DialogTrigger>
       <DialogContent className="h-[420px] lg:max-w-[600px] ">
         <DialogHeader>
           <DialogTitle className="flex items-center">
-            <span className="pr-2">{t('code.export')}</span>
+            <span className="pr-2">{t("code.export")}</span>
             <Download
               strokeWidth={1.5}
               className="h-6 w-6 pl-1 text-foreground"
               aria-hidden="true"
             />
           </DialogTitle>
-          <DialogDescription>{t('code.exportToJSON')}</DialogDescription>
+          <DialogDescription>{t("code.exportToJSON")}</DialogDescription>
         </DialogHeader>
 
         <EditFlowSettings
@@ -88,19 +77,17 @@ export default function ExportModal() {
               setChecked(event);
             }}
           />
-          <label htmlFor="terms" className="export-modal-save-api text-sm">{t('code.useOwnAPIKeys')}</label>
+          <label htmlFor="terms" className="export-modal-save-api text-sm">
+            {t("code.useOwnAPIKeys")}
+          </label>
         </div>
 
         <DialogFooter>
-          <Button
-            onClick={handleClose}
-            type="submit"
-          >
-            {t('code.exportSkill')}
+          <Button onClick={handleClose} type="submit">
+            {t("code.exportSkill")}
           </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
   );
 }
-

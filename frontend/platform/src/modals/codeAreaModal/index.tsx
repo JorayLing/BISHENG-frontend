@@ -19,7 +19,7 @@ import BaseModal from "../baseModal";
 
 export default function CodeAreaModal({
   value,
-  setValue
+  setValue,
 }: {
   setValue: (value: string) => void;
   value: string;
@@ -30,7 +30,7 @@ export default function CodeAreaModal({
   const { dark } = useContext(darkContext);
   const { closePopUp, setCloseEdit } = useContext(PopUpContext);
   const { setErrorData, setSuccessData } = useContext(alertContext);
-  const { t } = useTranslation()
+  const { t } = useTranslation();
 
   function setModalOpen(x: boolean) {
     if (x === false) {
@@ -40,42 +40,43 @@ export default function CodeAreaModal({
   }
 
   function handleClick() {
-    captureAndAlertRequestErrorHoc(postValidateCode(code)
-      .then((apiReturn) => {
+    captureAndAlertRequestErrorHoc(
+      postValidateCode(code).then((apiReturn) => {
         if (apiReturn) {
           let importsErrors = apiReturn.imports.errors;
           let funcErrors = apiReturn.function.errors;
           if (funcErrors.length === 0 && importsErrors.length === 0) {
-            setSuccessData({ title: t('code.codeReadyToRun') });
+            setSuccessData({ title: t("code.codeReadyToRun") });
             setValue(code);
             setModalOpen(false);
           } else {
             if (funcErrors.length !== 0) {
               setErrorData({
-                title: t('code.functionError'),
+                title: t("code.functionError"),
                 list: funcErrors,
               });
             }
             if (importsErrors.length !== 0) {
               setErrorData({
-                title: t('code.importsError'),
+                title: t("code.importsError"),
                 list: importsErrors,
               });
             }
           }
         } else {
           setErrorData({
-            title: t('code.errorOccurred'),
+            title: t("code.errorOccurred"),
           });
         }
-      }));
+      }),
+    );
   }
 
   return (
     <BaseModal open={true} setOpen={setModalOpen}>
-      <BaseModal.Header description={t('code.editPythonCodeDescription')}>
+      <BaseModal.Header description={t("code.editPythonCodeDescription")}>
         <DialogTitle className="flex items-center">
-          <span className="pr-2">{t('code.editCode')}</span>
+          <span className="pr-2">{t("code.editCode")}</span>
           <TerminalSquare
             strokeWidth={1.5}
             className="h-6 w-6 pl-1 text-primary"
@@ -104,7 +105,7 @@ export default function CodeAreaModal({
           </div>
           <div className="flex h-fit w-full justify-end">
             <Button className="mt-3" onClick={handleClick} type="submit">
-              {t('code.checkAndSave')}
+              {t("code.checkAndSave")}
             </Button>
           </div>
         </div>
@@ -112,4 +113,3 @@ export default function CodeAreaModal({
     </BaseModal>
   );
 }
-

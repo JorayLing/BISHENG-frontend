@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { readOnlineFlows } from "../../../controllers/API/flow";
 import { FlowType } from "../../../types/flow";
 import { useTable } from "../../../util/hook";
@@ -11,7 +12,6 @@ import {
   SheetTrigger,
 } from "../../bs-ui/sheet";
 import CardComponent from "../cardComponent";
-import { useTranslation } from "react-i18next";
 
 export default function SkillSheet({ select, children, onSelect }) {
   const [keyword, setKeyword] = useState("");
@@ -22,7 +22,7 @@ export default function SkillSheet({ select, children, onSelect }) {
   } = useTable<FlowType>({}, (param) =>
     readOnlineFlows(param.page, param.keyword).then((res) => {
       return res;
-    })
+    }),
   );
 
   const handleSearch = (e) => {
@@ -36,7 +36,7 @@ export default function SkillSheet({ select, children, onSelect }) {
     window.open(__APP_ENV__.BASE_URL + "/build/apps");
   };
 
-  const { t } = useTranslation()
+  const { t } = useTranslation();
 
   return (
     <Sheet>

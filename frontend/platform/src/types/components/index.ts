@@ -1,10 +1,10 @@
-import { ReactElement, ReactNode } from "react";
+import { TypeModal } from "@/utils";
 import { ReactFlowJsonObject, XYPosition } from "@xyflow/react";
+import { ReactElement, ReactNode } from "react";
 import { APIClassType, APITemplateType, TemplateVariableType } from "../api";
 import { ChatMessageType } from "../chat";
 import { FlowStyleType, FlowType, NodeDataType, NodeType } from "../flow/index";
 import { sourceHandleType, targetHandleType } from "./../flow/index";
-import { TypeModal } from "@/utils";
 export type InputComponentType = {
   autoFocus?: boolean;
   onBlur?: (event: React.FocusEvent<HTMLInputElement>) => void;
@@ -21,7 +21,7 @@ export type InputComponentType = {
   className?: string;
   id?: string;
   blurOnEnter?: boolean;
-  type?: 'input' | 'textarea'
+  type?: "input" | "textarea";
 };
 export type ToggleComponentType = {
   enabled: boolean;
@@ -168,18 +168,18 @@ export type TooltipComponentType = {
   children: ReactElement;
   title: string | ReactElement;
   placement?:
-  | "bottom-end"
-  | "bottom-start"
-  | "bottom"
-  | "left-end"
-  | "left-start"
-  | "left"
-  | "right-end"
-  | "right-start"
-  | "right"
-  | "top-end"
-  | "top-start"
-  | "top";
+    | "bottom-end"
+    | "bottom-start"
+    | "bottom"
+    | "left-end"
+    | "left-start"
+    | "left"
+    | "right-end"
+    | "right-start"
+    | "right"
+    | "top-end"
+    | "top-start"
+    | "top";
 };
 
 export type ProgressBarType = {
@@ -308,8 +308,8 @@ export type ConfirmationModalType = {
   cancelText: string;
   confirmationText: string;
   children:
-  | [React.ReactElement<ContentProps>, React.ReactElement<TriggerProps>]
-  | React.ReactElement<ContentProps>;
+    | [React.ReactElement<ContentProps>, React.ReactElement<TriggerProps>]
+    | React.ReactElement<ContentProps>;
   icon: string;
   data?: any;
   index?: number;
@@ -317,14 +317,14 @@ export type ConfirmationModalType = {
   open?: boolean;
   onClose?: (close: boolean) => void;
   size?:
-  | "x-small"
-  | "smaller"
-  | "small"
-  | "medium"
-  | "large"
-  | "large-h-full"
-  | "small-h-full"
-  | "medium-h-full";
+    | "x-small"
+    | "smaller"
+    | "small"
+    | "medium"
+    | "large"
+    | "large-h-full"
+    | "small-h-full"
+    | "medium-h-full";
 };
 
 export type UserManagementType = {
@@ -603,12 +603,12 @@ export type codeTabsPropsType = {
     getValue?: (
       value: string,
       node: NodeType,
-      template: TemplateVariableType
+      template: TemplateVariableType,
     ) => string;
     buildTweakObject?: (
       tw: string,
       changes: string | string[] | boolean | number | Object[] | Object,
-      template: TemplateVariableType
+      template: TemplateVariableType,
     ) => string | void;
   };
 };

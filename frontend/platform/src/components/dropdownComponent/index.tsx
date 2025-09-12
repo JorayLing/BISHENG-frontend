@@ -16,7 +16,7 @@ export default function Dropdown({
   const { closePopUp } = useContext(PopUpContext);
 
   let [internalValue, setInternalValue] = useState(
-    value === "" || !value ? "" : value
+    value === "" || !value ? "" : value,
   );
 
   useEffect(() => {
@@ -25,9 +25,9 @@ export default function Dropdown({
 
   useEffect(() => {
     if (internalValue !== value) {
-      setInternalValue(value)
+      setInternalValue(value);
     }
-  }, [value])
+  }, [value]);
 
   return (
     <>
@@ -40,7 +40,9 @@ export default function Dropdown({
       >
         {({ open }) => (
           <>
-            <div className={editNode ? "mt-1" : "relative mt-1" + ' col-span-3'}>
+            <div
+              className={editNode ? "mt-1" : "relative mt-1" + " col-span-3"}
+            >
               <Listbox.Button
                 className={
                   editNode
@@ -71,7 +73,7 @@ export default function Dropdown({
                     editNode
                       ? "dropdown-component-true-options nowheel custom-scroll"
                       : "dropdown-component-false-options nowheel custom-scroll",
-                    apiModal ? "mb-2 w-[250px]" : "absolute"
+                    apiModal ? "mb-2 w-[250px]" : "absolute",
                   )}
                 >
                   {options.map((option, id) => (
@@ -82,7 +84,7 @@ export default function Dropdown({
                           active ? " bg-accent" : "",
                           editNode
                             ? "dropdown-component-false-option"
-                            : "dropdown-component-true-option"
+                            : "dropdown-component-true-option",
                         )
                       }
                       value={option}
@@ -92,7 +94,7 @@ export default function Dropdown({
                           <span
                             className={classNames(
                               selected ? "font-semibold" : "font-normal",
-                              "block truncate "
+                              "block truncate ",
                             )}
                           >
                             {option}
@@ -102,7 +104,7 @@ export default function Dropdown({
                             <span
                               className={classNames(
                                 active ? "text-background " : "",
-                                "dropdown-component-choosal"
+                                "dropdown-component-choosal",
                               )}
                             >
                               <Check

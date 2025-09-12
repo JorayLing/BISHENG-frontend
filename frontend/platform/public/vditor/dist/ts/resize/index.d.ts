@@ -1,6 +1,6 @@
 /// <reference types="./types" />
 export declare class Resize {
-    element: HTMLElement;
-    constructor(vditor: IVditor);
-    private bindEvent;
+  element: HTMLElement;
+  constructor(vditor: IVditor);
+  private bindEvent;
 }

@@ -22,7 +22,7 @@ export default function ToggleComponent({
         }}
         className={classNames(
           enabled ? "bg-primary" : "bg-input",
-          "toggle-component-switch "
+          "toggle-component-switch ",
         )}
       >
         <span className="sr-only">Use setting</span>
@@ -30,7 +30,7 @@ export default function ToggleComponent({
           className={classNames(
             enabled ? "translate-x-5" : "translate-x-0",
             "toggle-component-span",
-            disabled ? "bg-input " : "bg-background"
+            disabled ? "bg-input " : "bg-background",
           )}
         >
           <span
@@ -38,7 +38,7 @@ export default function ToggleComponent({
               enabled
                 ? "opacity-0 duration-100 ease-out"
                 : "opacity-100 duration-200 ease-in",
-              "toggle-component-second-span"
+              "toggle-component-second-span",
             )}
             aria-hidden="true"
           ></span>
@@ -47,7 +47,7 @@ export default function ToggleComponent({
               enabled
                 ? "opacity-100 duration-200 ease-in"
                 : "opacity-0 duration-100 ease-out",
-              "toggle-component-second-span"
+              "toggle-component-second-span",
             )}
             aria-hidden="true"
           ></span>

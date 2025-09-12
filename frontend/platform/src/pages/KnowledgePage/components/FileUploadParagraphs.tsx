@@ -1,122 +1,135 @@
-import { Dialog, DialogContent } from "@/components/bs-ui/dialog";
-import SelectSearch from "@/components/bs-ui/select/select";
+import { LoadingIcon } from "@/components/bs-icons/loading";
 import { delChunkInPreviewApi, previewFileSplitApi } from "@/controllers/API";
 import { captureAndAlertRequestErrorHoc } from "@/controllers/request";
-import { Info } from "lucide-react";
-import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from "react";
+import {
+  forwardRef,
+  useEffect,
+  useImperativeHandle,
+  useRef,
+  useState,
+} from "react";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
-import ParagraphEdit from "./ParagraphEdit";
-import { ParagraphsItem } from "./Paragraphs";
-import { LoadingIcon } from "@/components/bs-icons/loading";
 
-const FileUploadParagraphs = forwardRef(function ({ open = false, change, onChange }: any, ref) {
-    const { id } = useParams()
-    const { t } = useTranslation()
-    const paramsRef = useRef<any>(null)
-    const [loading, setLoading] = useState(false)
-    const [paragraph, setParagraph] = useState<any>({
-        fileId: '',
-        chunkId: '',
-        show: false
-    })
+const FileUploadParagraphs = forwardRef(function (
+  { open = false, change, onChange }: any,
+  ref,
+) {
+  const { id } = useParams();
+  const { t } = useTranslation();
+  const paramsRef = useRef<any>(null);
+  const [loading, setLoading] = useState(false);
+  const [paragraph, setParagraph] = useState<any>({
+    fileId: "",
+    chunkId: "",
+    show: false,
+  });
 
-    const [fileValue, setFileValue] = useState('')
-    const fileValueRef = useRef('')
-    const allFilesRef = useRef([])
-    const [files, setFiles] = useState([])
+  const [fileValue, setFileValue] = useState("");
+  const fileValueRef = useRef("");
+  const allFilesRef = useRef([]);
+  const [files, setFiles] = useState([]);
 
-    const fileCachesRef = useRef({})
+  const fileCachesRef = useRef({});
 
-    useEffect(() => {
-        if (!open) {
-            fileValueRef.current = ''
-            fileCachesRef.current = {}
-        }
-    }, [open])
-
-    useImperativeHandle(ref, () => ({
-        load(data, files) {
-            console.log(111, data, files);
-
-            paramsRef.current = data
-            fileCachesRef.current = {}
-
-            allFilesRef.current = files.map(el => ({
-                label: el.name,
-                value: el.file_path
-            }))
-            setFiles([...allFilesRef.current])
-            console.log(files[0].file_path, fileValueRef.current);
-
-            loadchunks(fileValueRef.current || files[0].file_path) // default first 
-        }
-    }))
-
-    const [paragraphs, setParagraphs] = useState<any>([])
-    const [previewFileUrl, setFileUrl] = useState('')
-    const [isUns, setIsUns] = useState(false)
-    const [partitions, setPartitions] = useState<any>([])
-
-
-
-    // 加载文件分段结果
-    const loadchunks = async (fileValue) => {
-        console.log(fileValue, '5555');
-
-        if (!fileValue) return
-        setLoading(true)
-        setFileValue(fileValue)
-        fileValueRef.current = fileValue
-        previewFileSplitApi({ ...paramsRef.current, file_path: fileValue, cache: !!fileCachesRef.current[fileValue] }).then(res => {
-            setLoading(false)
-            setParagraphs(res.chunks)
-            // setFileUrl(fileValue)
-            setFileUrl(res.file_url)
-            setIsUns(res.parse_type === 'uns')
-            setPartitions(res.partitions)
-
-            fileCachesRef.current[fileValue] = true // chace tag
-        })
+  useEffect(() => {
+    if (!open) {
+      fileValueRef.current = "";
+      fileCachesRef.current = {};
     }
+  }, [open]);
 
-    const handleSelectSearch = (e: any) => {
-        const value = e.target.value
-        if (!value) return setFiles([...allFilesRef.current])
-        // 按label查找
-        const res = allFilesRef.current.filter(el => el.label.indexOf(value) !== -1 || el.value === fileValue)
-        setFiles(res)
-    }
+  useImperativeHandle(ref, () => ({
+    load(data, files) {
+      console.log(111, data, files);
 
-    const handleReload = () => {
-        setLoading(true)
-        onChange(false)
-        fileCachesRef.current = {}
+      paramsRef.current = data;
+      fileCachesRef.current = {};
 
-        // loadchunks(fileValue)
-    }
+      allFilesRef.current = files.map((el) => ({
+        label: el.name,
+        value: el.file_path,
+      }));
+      setFiles([...allFilesRef.current]);
+      console.log(files[0].file_path, fileValueRef.current);
 
-    const handleDeleteChunk = async (data) => {
-        await captureAndAlertRequestErrorHoc(delChunkInPreviewApi({
-            knowledge_id: id,
-            file_path: fileValue,
-            text: data.text,
-            chunk_index: data.metadata.chunk_index
-        }))
-        const res = paragraphs.filter(el => el.metadata.chunk_index !== data.metadata.chunk_index)
-        setParagraphs(res)
-    }
+      loadchunks(fileValueRef.current || files[0].file_path); // default first
+    },
+  }));
 
-    if (!open) return null
+  const [paragraphs, setParagraphs] = useState<any>([]);
+  const [previewFileUrl, setFileUrl] = useState("");
+  const [isUns, setIsUns] = useState(false);
+  const [partitions, setPartitions] = useState<any>([]);
 
-    if (loading) return (
-        <div className="absolute left-0 top-0 z-10 flex h-full w-full items-center justify-center bg-[rgba(255,255,255,0.6)] dark:bg-blur-shared">
-            <LoadingIcon />
-        </div>
-    )
+  // 加载文件分段结果
+  const loadchunks = async (fileValue) => {
+    console.log(fileValue, "5555");
 
+    if (!fileValue) return;
+    setLoading(true);
+    setFileValue(fileValue);
+    fileValueRef.current = fileValue;
+    previewFileSplitApi({
+      ...paramsRef.current,
+      file_path: fileValue,
+      cache: !!fileCachesRef.current[fileValue],
+    }).then((res) => {
+      setLoading(false);
+      setParagraphs(res.chunks);
+      // setFileUrl(fileValue)
+      setFileUrl(res.file_url);
+      setIsUns(res.parse_type === "uns");
+      setPartitions(res.partitions);
 
-    return {/* 原预览页面，暂时无用
+      fileCachesRef.current[fileValue] = true; // chace tag
+    });
+  };
+
+  const handleSelectSearch = (e: any) => {
+    const value = e.target.value;
+    if (!value) return setFiles([...allFilesRef.current]);
+    // 按label查找
+    const res = allFilesRef.current.filter(
+      (el) => el.label.indexOf(value) !== -1 || el.value === fileValue,
+    );
+    setFiles(res);
+  };
+
+  const handleReload = () => {
+    setLoading(true);
+    onChange(false);
+    fileCachesRef.current = {};
+
+    // loadchunks(fileValue)
+  };
+
+  const handleDeleteChunk = async (data) => {
+    await captureAndAlertRequestErrorHoc(
+      delChunkInPreviewApi({
+        knowledge_id: id,
+        file_path: fileValue,
+        text: data.text,
+        chunk_index: data.metadata.chunk_index,
+      }),
+    );
+    const res = paragraphs.filter(
+      (el) => el.metadata.chunk_index !== data.metadata.chunk_index,
+    );
+    setParagraphs(res);
+  };
+
+  if (!open) return null;
+
+  if (loading)
+    return (
+      <div className="absolute left-0 top-0 z-10 flex h-full w-full items-center justify-center bg-[rgba(255,255,255,0.6)] dark:bg-blur-shared">
+        <LoadingIcon />
+      </div>
+    );
+
+  return {
+    /* 原预览页面，暂时无用
         <div className="flex gap-2">
             <SelectSearch value={fileValue} options={files}
                 selectPlaceholder=''
@@ -167,8 +180,8 @@ const FileUploadParagraphs = forwardRef(function ({ open = false, change, onChan
                     }
                 />
             </DialogContent>
-        </Dialog> */}
-
+        </Dialog> */
+  };
 });
 
-export default FileUploadParagraphs
+export default FileUploadParagraphs;
