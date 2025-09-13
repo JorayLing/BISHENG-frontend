@@ -32,7 +32,6 @@ export default function Chat({
         clear={clear}
         form={form}
         wsUrl={wsUrl}
-        inputForm={inputForm}
         onBeforSend={onBeforSend}
         onLoad={() => setLoading(false)}
       ></ChatInput>

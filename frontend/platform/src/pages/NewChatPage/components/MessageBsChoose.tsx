@@ -4,9 +4,9 @@ import { Button } from "@/components/bs-ui/button";
 import { Textarea } from "@/components/bs-ui/input";
 import { CodeBlock } from "@/modals/formModal/chatMessage/codeBlock";
 import aiAvatar from "@/pages/NewChatPage/images/aiAvatar.png";
+import checkIcon from "@/pages/NewChatPage/images/check.png";
 import { WorkflowMessage } from "@/types/flow";
 import { downloadFile } from "@/util/utils";
-import { CheckCircle } from "lucide-react";
 import { useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import ReactMarkdown from "react-markdown";
@@ -128,7 +128,6 @@ export default function MessageBsChoose({
     ),
     [data.message],
   );
-  console.log("data.message.msg ===> ", data.message);
 
   const files = useMemo(() => {
     return typeof data.files === "string" ? [] : data.files;
@@ -164,7 +163,7 @@ export default function MessageBsChoose({
             )}
             <div className="text-sm max-w-[calc(100%-64px)] chat-ai-msg">
               {/* message */}
-              <div>{mkdown}</div>
+              <div className="chat-select-title">{mkdown}</div>
               {/* files */}
               <div>
                 {files.map((file) => (
@@ -207,16 +206,17 @@ export default function MessageBsChoose({
                     </div>
                   </div>
                 ) : (
-                  <div>
+                  <div className={"flex flex-col"}>
                     {data.message.options.map((opt) => (
                       <div
                         key={opt.id}
-                        className="min-w-56 bg-[#fff] dark:bg-background rounded-xl p-4 mt-2 hover:bg-gray-200 cursor-pointer flex justify-between items-center break-all"
                         onClick={() => handleSelect(opt)}
+                        className={`chat-select ${selected === opt.id ? "chat-select-check" : ""}`}
                       >
                         {opt.label}
                         {selected === opt.id && (
-                          <CheckCircle size={20} className="min-w-5" />
+                          <img src={checkIcon} alt="" />
+                          // <CheckCircle size={20} className="min-w-5" />
                         )}
                       </div>
                     ))}

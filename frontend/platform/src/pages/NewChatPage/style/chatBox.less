@@ -199,6 +199,38 @@
           font-weight: 400;
           box-sizing: border-box;
         }
+
+        .chat-select-title {
+          font-family: PingFangSC-Medium;
+          font-size: 14px;
+          color: #0D0D0D;
+          letter-spacing: 0;
+          font-weight: 500;
+        }
+
+        .chat-select {
+          width: max-content;
+          padding: 6px 38px;
+          background: #FFFFFF;
+          box-shadow: 0 1px 6px 0 rgba(0, 0, 0, 0.12);
+          margin-bottom: 8px;
+          box-sizing: border-box;
+          border-radius: 8px;
+          border: 2px solid transparent;
+          position: relative;
+
+          img {
+            width: 16px;
+            height: 16px;
+            position: absolute;
+            top: -2px;
+            right: -2px;
+          }
+        }
+
+        .chat-select-check {
+          border: 2px solid #7DD0F4;
+        }
       }
 
       .chat-input {
@@ -218,6 +250,7 @@
           width: 24px;
           height: 24px;
         }
+
 
         .chat-textarea {
           flex: 1;
@@ -266,4 +299,24 @@
       }
     }
   }
+}
+
+.input-form-label {
+  font-family: PingFangSC-Regular;
+  font-size: 14px;
+  color: #333333;
+  letter-spacing: 0;
+  font-weight: 400;
+  margin-bottom: 9px;
+}
+
+.input-form-submit {
+  width: 240px;
+  height: 32px;
+  background: linear-gradient(to right, #61ACFB, #897EFF);
+  font-family: PingFangSC-Medium;
+  font-size: 14px;
+  color: #FFFFFF;
+  letter-spacing: 0;
+  font-weight: 500;
 }

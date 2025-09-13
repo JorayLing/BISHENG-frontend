@@ -11,6 +11,7 @@ import MultiSelect from "@/components/bs-ui/select/multi";
 import { useToast } from "@/components/bs-ui/toast/use-toast";
 import InputComponent from "@/components/inputComponent";
 import InputFileComponent from "@/components/inputFileComponent";
+import aiAvatar from "@/pages/NewChatPage/images/aiAvatar.png";
 import { WorkflowNodeParam } from "@/types/flow";
 import { useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -22,7 +23,7 @@ const enum FormItemType {
   Select = "select",
 }
 
-const InputForm = ({ data }: { data: WorkflowNodeParam }) => {
+const InputForm = ({ data, logo }: { data: WorkflowNodeParam; logo: any }) => {
   const { t } = useTranslation();
 
   const formDataRef = useRef(
@@ -86,14 +87,26 @@ const InputForm = ({ data }: { data: WorkflowNodeParam }) => {
   const [multiVal, setMultiVal] = useState([]);
   return (
     <div className="flex w-full">
-      <div className="max-w-[90%] min-w-96">
-        <div className="min-h-8 px-6 py-4 rounded-2xl bg-[#F5F6F8] dark:bg-[#313336]">
+      {logo ? (
+        <div className="w-[40px] h-[40px] rounded-full overflow-hidden">
+          <img className="w-[40px] h-[40px]" src={logo} alt="" />
+        </div>
+      ) : (
+        <div className="w-[40px] h-[40px] flex justify-center items-center rounded-full">
+          <img className="w-full h-full" src={aiAvatar} alt="" />
+          {/*<AvatarIcon />*/}
+        </div>
+      )}
+      <div className="max-w-[90%] min-w-96 chat-ai-msg">
+        <div className="min-h-8 rounded-2xl dark:bg-[#313336] flex flex-col items-center">
           {data.value.map((item, i) => (
             <div key={item.id} className="w-full text-sm bisheng-label">
-              {item.required && <span className="text-red-500">*</span>}
-              {item.value}
+              <div className={"mb-2"}>
+                {item.required && <span className="text-red-500">*</span>}
+                <span className="input-form-label">{item.value}</span>
+              </div>
               {/* <span className="text-status-red">{item.required ? " *" : ""}</span> */}
-              <div className="mb-2">
+              <div className="mb-3">
                 {(() => {
                   switch (item.type) {
                     case FormItemType.Text:
@@ -163,7 +176,7 @@ const InputForm = ({ data }: { data: WorkflowNodeParam }) => {
               </div>
             </div>
           ))}
-          <Button size="sm" className="w-full" onClick={submit}>
+          <Button size="sm" className="input-form-submit" onClick={submit}>
             {t("report.start")}
           </Button>
         </div>

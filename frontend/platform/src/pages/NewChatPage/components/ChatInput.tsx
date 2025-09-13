@@ -6,6 +6,7 @@ import Tip from "@/components/bs-ui/tooltip/tip";
 import { locationContext } from "@/contexts/locationContext";
 import { useMessageStore } from "@/pages/BuildPage/flow/FlowChat/messageStore";
 import useFlowStore from "@/pages/BuildPage/flow/flowStore";
+import ChatInputForm from "@/pages/NewChatPage/components/ChatInputForm";
 import icon from "@/pages/NewChatPage/images/icon.png";
 import send from "@/pages/NewChatPage/images/send.png";
 import sendDisabled from "@/pages/NewChatPage/images/sendDisabled.png";
@@ -84,7 +85,6 @@ export default function ChatInput({
     insetNodeRun,
     setShowGuideQuestion,
   } = useMessageStore();
-  console.log("ui messages :>> ", messages);
 
   const currentChatIdRef = useRef(null);
   const inputRef = useRef(null);
@@ -99,7 +99,7 @@ export default function ChatInput({
    */
   const changeChatedRef = useRef(false);
   useEffect(() => {
-    // console.log('message msg', messages, form);
+    // console.log("message msg", messages, form);
 
     if (changeChatedRef.current) {
       changeChatedRef.current = false;
@@ -531,6 +531,11 @@ export default function ChatInput({
     inputLock.locked,
   );
 
+  const chatInputFormRef = useRef(null);
+  const handleSubmitForm = () => {
+    chatInputFormRef?.current?.submit();
+  };
+
   return (
     <div
       className={`chat-input ${inputLock.locked ? "chat-input-disabled" : ""}`}
@@ -545,22 +550,27 @@ export default function ChatInput({
       {/*icon*/}
       <img className="icon" src={icon} alt="" />
 
+      {/*表单*/}
+      {inputForm && <ChatInputForm ref={chatInputFormRef} data={inputForm} />}
+
       {/*输入框*/}
-      <Textarea
-        className="chat-textarea focus-visible:ring-0"
-        id="bs-send-input"
-        ref={inputRef}
-        rows={1}
-        disabled={inputLock.locked}
-        onInput={handleTextAreaHeight}
-        placeholder={placholder}
-        onKeyDown={(event) => {
-          if (event.key === "Enter" && !event.shiftKey) {
-            event.preventDefault();
-            !inputLock.locked && handleSendClick();
-          }
-        }}
-      ></Textarea>
+      {!inputForm && (
+        <Textarea
+          className="chat-textarea focus-visible:ring-0"
+          id="bs-send-input"
+          ref={inputRef}
+          rows={1}
+          disabled={inputLock.locked}
+          onInput={handleTextAreaHeight}
+          placeholder={placholder}
+          onKeyDown={(event) => {
+            if (event.key === "Enter" && !event.shiftKey) {
+              event.preventDefault();
+              !inputLock.locked && handleSendClick();
+            }
+          }}
+        ></Textarea>
+      )}
 
       {/*/!* form switch *!/*/}
       <div>
@@ -605,22 +615,35 @@ export default function ChatInput({
       </div>
 
       {/* send */}
-      <div>
-        <div
-          id="bs-send-btn"
-          className="w-[38px] h-[38px] rounded-sm  dark:hover:bg-gray-950 cursor-pointer flex justify-center items-center"
-          onClick={() => {
-            !inputLock.locked && !fileUploading && handleSendClick();
-          }}
-        >
-          {inputLock.locked ? (
-            <img className="send" src={sendDisabled} alt="" />
-          ) : (
+      {inputForm ? (
+        <div>
+          <div
+            id="bs-send-btn"
+            className="w-[38px] h-[38px] rounded-sm  dark:hover:bg-gray-950 cursor-pointer flex justify-center items-center"
+            onClick={() => handleSubmitForm()}
+          >
             <img className="send" src={send} alt="" />
-          )}
-          {/*<SendIcon className={`${inputLock.locked || fileUploading ? 'text-muted-foreground' : 'text-foreground'}`} />*/}
+          </div>
         </div>
-      </div>
+      ) : (
+        <div>
+          <div
+            id="bs-send-btn"
+            className="w-[38px] h-[38px] rounded-sm  dark:hover:bg-gray-950 cursor-pointer flex justify-center items-center"
+            onClick={() => {
+              !inputLock.locked && !fileUploading && handleSendClick();
+            }}
+          >
+            {inputLock.locked && !inputForm ? (
+              <img className="send" src={sendDisabled} alt="" />
+            ) : (
+              <img className="send" src={send} alt="" />
+            )}
+            {/*<SendIcon className={`${inputLock.locked || fileUploading ? 'text-muted-foreground' : 'text-foreground'}`} />*/}
+          </div>
+        </div>
+      )}
+
       {/* stop & 重置 */}
       <div className="chat-new-work-flow">
         {!stop.show && (

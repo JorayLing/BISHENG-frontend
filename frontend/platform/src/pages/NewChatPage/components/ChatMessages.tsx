@@ -4,7 +4,7 @@ import ResouceModal from "@/pages/ChatAppPage/components/ResouceModal";
 import ThumbsMessage from "@/pages/ChatAppPage/components/ThumbsMessage";
 import { useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
-import InputForm from "./InputForm";
+import ChatMusic from "./ChatMusic";
 import MessageBs from "./MessageBs";
 import MessageBsChoose from "./MessageBsChoose";
 import MessageUser from "./MessageUser";
@@ -61,7 +61,6 @@ export default function ChatMessages({
       scrollLockRef.current = scrollHeight - scrollTop - clientHeight > 400;
 
       if (messagesRef.current.scrollTop <= 90) {
-        console.log("请求 :>> ", 1);
         queryLockRef.current = true;
         loadMore();
         // TODO 翻页定位
@@ -79,7 +78,6 @@ export default function ChatMessages({
 
   // const messagesList = [...hisMessages, ...messages]
   const messagesList = [...messages];
-  console.log("ui message :>> ", messagesList);
   // 成对的qa msg
   const findQa = (msgs, index) => {
     const item = msgs[index];
@@ -112,86 +110,91 @@ export default function ChatMessages({
     <div id="message-panne" ref={messagesRef} className="chat-message">
       {messagesList.map((msg, index) => {
         // output节点特殊msg
-        console.log("msg.category ===> ", msg.category);
-        switch (msg.category) {
-          case "input":
-            return null;
-          case "question":
-            return (
-              <MessageUser
-                mark={mark}
-                key={msg.message_id}
-                useName={useName}
-                data={msg}
-                onMarkClick={() => {
-                  onMarkClick?.(
-                    "question",
-                    msg.id,
-                    findQa(messagesList, index),
-                  );
-                }}
-              />
-            );
-          case "guide_word":
-          case "output_msg":
-          case "stream_msg":
-          case "answer":
-            return (
-              <MessageBs
-                debug={debug}
-                mark={mark}
-                logo={logo}
-                key={msg.message_id}
-                data={msg}
-                onUnlike={(chatId) => {
-                  thumbRef.current?.openModal(chatId);
-                }}
-                onSource={(data) => {
-                  sourceRef.current?.openModal(data);
-                }}
-                onMarkClick={() =>
-                  onMarkClick?.(
-                    "answer",
-                    msg.message_id,
-                    findQa(messagesList, index),
-                  )
-                }
-              />
-            );
-          case "separator":
-            return (
-              <Separator
-                key={msg.message_id}
-                text={msg.message || t("chat.roundOver")}
-              />
-            );
-          case "output_with_choose_msg":
-            return (
-              <MessageBsChoose key={msg.message_id} data={msg} logo={logo} />
-            );
-          case "output_with_input_msg":
-            return (
-              <MessageBsChoose
-                type="input"
-                key={msg.message_id}
-                data={msg}
-                logo={logo}
-              />
-            );
-          // case "node_run":
-          //   return <MessageNodeRun key={msg.message_id} data={msg} />;
-          default:
-            return (
-              <div
-                className="text-sm mt-2 border rounded-md p-2"
-                key={msg.message_id}
-              >
-                Unknown message type
-              </div>
-            );
+        if (msg.message?.node_id === "output_47d5d") {
+          return <ChatMusic key={msg.message_id} logo={logo} data={msg} />;
+        } else if (msg.message?.node_id === "output_dbd11") {
+          return <ChatMusic key={msg.message_id} logo={logo} data={msg} />;
+        } else {
+          switch (msg.category) {
+            case "input":
+              return null;
+            case "question":
+              return (
+                <MessageUser
+                  mark={mark}
+                  key={msg.message_id}
+                  useName={useName}
+                  data={msg}
+                  onMarkClick={() => {
+                    onMarkClick?.(
+                      "question",
+                      msg.id,
+                      findQa(messagesList, index),
+                    );
+                  }}
+                />
+              );
+            case "guide_word":
+            case "output_msg":
+            case "stream_msg":
+            case "answer":
+              return (
+                <MessageBs
+                  debug={debug}
+                  mark={mark}
+                  logo={logo}
+                  key={msg.message_id}
+                  data={msg}
+                  onUnlike={(chatId) => {
+                    thumbRef.current?.openModal(chatId);
+                  }}
+                  onSource={(data) => {
+                    sourceRef.current?.openModal(data);
+                  }}
+                  onMarkClick={() =>
+                    onMarkClick?.(
+                      "answer",
+                      msg.message_id,
+                      findQa(messagesList, index),
+                    )
+                  }
+                />
+              );
+            case "separator":
+              return (
+                <Separator
+                  key={msg.message_id}
+                  text={msg.message || t("chat.roundOver")}
+                />
+              );
+            case "output_with_choose_msg":
+              return (
+                <MessageBsChoose key={msg.message_id} data={msg} logo={logo} />
+              );
+            case "output_with_input_msg":
+              return (
+                <MessageBsChoose
+                  type="input"
+                  key={msg.message_id}
+                  data={msg}
+                  logo={logo}
+                />
+              );
+            // case "node_run":
+            //   return <MessageNodeRun key={msg.message_id} data={msg} />;
+            default:
+              return (
+                <div
+                  className="text-sm mt-2 border rounded-md p-2"
+                  key={msg.message_id}
+                >
+                  Unknown message type
+                </div>
+              );
+          }
         }
       })}
-      {inputForm && <InputForm data={inputForm} />}
+      {/*{inputForm && <InputForm data={inputForm} logo={logo} />}*/}
       <ThumbsMessage ref={thumbRef}></ThumbsMessage>
       <ResouceModal ref={sourceRef}></ResouceModal>
     </div>
