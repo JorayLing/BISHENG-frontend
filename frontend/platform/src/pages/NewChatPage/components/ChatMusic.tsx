@@ -117,15 +117,18 @@ const ChatMusic: React.FC<ChatMusicProps> = ({ logo, data }) => {
   return (
     <div>
       <div className="w-fit group max-w-[90%] flex">
-        {logo ? (
-          <div className="w-[40px] h-[40px] rounded-full overflow-hidden">
-            <img className="w-[40px] h-[40px]" src={logo} alt="" />
-          </div>
-        ) : (
-          <div className="w-[40px] h-[40px] flex justify-center items-center rounded-full">
-            <img className="w-full h-full" src={aiAvatar} alt="" />
-          </div>
-        )}
+        {/*{logo ? (*/}
+        {/*  <div className="w-[40px] h-[40px] rounded-full overflow-hidden">*/}
+        {/*    <img className="w-[40px] h-[40px]" src={logo} alt="" />*/}
+        {/*  </div>*/}
+        {/*) : (*/}
+        {/*  <div className="w-[40px] h-[40px] flex justify-center items-center rounded-full">*/}
+        {/*    <img className="w-full h-full" src={aiAvatar} alt="" />*/}
+        {/*  </div>*/}
+        {/*)}*/}
+        <div className="w-[40px] h-[40px] flex justify-center items-center rounded-full">
+          <img className="w-full h-full" src={aiAvatar} alt="" />
+        </div>
         <div className="chat-music-container">
           {/* 头部区域 */}
           <div className="music-header">
@@ -171,16 +174,20 @@ const ChatMusic: React.FC<ChatMusicProps> = ({ logo, data }) => {
         <div className="w-fit group max-w-[90%]">
           <div className="min-h-8">
             <div className="flex gap-2">
-              {logo ? (
-                <div className="w-[40px] h-[40px] rounded-full overflow-hidden">
-                  <img className="w-[40px] h-[40px]" src={logo} alt="" />
-                </div>
-              ) : (
-                <div className="w-[40px] h-[40px] flex justify-center items-center rounded-full">
-                  <img className="w-full h-full" src={aiAvatar} alt="" />
-                  {/*<AvatarIcon />*/}
-                </div>
-              )}
+              {/*{logo ? (*/}
+              {/*  <div className="w-[40px] h-[40px] rounded-full overflow-hidden">*/}
+              {/*    <img className="w-[40px] h-[40px]" src={logo} alt="" />*/}
+              {/*  </div>*/}
+              {/*) : (*/}
+              {/*  <div className="w-[40px] h-[40px] flex justify-center items-center rounded-full">*/}
+              {/*    <img className="w-full h-full" src={aiAvatar} alt="" />*/}
+              {/*    /!*<AvatarIcon />*!/*/}
+              {/*  </div>*/}
+              {/*)}*/}
+              <div className="w-[40px] h-[40px] flex justify-center items-center rounded-full">
+                <img className="w-full h-full" src={aiAvatar} alt="" />
+                {/*<AvatarIcon />*/}
+              </div>
               <div className="text-sm max-w-[calc(100%-64px)] chat-ai-msg">
                 {/* select or input */}
                 <div className="mt-2">

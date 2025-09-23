@@ -168,11 +168,11 @@ export default function ChatFiles({ v, accepts, onChange }) {
     <div className="relative z-10">
       {/* Displaying files */}
       {!!files.length && (
-        <div className="absolute bottom-2 left-2 flex flex-wrap gap-2  bg-gray-50 p-2 rounded-xl max-h-96 overflow-y-auto">
+        <div className="absolute bottom-[4.5rem] left-[-4.5rem] flex flex-wrap gap-2  bg-gray-100 p-2 rounded-xl max-h-96 overflow-y-auto">
           {files.map((file, index) => (
             <div
               key={index}
-              className="group relative flex items-center space-x-3 bg-gray-100 p-2 rounded-xl cursor-default"
+              className="group relative flex items-center space-x-3 bg-gray-200 p-2 rounded-xl cursor-default"
             >
               {/* Remove button */}
               <span
@@ -183,7 +183,7 @@ export default function ChatFiles({ v, accepts, onChange }) {
               </span>
 
               {/* File Icon */}
-              <div className="w-8 h-8 bg-gray-200 rounded-md flex items-center justify-center">
+              <div className="w-8 h-8 bg-gray-300 rounded-md flex items-center justify-center">
                 {file.isUploading ? (
                   <Loading className="size-4" />
                 ) : (

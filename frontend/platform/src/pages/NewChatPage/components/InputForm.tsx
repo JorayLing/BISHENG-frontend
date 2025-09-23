@@ -87,16 +87,20 @@ const InputForm = ({ data, logo }: { data: WorkflowNodeParam; logo: any }) => {
   const [multiVal, setMultiVal] = useState([]);
   return (
     <div className="flex w-full">
-      {logo ? (
-        <div className="w-[40px] h-[40px] rounded-full overflow-hidden">
-          <img className="w-[40px] h-[40px]" src={logo} alt="" />
-        </div>
-      ) : (
-        <div className="w-[40px] h-[40px] flex justify-center items-center rounded-full">
-          <img className="w-full h-full" src={aiAvatar} alt="" />
-          {/*<AvatarIcon />*/}
-        </div>
-      )}
+      {/*{logo ? (*/}
+      {/*  <div className="w-[40px] h-[40px] rounded-full overflow-hidden">*/}
+      {/*    <img className="w-[40px] h-[40px]" src={logo} alt="" />*/}
+      {/*  </div>*/}
+      {/*) : (*/}
+      {/*  <div className="w-[40px] h-[40px] flex justify-center items-center rounded-full">*/}
+      {/*    <img className="w-full h-full" src={aiAvatar} alt="" />*/}
+      {/*    /!*<AvatarIcon />*!/*/}
+      {/*  </div>*/}
+      {/*)}*/}
+      <div className="w-[40px] h-[40px] flex justify-center items-center rounded-full">
+        <img className="w-full h-full" src={aiAvatar} alt="" />
+        {/*<AvatarIcon />*/}
+      </div>
       <div className="max-w-[90%] min-w-96 chat-ai-msg">
         <div className="min-h-8 rounded-2xl dark:bg-[#313336] flex flex-col items-center">
           {data.value.map((item, i) => (

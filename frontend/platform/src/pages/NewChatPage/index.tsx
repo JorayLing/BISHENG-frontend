@@ -25,15 +25,29 @@ const ChatItem = ({
   handleDeleteChat,
   _k,
 }) => {
+  let title = "";
+  if (chat.earliest_message && chat.earliest_message.message) {
+    if (chat.flow_type === 5) {
+      try {
+        let message = JSON.parse(chat.earliest_message?.message);
+        title = message?.input || message?.content;
+      } catch (err) {
+        title = chat.flow_name;
+      }
+    } else {
+      title = chat.earliest_message?.message;
+    }
+  } else {
+    title = chat.flow_name;
+  }
+
   return (
     <div
       className={chatId === chat.chat_id ? "chat-item Activate" : "chat-item"}
       key={chat.chat_id}
       onClick={() => handleSelectChat(chat)}
     >
-      <span className="chat-item-title">
-        {chat.earliest_message?.remark || chat.latest_message?.message || ""}
-      </span>
+      <span className="chat-item-title">{title}</span>
       <div className="chat-item-time">
         <span>{formatStrTime(chat.update_time, "MM 月 dd 日")}</span>
         <span className="chat-item-delete">

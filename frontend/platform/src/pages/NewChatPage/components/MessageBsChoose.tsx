@@ -151,16 +151,20 @@ export default function MessageBsChoose({
         </div>
         <div className="min-h-8">
           <div className="flex gap-2">
-            {logo ? (
-              <div className="w-[40px] h-[40px] rounded-full overflow-hidden">
-                <img className="w-[40px] h-[40px]" src={logo} alt="" />
-              </div>
-            ) : (
-              <div className="w-[40px] h-[40px] flex justify-center items-center rounded-full">
-                <img className="w-full h-full" src={aiAvatar} alt="" />
-                {/*<AvatarIcon />*/}
-              </div>
-            )}
+            {/*{logo ? (*/}
+            {/*  <div className="w-[40px] h-[40px] rounded-full overflow-hidden">*/}
+            {/*    <img className="w-[40px] h-[40px]" src={logo} alt="" />*/}
+            {/*  </div>*/}
+            {/*) : (*/}
+            {/*  <div className="w-[40px] h-[40px] flex justify-center items-center rounded-full">*/}
+            {/*    <img className="w-full h-full" src={aiAvatar} alt="" />*/}
+            {/*    /!*<AvatarIcon />*!/*/}
+            {/*  </div>*/}
+            {/*)}*/}
+            <div className="w-[40px] h-[40px] flex justify-center items-center rounded-full">
+              <img className="w-full h-full" src={aiAvatar} alt="" />
+              {/*<AvatarIcon />*/}
+            </div>
             <div className="text-sm max-w-[calc(100%-64px)] chat-ai-msg">
               {/* message */}
               <div className="chat-select-title">{mkdown}</div>

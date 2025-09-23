@@ -46,7 +46,7 @@ export default function MessageUser({
           {useName && <p className="text-gray-600 text-sm">{useName}</p>}
         </div>
         <div className="flex">
-          <div className="flex gap-2 chat-msg">
+          <div className="flex gap-2 max-w-[calc(100%-64px)] chat-msg">
             <div className="text-sm break-all whitespace-break-spaces">
               {typeof data.message === "string"
                 ? data.message
@@ -54,7 +54,11 @@ export default function MessageUser({
             </div>
           </div>
           <div className="w-[48px] h-[48px]">
-            <img src={__APP_ENV__.BASE_URL + "/user.png"} alt="" />
+            <img
+              className="w-full h-full"
+              src={__APP_ENV__.BASE_URL + "/user.png"}
+              alt=""
+            />
           </div>
         </div>
 
