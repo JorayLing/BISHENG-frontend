@@ -2,6 +2,7 @@ import Separator from "@/components/bs-comp/chatComponent/Separator";
 import { useMessageStore } from "@/pages/BuildPage/flow/FlowChat/messageStore";
 import ResouceModal from "@/pages/ChatAppPage/components/ResouceModal";
 import ThumbsMessage from "@/pages/ChatAppPage/components/ThumbsMessage";
+import MessageNodeRun from "@/pages/NewChatPage/components/MessageNodeRun";
 import { useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import ChatMusic from "./ChatMusic";
@@ -180,8 +181,8 @@ export default function ChatMessages({
                   logo={logo}
                 />
               );
-            // case "node_run":
-            //   return <MessageNodeRun key={msg.message_id} data={msg} />;
+            case "node_run":
+              return <MessageNodeRun key={msg.message_id} data={msg} />;
             default:
               return (
                 <div
