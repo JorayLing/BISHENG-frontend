@@ -4,53 +4,61 @@ import { Copy, Play, Trash2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
 export default function NodeToolbarComponent({ nodeId, type, onRun }) {
-    const { t } = useTranslation('flow')
-    const handleDelete = () => {
-        const event = new CustomEvent('nodeDelete', {
-            detail: nodeId
-        });
-        window.dispatchEvent(event);
-    }
+  const { t } = useTranslation("flow");
+  const handleDelete = () => {
+    const event = new CustomEvent("nodeDelete", {
+      detail: nodeId,
+    });
+    window.dispatchEvent(event);
+  };
 
-    const handleCopy = () => {
-        const event = new CustomEvent('nodeCopy', {
-            detail: [nodeId]
-        });
-        window.dispatchEvent(event);
-    }
+  const handleCopy = () => {
+    const event = new CustomEvent("nodeCopy", {
+      detail: [nodeId],
+    });
+    window.dispatchEvent(event);
+  };
 
-    if (type === 'start') return null
+  if (type === "start") return null;
 
-    return <div className="rounded-xl shadow-sm p-1 bg-gradient-to-r from-gray-50 to-[#fff] dark:from-gray-900 dark:to-gray-950 border">
-        {["agent", "tool", "llm", "rag", "qa_retriever", "code"].includes(type) && (
-            <Tip content={t('runNode')} side="top">
-                <Button size="icon" variant="ghost" className="size-8" onClick={onRun}>
-                    <Play size={16} />
-                </Button>
-            </Tip>
-        )}
-        <Tip content={t('copy')} side="top">
-            <Button
-                size="icon"
-                variant="ghost"
-                className={`size-8`}
-                onClick={handleCopy}
-            >
-                <Copy size={16} />
-            </Button>
+  return (
+    <div className="rounded-xl shadow-sm p-1 bg-gradient-to-r from-gray-50 to-[#fff] dark:from-gray-900 dark:to-gray-950 border">
+      {["agent", "tool", "llm", "rag", "qa_retriever", "code"].includes(
+        type,
+      ) && (
+        <Tip content={t("runNode")} side="top">
+          <Button
+            size="icon"
+            variant="ghost"
+            className="size-8"
+            onClick={onRun}
+          >
+            <Play size={16} />
+          </Button>
         </Tip>
-        <Tip content={t('delete')} side="top">
-            <Button
-                size="icon"
-                variant="ghost"
-                className={`size-8 hover:text-red-600`}
-                onClick={handleDelete}
-            >
-                <Trash2 size={16} />
-            </Button>
-        </Tip>
+      )}
+      <Tip content={t("copy")} side="top">
+        <Button
+          size="icon"
+          variant="ghost"
+          className={`size-8`}
+          onClick={handleCopy}
+        >
+          <Copy size={16} />
+        </Button>
+      </Tip>
+      <Tip content={t("delete")} side="top">
+        <Button
+          size="icon"
+          variant="ghost"
+          className={`size-8 hover:text-red-600`}
+          onClick={handleDelete}
+        >
+          <Trash2 size={16} />
+        </Button>
+      </Tip>
 
-        {/* <Select onValueChange={() => { }} value="">
+      {/* <Select onValueChange={() => { }} value="">
             <SelectTrigger showIcon={false} className="border-none inline-flex w-9 h-9 p-0 shadow-none">
                 <Button size="icon" variant="ghost"><Ellipsis /></Button>
             </SelectTrigger>
@@ -70,4 +78,5 @@ export default function NodeToolbarComponent({ nodeId, type, onRun }) {
             </SelectContent>
         </Select> */}
     </div>
-};
+  );
+}

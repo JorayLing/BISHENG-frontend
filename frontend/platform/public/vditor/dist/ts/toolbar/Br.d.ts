@@ -1,4 +1,4 @@
 export declare class Br {
-    element: HTMLElement;
-    constructor();
+  element: HTMLElement;
+  constructor();
 }

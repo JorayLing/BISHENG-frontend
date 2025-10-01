@@ -70,7 +70,7 @@ export default function BuildTrigger({
     // Step 2: Use the session ID to establish an SSE connection using EventSource
     let validationResults = [];
     let finished = false;
-    let buildEnd = false
+    let buildEnd = false;
     const apiUrl = `${__APP_ENV__.BASE_URL}/api/v1/build/stream/${flowId}`;
     const eventSource = new EventSource(apiUrl);
 
@@ -83,7 +83,7 @@ export default function BuildTrigger({
       // if the event is the end of the stream, close the connection
       if (parsedData.end_of_stream) {
         eventSource.close();
-        buildEnd = true
+        buildEnd = true;
 
         return;
       } else if (parsedData.log) {
@@ -119,7 +119,7 @@ export default function BuildTrigger({
     // Step 3: Wait for the stream to finish
     while (!finished) {
       await new Promise((resolve) => setTimeout(resolve, 100));
-      finished = buildEnd // validationResults.length === flow.data.nodes.length;
+      finished = buildEnd; // validationResults.length === flow.data.nodes.length;
     }
     // Step 4: Return true if all nodes are valid, false otherwise
     return validationResults.every((result) => result);
@@ -138,7 +138,7 @@ export default function BuildTrigger({
 
   async function enforceMinimumLoadingTime(
     startTime: number,
-    minimumLoadingTime: number
+    minimumLoadingTime: number,
   ) {
     const elapsedTime = Date.now() - startTime;
     const remainingTime = minimumLoadingTime - elapsedTime;
@@ -173,8 +173,8 @@ export default function BuildTrigger({
           onClick={() => {
             handleBuild(flow);
           }}
-        // onMouseEnter={handleMouseEnter}
-        // onMouseLeave={handleMouseLeave}
+          // onMouseEnter={handleMouseEnter}
+          // onMouseLeave={handleMouseLeave}
         >
           <button>
             <div className="round-button-div">

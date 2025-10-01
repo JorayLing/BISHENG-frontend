@@ -13,7 +13,6 @@ import SkillToolsPage from "./pages/BuildPage/tools";
 import SkillChatPage from "./pages/ChatAppPage";
 import ChatAssitantShare from "./pages/ChatAppPage/chatAssitantShare";
 import ChatShare from "./pages/ChatAppPage/chatShare";
-import ChatPro from "./pages/ChatAppPage/chatWebview";
 import DataSetPage from "./pages/DataSetPage";
 import DiffFlowPage from "./pages/DiffFlowPage";
 import EvaluatingPage from "./pages/EvaluationPage";
@@ -32,11 +31,20 @@ import { ResetPwdPage } from "./pages/LoginPage/resetPwd";
 import Doc from "./pages/ModelPage/doc";
 import { Finetune } from "./pages/ModelPage/finetune";
 import Management from "./pages/ModelPage/manage";
+import NewChatPro from "./pages/NewChatPage/index";
 import Page403 from "./pages/Page403";
 import Report from "./pages/Report";
 import SystemPage from "./pages/SystemPage";
 import ResoucePage from "./pages/resoucePage";
 import { AppNumType } from "./types/app";
+import AdminNewPage from "./pages/AdminNewPage/index";
+import HomeSubRoute from "./pages/AdminNewPage/HomeSubRoute";
+import ChatSubRoute from "./pages/AdminNewPage/ChatSubRoute";
+import ChatFlowAuthSubRoute from "./pages/AdminNewPage/ChatFlowAuthSubRoute";
+import ChatAssistantAuthSubRoute from "./pages/AdminNewPage/ChatAssistantAuthSubRoute";
+import IframeSubRoute from "./pages/AdminNewPage/IframeSubRoute";
+import UsersSubRoute from "./pages/AdminNewPage/UsersSubRoute";
+import TestSubRoute from "./pages/AdminNewPage/TestSubRoute";
 
 // react 与 react router dom版本不匹配
 // const FileLibPage = lazy(() => import(/* webpackChunkName: "FileLibPage" */ "./pages/FileLibPage"));
@@ -47,44 +55,63 @@ import { AppNumType } from "./types/app";
 const ErrorHoc = ({ Comp }) => {
   return (
     <ErrorBoundary
-      onReset={() => window.location.href = window.location.href}
+      onReset={() => (window.location.href = window.location.href)}
       FallbackComponent={CrashErrorComponent}
     >
       <Comp />
     </ErrorBoundary>
   );
-}
+};
 
 const baseConfig = {
   //@ts-ignore
-  basename: __APP_ENV__.BASE_URL
-}
-
+  basename: __APP_ENV__.BASE_URL,
+};
 
 const privateRouter = [
   {
     path: "/",
+    element: <Navigate to="/adminNew" replace />,
+  },
+  {
+    path: "/main",
     element: <MainLayout />,
     children: [
-      { path: "", element: <SkillChatPage />, },
-      { path: "filelib", element: <KnowledgePage />, permission: 'knowledge', },
-      { path: "filelib/:id", element: <FilesPage />, permission: 'knowledge', },
-      { path: "filelib/upload/:id", element: <FilesUpload />, permission: 'knowledge', },
-      { path: "filelib/qalib/:id", element: <QasPage />, permission: 'knowledge', },
-      { path: "build/apps", element: <Apps />, permission: 'build', },
+      { path: "", element: <SkillChatPage /> },
+      { path: "filelib", element: <KnowledgePage />, permission: "knowledge" },
+      { path: "filelib/:id", element: <FilesPage />, permission: "knowledge" },
+      {
+        path: "filelib/upload/:id",
+        element: <FilesUpload />,
+        permission: "knowledge",
+      },
+      {
+        path: "filelib/qalib/:id",
+        element: <QasPage />,
+        permission: "knowledge",
+      },
+      { path: "build/apps", element: <Apps />, permission: "build" },
       // { path: "build/assist", element: <SkillAssisPage />, permission: 'build', },
       // { path: "build/skills", element: <SkillsPage />, permission: 'build', },
       // @ts-ignore
-      { path: "build/tools", element: <SkillToolsPage />, permission: 'build', },
-      { path: "build/client", element: <WorkBenchPage />, permission: 'build' },
+      { path: "build/tools", element: <SkillToolsPage />, permission: "build" },
+      { path: "build/client", element: <WorkBenchPage />, permission: "build" },
       { path: "build", element: <Navigate to="apps" replace /> },
-      { path: "build/skill", element: <L2Edit />, permission: 'build', },
-      { path: "build/skill/:id/:vid", element: <L2Edit />, permission: 'build', },
-      { path: "build/temps/:type", element: <Templates />, permission: 'build', },
+      { path: "build/skill", element: <L2Edit />, permission: "build" },
+      {
+        path: "build/skill/:id/:vid",
+        element: <L2Edit />,
+        permission: "build",
+      },
+      {
+        path: "build/temps/:type",
+        element: <Templates />,
+        permission: "build",
+      },
       { path: "model/management", element: <Management /> },
       { path: "model/finetune", element: <Finetune /> },
       { path: "model", element: <Navigate to="management" replace /> },
-      { path: "sys", element: <SystemPage />, permission: 'sys' },
+      { path: "sys", element: <SystemPage />, permission: "sys" },
       { path: "log", element: <LogPage /> },
       { path: "log/chatlog/:fid/:cid/:type", element: <AppChatDetail /> },
       { path: "evaluation", element: <EvaluatingPage /> },
@@ -98,78 +125,101 @@ const privateRouter = [
   { path: "model/doc", element: <Doc /> },
   {
     path: "/skill/:id/",
-    children: [
-      { path: "", element: <ErrorHoc Comp={SkillPage} /> }
-    ]
+    children: [{ path: "", element: <ErrorHoc Comp={SkillPage} /> }],
   },
   {
     path: "/flow/:id/",
-    children: [
-      { path: "", element: <ErrorHoc Comp={FlowPage} /> }
-    ]
+    children: [{ path: "", element: <ErrorHoc Comp={FlowPage} /> }],
   },
   {
     path: "/assistant/:id/",
-    children: [
-      { path: "", element: <EditAssistantPage /> }
-    ]
+    children: [{ path: "", element: <EditAssistantPage /> }],
   },
   {
     path: "/resouce/:cid/:mid",
-    element: <ResoucePage />
+    element: <ResoucePage />,
   },
   // 独立会话页
-  { path: "/chat/assistant/auth/:id/", element: <ChatPro type={AppNumType.ASSISTANT} /> },
-  { path: "/chat/flow/auth/:id/", element: <ChatPro type={AppNumType.FLOW} /> },
-  { path: "/chat/skill/auth/:id/", element: <ChatPro /> },
+  {
+    path: "/chat/assistant/auth/:id/",
+    element: <NewChatPro type={AppNumType.ASSISTANT} />,
+  },
+  // 旧的
+  // { path: "/chat/flow/auth/:id/", element: <ChatPro type={AppNumType.FLOW} /> },
+  // 新的
+  {
+    path: "/chat/flow/auth/:id/",
+    element: <NewChatPro type={AppNumType.FLOW} />,
+  },
+  { path: "/chat/skill/auth/:id/", element: <NewChatPro /> },
   { path: "/chat", element: <SkillChatPage /> },
   { path: "/chat/:id/", element: <ChatShare /> },
   { path: "/chat/flow/:id/", element: <ChatShare type={AppNumType.FLOW} /> },
   { path: "/chat/assistant/:id/", element: <ChatAssitantShare /> },
   { path: "/report/:id/", element: <Report /> },
   { path: "/diff/:id/:vid/:cid", element: <ErrorHoc Comp={DiffFlowPage} /> },
+  { 
+    path: "/adminNew", 
+    element: <AdminNewPage />,
+    children: [
+      { path: "", element: <HomeSubRoute /> },
+      { path: "test", element: <TestSubRoute /> },
+      { path: "chat", element: <ChatSubRoute /> },
+      { path: "chat/:id", element: <ChatSubRoute /> },
+      { path: "chat/flow/auth/:id", element: <ChatFlowAuthSubRoute /> },
+      { path: "chat/assistant/auth/:id", element: <ChatAssistantAuthSubRoute /> },
+      { path: "iframe/:id", element: <IframeSubRoute /> },
+      { path: "users", element: <UsersSubRoute /> },
+      { path: "roles", element: <div className="p-6"><h2 className="text-xl font-semibold">角色管理</h2></div> },
+      { path: "docs", element: <div className="p-6"><h2 className="text-xl font-semibold">项目文档</h2></div> },
+      { path: "settings", element: <div className="p-6"><h2 className="text-xl font-semibold">系统设置</h2></div> },
+    ]
+  },
   { path: "/reset", element: <ResetPwdPage /> },
   { path: "/403", element: <Page403 /> },
-  { path: "*", element: <Navigate to="/" replace /> }
-]
+  { path: "*", element: <Navigate to="/adminNew" replace /> },
+];
 
 export const getPrivateRouter = (permissions) => {
   const filterMenuItem = (_privateRouter) => {
     const result = _privateRouter.reduce((res, cur) => {
       // 递归
       if (cur.children?.length) {
-        cur.children = filterMenuItem(cur.children)
+        cur.children = filterMenuItem(cur.children);
       }
 
-      const { permission, ...other } = cur
+      const { permission, ...other } = cur;
       if (permission && !permissions.includes(permission)) {
-        return res
+        return res;
       }
 
-      res.push(other)
-      return res
-    }, [])
+      res.push(other);
+      return res;
+    }, []);
 
-    return result
-  }
+    return result;
+  };
 
-  return createBrowserRouter(permissions ? filterMenuItem(privateRouter) : [],
-    baseConfig)
-}
+  return createBrowserRouter(
+    permissions ? filterMenuItem(privateRouter) : [],
+    baseConfig,
+  );
+};
 
 export const getAdminRouter = () => {
-  return createBrowserRouter(privateRouter,
-    baseConfig)
-}
+  return createBrowserRouter(privateRouter, baseConfig);
+};
 
-export const publicRouter = createBrowserRouter([
-  { path: "/", element: <LoginPage /> },
-  { path: "/reset", element: <ResetPwdPage /> },
-  { path: "/chat/:id/", element: <ChatShare /> },
-  { path: "/chat/flow/:id/", element: <ChatShare type={AppNumType.FLOW} /> },
-  { path: "/chat/assistant/:id/", element: <ChatAssitantShare /> },
-  { path: "/resouce/:cid/:mid", element: <ResoucePage /> },
-  { path: "/403", element: <Page403 /> },
-  { path: "*", element: <LoginPage /> }
-],
-  baseConfig)
+export const publicRouter = createBrowserRouter(
+  [
+    { path: "/", element: <LoginPage /> },
+    { path: "/reset", element: <ResetPwdPage /> },
+    { path: "/chat/:id/", element: <ChatShare /> },
+    { path: "/chat/flow/:id/", element: <ChatShare type={AppNumType.FLOW} /> },
+    { path: "/chat/assistant/:id/", element: <ChatAssitantShare /> },
+    { path: "/resouce/:cid/:mid", element: <ResoucePage /> },
+    { path: "/403", element: <Page403 /> },
+    { path: "*", element: <LoginPage /> },
+  ],
+  baseConfig,
+);

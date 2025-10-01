@@ -1,9 +1,15 @@
-import { Edge, Node, ReactFlowJsonObject, Viewport, XYPosition } from "@xyflow/react";
+import {
+  Edge,
+  Node,
+  ReactFlowJsonObject,
+  Viewport,
+  XYPosition,
+} from "@xyflow/react";
 import { APIClassType } from "../api/index";
 
 export const enum OnlineState {
   OffLine = 1,
-  OnLine = 2
+  OnLine = 2,
 }
 
 /** 流程 */
@@ -12,11 +18,11 @@ export type FlowState = {
     source: string;
     target: string;
     /** 来源节点内部的唯一ID，目前只有condition节点需要 */
-    source_internal_id
+    source_internal_id;
   }[];
   views: FlowNode[];
   viewport: any;
-}
+};
 
 /** 流程节点 */
 interface FlowNode {
@@ -32,9 +38,8 @@ interface FlowNode {
     }[];
     nodes: any[];
     viewport: any;
-  }
+  };
 }
-
 
 export type FlowType = {
   name: string;
@@ -45,7 +50,7 @@ export type FlowType = {
   style?: FlowStyleType;
   user_name?: string;
   write: boolean;
-  guide_word: string
+  guide_word: string;
   is_component?: boolean;
   parent?: string;
   date_created?: string;
@@ -98,7 +103,6 @@ export type targetHandleType = {
   id: string;
   proxy?: { field: string; id: string };
 };
-
 
 export type FlowVersionItem = {
   create_time: string;
@@ -185,25 +189,25 @@ export interface WorkflowNodeParam {
   multi?: boolean;
   /** Array of options */
   options?: any[];
-  test?: string,
+  test?: string;
   hidden?: boolean;
 }
 
 /** 工作流消息结构 */
 export interface WorkflowMessage {
-  category: string;              // "processing"
-  node_id?: string;               // Node identifier
-  flow_id: string;               // Flow identifier
-  chat_id: string | null;        // Nullable, could be null if not set
-  message_id: string | null;     // Nullable, could be null if not set
-  files: any[];                  // Array, likely for file attachments
-  is_bot: boolean;               // True if the sender is a bot
-  liked?: boolean;                 // Count or boolean representing like status
-  message: any;               // Actual message content, empty in this case
-  receiver: string | null;       // Nullable receiver field
-  sender: string | null;         // Nullable sender field
-  source: number;                // Source identifier, type unclear
-  user_id: number;               // User identifier, integer type
+  category: string; // "processing"
+  node_id?: string; // Node identifier
+  flow_id: string; // Flow identifier
+  chat_id: string | null; // Nullable, could be null if not set
+  message_id: string | null; // Nullable, could be null if not set
+  files: any[]; // Array, likely for file attachments
+  is_bot: boolean; // True if the sender is a bot
+  liked?: boolean; // Count or boolean representing like status
+  message: any; // Actual message content, empty in this case
+  receiver: string | null; // Nullable receiver field
+  sender: string | null; // Nullable sender field
+  source: number; // Source identifier, type unclear
+  user_id: number; // User identifier, integer type
   end: boolean;
   update_time: string;
   reasoning_log?: string; // 推理

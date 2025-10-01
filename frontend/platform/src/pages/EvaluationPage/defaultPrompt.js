@@ -64,4 +64,4 @@ Extracted statements:
 Question:{question}
 Answer: {answer}
 Ground truth: {ground_truth}
-Extracted statements:"""`
+Extracted statements:"""`;

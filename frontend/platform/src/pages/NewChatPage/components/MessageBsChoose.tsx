@@ -1,0 +1,236 @@
+import { checkSassUrl } from "@/components/bs-comp/FileView";
+import { WordIcon } from "@/components/bs-icons";
+import { Button } from "@/components/bs-ui/button";
+import { Textarea } from "@/components/bs-ui/input";
+import { CodeBlock } from "@/modals/formModal/chatMessage/codeBlock";
+import aiAvatar from "@/pages/NewChatPage/images/aiAvatar.png";
+import checkIcon from "@/pages/NewChatPage/images/check.png";
+import { WorkflowMessage } from "@/types/flow";
+import { downloadFile } from "@/util/utils";
+import { useMemo, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
+import ReactMarkdown from "react-markdown";
+import rehypeMathjax from "rehype-mathjax";
+import remarkGfm from "remark-gfm";
+import remarkMath from "remark-math";
+// 颜色列表
+const colorList = [
+  "#111",
+  "#FF5733",
+  "#3498DB",
+  "#27AE60",
+  "#E74C3C",
+  "#9B59B6",
+  "#F1C40F",
+  "#34495E",
+  "#16A085",
+  "#E67E22",
+  "#95A5A6",
+];
+
+export default function MessageBsChoose({
+  type = "choose",
+  logo,
+  data,
+}: {
+  type?: string;
+  logo: string;
+  data: WorkflowMessage;
+}) {
+  const { t } = useTranslation();
+  const avatarColor =
+    colorList[
+      (data.sender?.split("").reduce((num, s) => num + s.charCodeAt(), 0) ||
+        0) % colorList.length
+    ];
+
+  const [selected, setSelected] = useState(data.message.hisValue || "");
+  const handleSelect = (obj) => {
+    if (selected) return;
+    const myEvent = new CustomEvent("outputMsgEvent", {
+      detail: {
+        nodeId: data.message.node_id,
+        message: data,
+        data: {
+          [data.message.key]: obj.id,
+        },
+      },
+    });
+    document.dispatchEvent(myEvent);
+    setSelected(obj.id);
+  };
+
+  // download file
+  const handleDownloadFile = (file) => {
+    downloadFile(checkSassUrl(file.path), file.name);
+  };
+
+  // input
+  const textRef = useRef(null);
+  const [inputSended, setInputSended] = useState(
+    !!data.message.hisValue || false,
+  );
+  const handleSend = () => {
+    const val = textRef.current.value;
+    if (!val.trim()) return;
+    setInputSended(true);
+    const myEvent = new CustomEvent("outputMsgEvent", {
+      detail: {
+        nodeId: data.message.node_id,
+        message: data,
+        data: {
+          [data.message.key]: val,
+        },
+      },
+    });
+    document.dispatchEvent(myEvent);
+  };
+
+  const mkdown = useMemo(
+    () => (
+      <ReactMarkdown
+        remarkPlugins={[remarkGfm, remarkMath]}
+        rehypePlugins={[rehypeMathjax]}
+        linkTarget="_blank"
+        className="bs-mkdown inline-block break-all max-w-full text-sm text-text-answer"
+        components={{
+          code: ({ node, inline, className, children, ...props }) => {
+            if (children.length) {
+              if (children[0] === "▍") {
+                return <span className="form-modal-markdown-span"> ▍ </span>;
+              }
+
+              if (typeof children[0] === "string") {
+                children[0] = children[0].replace("▍", "▍");
+              }
+            }
+
+            const match = /language-(\w+)/.exec(className || "");
+
+            return !inline ? (
+              <CodeBlock
+                key={Math.random()}
+                language={(match && match[1]) || ""}
+                value={String(children).replace(/\n$/, "")}
+                {...props}
+              />
+            ) : (
+              <code className={className} {...props}>
+                {" "}
+                {children}{" "}
+              </code>
+            );
+          },
+        }}
+      >
+        {data.message.msg}
+      </ReactMarkdown>
+    ),
+    [data.message],
+  );
+
+  const files = useMemo(() => {
+    return typeof data.files === "string" ? [] : data.files;
+  }, [data.files]);
+
+  // hack
+  if (typeof data.files === "string") return null;
+
+  return (
+    <div className="flex w-full">
+      <div className="w-fit group max-w-[90%]">
+        <div className="flex justify-between items-center mb-1">
+          {data.sender ? (
+            <p className="text-gray-600 text-xs">{data.sender}</p>
+          ) : (
+            <p />
+          )}
+          <div className={`text-right group-hover:opacity-100 opacity-0`}>
+            {/* <span className="text-slate-400 text-sm">{formatStrTime(data.update_time, 'MM 月 dd 日 HH:mm')}</span> */}
+          </div>
+        </div>
+        <div className="min-h-8">
+          <div className="flex gap-2">
+            {/*{logo ? (*/}
+            {/*  <div className="w-[40px] h-[40px] rounded-full overflow-hidden">*/}
+            {/*    <img className="w-[40px] h-[40px]" src={logo} alt="" />*/}
+            {/*  </div>*/}
+            {/*) : (*/}
+            {/*  <div className="w-[40px] h-[40px] flex justify-center items-center rounded-full">*/}
+            {/*    <img className="w-full h-full" src={aiAvatar} alt="" />*/}
+            {/*    /!*<AvatarIcon />*!/*/}
+            {/*  </div>*/}
+            {/*)}*/}
+            <div className="w-[40px] h-[40px] flex justify-center items-center rounded-full">
+              <img className="w-full h-full" src={aiAvatar} alt="" />
+              {/*<AvatarIcon />*/}
+            </div>
+            <div className="text-sm max-w-[calc(100%-64px)] chat-ai-msg">
+              {/* message */}
+              <div className="chat-select-title">{mkdown}</div>
+              {/* files */}
+              <div>
+                {files.map((file) => (
+                  <div
+                    className="flex gap-2 w-52 border border-gray-200 shadow-sm bg-gray-50 dark:bg-gray-600 px-4 py-2 rounded-sm cursor-pointer"
+                    onClick={() => handleDownloadFile(file)}
+                  >
+                    <div className="flex items-center">
+                      <WordIcon />
+                    </div>
+                    <div>
+                      <h1 className="text-sm font-bold">{file.name}</h1>
+                      <p className="text-xs text-gray-400 mt-1">
+                        {t("chat.clickDownload")}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              {/* select or input */}
+              <div className="mt-2">
+                {type === "input" ? (
+                  <div>
+                    <Textarea
+                      className="w-full"
+                      ref={textRef}
+                      disabled={inputSended}
+                      defaultValue={
+                        data.message.input_msg || data.message.hisValue
+                      }
+                    />
+                    <div className="flex justify-end mt-2">
+                      <Button
+                        className="h-8"
+                        disabled={inputSended}
+                        onClick={handleSend}
+                      >
+                        {inputSended ? t("chat.confirmed") : t("chat.confirm")}
+                      </Button>
+                    </div>
+                  </div>
+                ) : (
+                  <div className={"flex flex-col"}>
+                    {data.message.options.map((opt) => (
+                      <div
+                        key={opt.id}
+                        onClick={() => handleSelect(opt)}
+                        className={`chat-select ${selected === opt.id ? "chat-select-check" : ""}`}
+                      >
+                        {opt.label}
+                        {selected === opt.id && (
+                          <img src={checkIcon} alt="" />
+                          // <CheckCircle size={20} className="min-w-5" />
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}

@@ -1,0 +1,68 @@
+.alert-dialog{
+  width: 458px;
+  height: 312px;
+  position: relative;
+  .robot{
+    margin-top: -147px;
+    margin-left: 64px;
+    width: 320px;
+    height: 192px;
+    position: absolute;
+    z-index: 50;
+  }
+  .close{
+    width: 50px;
+    height: 50px;
+    position: absolute;
+    right: -58px;
+    top: 0;
+    cursor:pointer;
+  }
+  .alert-dialog-content{
+    width: 458px;
+    height: 312px;
+    background: url('./images/alert-dialog-bg.png') no-repeat;
+    background-size: 100% 100%;
+    position: relative;
+    z-index: 51;
+    padding-top: 1px;
+    .alert-dialog-desc{
+      font-family: PingFangSC-Heavy;
+      font-size: 20px;
+      color: #0D0D0D;
+      letter-spacing: 0;
+      line-height: 28px;
+      font-weight: 400;
+      text-align: center;
+      margin-top: 129px;
+    }
+    .alert-dialog-footer{
+      display: flex;
+      justify-content: center;
+      margin-top: 50px;
+      >div{
+        width: 186px;
+        height: 83px;
+        text-align: center;
+        padding-top: 10px;
+        box-sizing: border-box;
+        font-family: FZLANTY_CUJW--GB1-0;
+        font-size: 24px;
+        color: #FFFFFF;
+        letter-spacing: 4px;
+        font-weight: 400;
+        cursor:pointer;
+      }
+      .alert-dialog-cancel{
+        background: url("./images/cancel.png") no-repeat;
+        background-size: 100% 100%;
+        text-shadow: 0 2px 6px rgba(19,94,189,0.64);
+      }
+      .alert-dialog-ok{
+        background: url("./images/ok.png") no-repeat;
+        background-size: 100% 100%;
+        text-shadow: 0 2px 6px #DC6D0A;
+      }
+    }
+  }
+}

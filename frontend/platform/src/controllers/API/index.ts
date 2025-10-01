@@ -1,37 +1,37 @@
 import { AppNumType, AppType } from "@/types/app";
+import originAxios from "axios";
 import { AppConfig } from "../../types/api/app";
 import { FlowType } from "../../types/flow";
 import axios from "../request";
-import originAxios from "axios";
 import {
   APIClassType,
   BuildStatusTypeAPI,
   InitTypeAPI,
-  RTServer
+  RTServer,
 } from "./../../types/api/index";
 
 export const paramsSerializer = (params) => {
   return Object.keys(params)
-    .map(key => {
+    .map((key) => {
       const value = params[key];
       if (value === undefined) {
         return null; // 只返回非undefined的值
       }
       if (Array.isArray(value)) {
-        return value.map(val => `${key}=${val}`).join('&');
+        return value.map((val) => `${key}=${val}`).join("&");
       }
       return `${key}=${value}`;
     })
-    .filter(item => item !== null) // 过滤掉值为null的项
-    .join('&');
-}
+    .filter((item) => item !== null) // 过滤掉值为null的项
+    .join("&");
+};
 
 const GITHUB_API_URL = "https://api.github.com";
 
 export async function getRepoStars(owner, repo) {
   try {
     const response = await axios.get(
-      `${GITHUB_API_URL}/repos/${owner}/${repo}`
+      `${GITHUB_API_URL}/repos/${owner}/${repo}`,
     );
     return response.data.stargazers_count;
   } catch (error) {
@@ -39,7 +39,6 @@ export async function getRepoStars(owner, repo) {
     return null;
   }
 }
-
 
 /**
  * Fetches all objects from the API endpoint.
@@ -92,13 +91,18 @@ export async function saveThemeApi(data: string): Promise<any> {
  * @returns The flows data.
  * @throws Will throw an error if reading fails.
  */
-export async function readTempsDatabase(type, id?: number): Promise<FlowType[]> {
+export async function readTempsDatabase(
+  type,
+  id?: number,
+): Promise<FlowType[]> {
   const typeMap = {
     [AppType.FLOW]: 10,
     [AppType.ASSISTANT]: 5,
-    [AppType.SKILL]: 1
-  }
-  return await axios.get(`/api/v1/skill/template?flow_type=${typeMap[type]}${id ? '&id=' + id : ''}`);
+    [AppType.SKILL]: 1,
+  };
+  return await axios.get(
+    `/api/v1/skill/template?flow_type=${typeMap[type]}${id ? "&id=" + id : ""}`,
+  );
 }
 
 /**
@@ -108,8 +112,11 @@ export async function readTempsDatabase(type, id?: number): Promise<FlowType[]> 
  * @returns  null.
  */
 export function createTempApi(params, type) {
-  const map = { assistant: 5, skill: 1, flow: 10 }
-  return axios.post(`/api/v1/skill/template/create`, { ...params, flow_type: map[type] });
+  const map = { assistant: 5, skill: 1, flow: 10 };
+  return axios.post(`/api/v1/skill/template/create`, {
+    ...params,
+    flow_type: map[type],
+  });
 }
 
 /**
@@ -136,16 +143,24 @@ export function updateTempApi(temp_id, data) {
  * 获取知识库列表
  * type 0文件库 1qa库
  */
-export async function readFileLibDatabase({ page = 1, pageSize = 20, name = '', type = 0 }) {
+export async function readFileLibDatabase({
+  page = 1,
+  pageSize = 20,
+  name = "",
+  type = 0,
+}) {
   try {
-    const response: { data: any[], total: number } = await axios.get('/api/v1/knowledge', {
-      params: {
-        page_num: page,
-        page_size: pageSize,
-        name,
-        type,
+    const response: { data: any[]; total: number } = await axios.get(
+      "/api/v1/knowledge",
+      {
+        params: {
+          page_num: page,
+          page_size: pageSize,
+          name,
+          type,
+        },
       },
-    });
+    );
     return response;
   } catch (error) {
     console.error(error);
@@ -163,20 +178,28 @@ export async function copyLibDatabase(knowledge_id) {
 /**
  * 获取知识库下文件列表
  */
-export async function readFileByLibDatabase({ id, page, pageSize = 20, name = '', status, file_ids }) {
-
+export async function readFileByLibDatabase({
+  id,
+  page,
+  pageSize = 20,
+  name = "",
+  status,
+  file_ids,
+}) {
   const params = {
     page_num: page,
     page_size: pageSize,
     file_name: name,
     status: status === 999 ? undefined : status,
     file_ids,
-  }
-  const response: { data: any[], total: number, writeable: any } = await axios.get(`/api/v1/knowledge/file_list/${id}`, {
-    params, paramsSerializer
-  });
+  };
+  const response: { data: any[]; total: number; writeable: any } =
+    await axios.get(`/api/v1/knowledge/file_list/${id}`, {
+      params,
+      paramsSerializer,
+    });
 
-  return response
+  return response;
   // return { data, writeable, pages: Math.ceil(total / pageSize) }
 }
 
@@ -190,11 +213,16 @@ export async function retryKnowledgeFileApi(data) {
 /**
  * 上传文件
  */
-export async function uploadLibFile(data, config, type: 'knowledge' | 'icon', url) {
+export async function uploadLibFile(
+  data,
+  config,
+  type: "knowledge" | "icon",
+  url,
+) {
   const urls = {
-    knowledge: '/api/v1/knowledge/upload',
-    icon: '/api/v1/upload/icon',
-  }
+    knowledge: "/api/v1/knowledge/upload",
+    icon: "/api/v1/upload/icon",
+  };
   return await axios.post(url || urls[type], data, config);
 }
 
@@ -212,18 +240,18 @@ type ExcelRule = {
 type UploadFileFc = {
   knowledge_id: number; // 必需
   separator: string[]; // 必需，切分相关参数，如果不传，使用默认值
-  separator_rule: ('after' | 'before')[]; // 必需
+  separator_rule: ("after" | "before")[]; // 必需
   chunk_size: number; // 必需
   chunk_overlap: number; // 必需
   file_list: { file_path: string }[]; // 必需
   retain_images?: boolean; //保留文档图片
-  force_ocr?: boolean;//强制开启ocr
-  enable_formula?: boolean;//开启公式识别
-  filter_page_header_footer?: boolean;//过滤页眉页脚
+  force_ocr?: boolean; //强制开启ocr
+  enable_formula?: boolean; //开启公式识别
+  filter_page_header_footer?: boolean; //过滤页眉页脚
   excel_rules: {
-    [uuid: string]: ExcelRule
+    [uuid: string]: ExcelRule;
   };
-}
+};
 type DefaultUploadFileFc = {
   knowledge_id: number; // 必需
   file_list: { file_path: string }[]; // 必需
@@ -231,7 +259,9 @@ type DefaultUploadFileFc = {
 ///
 export async function subUploadLibFile(data: UploadFileFc): Promise<any>;
 export async function subUploadLibFile(data: DefaultUploadFileFc): Promise<any>;
-export async function subUploadLibFile(data: UploadFileFc | DefaultUploadFileFc) {
+export async function subUploadLibFile(
+  data: UploadFileFc | DefaultUploadFileFc,
+) {
   return await axios.post(`/api/v1/knowledge/process`, data);
 }
 
@@ -241,24 +271,28 @@ export async function subUploadLibFile(data: UploadFileFc | DefaultUploadFileFc)
 let cancelTokenSource = originAxios.CancelToken.source();
 export async function previewFileSplitApi(data) {
   // 取消之前的请求
-  cancelTokenSource.cancel('Operation canceled due to new request');
+  cancelTokenSource.cancel("Operation canceled due to new request");
 
   // 创建新的取消令牌
   cancelTokenSource = originAxios.CancelToken.source();
-  return await axios.post(`/api/v1/knowledge/preview`, data, {
-    cancelToken: cancelTokenSource.token
-  }).then(res => {
-    return res
-  });
+  return await axios
+    .post(`/api/v1/knowledge/preview`, data, {
+      cancelToken: cancelTokenSource.token,
+    })
+    .then((res) => {
+      return res;
+    });
 }
 
 /**
  * 获取知识库下的切分段落
  */
-export async function getKnowledgeChunkApi(params): Promise<{ models: string[] }> {
-  let queryStr = ''
+export async function getKnowledgeChunkApi(
+  params,
+): Promise<{ models: string[] }> {
+  let queryStr = "";
   if (params.file_ids?.length) {
-    queryStr = params.file_ids.map(id => `file_ids=${id}`).join('&');
+    queryStr = params.file_ids.map((id) => `file_ids=${id}`).join("&");
   } else {
     delete params.file_ids;
   }
@@ -294,8 +328,8 @@ type KnowledgePutRequest = {
   file_id: number;
   chunk_index: number;
   text: string;
-  bbox: any
-}
+  bbox: any;
+};
 export async function updateChunkApi(data: KnowledgePutRequest) {
   return await axios.put(`/api/v1/knowledge/chunk`, data);
 }
@@ -312,13 +346,15 @@ export async function createFileLib(data) {
  */
 export async function updateKnowledgeApi(data) {
   return await axios.put(`/api/v1/knowledge/`, data);
-};
+}
 
 /**
  * 删除支持库
  */
 export async function deleteFileLib(id) {
-  return await axios.delete(`/api/v1/knowledge/`, { data: { knowledge_id: id } });
+  return await axios.delete(`/api/v1/knowledge/`, {
+    data: { knowledge_id: id },
+  });
 }
 
 /**
@@ -331,16 +367,15 @@ export async function deleteFile(id) {
 /**
  * 获取Qa问题列表
  */
-export async function getQaList(id, data: { page, pageSize, keyword }) {
+export async function getQaList(id, data: { page; pageSize; keyword }) {
   return await axios.get(`/api/v1/knowledge/qa/list/${id}`, {
     params: {
       page_size: data.pageSize,
       page_num: data.page,
-      keyword: data.keyword
+      keyword: data.keyword,
     },
   });
 }
-
 
 /**
  * 导出QA文件
@@ -352,11 +387,14 @@ export async function getQaFile(id): Promise<{ file_list: string[] }> {
 /**
  * 导入QA文件
  */
-export async function postImportQaFile(id, params): Promise<{
+export async function postImportQaFile(
+  id,
+  params,
+): Promise<{
   result: {
-    answers: string,
-    questions: string[],
-  }[]
+    answers: string;
+    questions: string[];
+  }[];
 }> {
   const { url } = params;
   return await axios.post(`/api/v1/knowledge/qa/import/${id}`, {
@@ -367,11 +405,14 @@ export async function postImportQaFile(id, params): Promise<{
 /**
  * 预览QA文件
  */
-export async function getQaFilePreview(id, params): Promise<{
+export async function getQaFilePreview(
+  id,
+  params,
+): Promise<{
   result: {
-    answers: string,
-    questions: string[],
-  }[]
+    answers: string;
+    questions: string[];
+  }[];
 }> {
   const { url, size, offset } = params;
   return await axios.post(`/api/v1/knowledge/qa/preview/${id}`, {
@@ -387,16 +428,19 @@ export async function getQaFilePreview(id, params): Promise<{
 export async function updateQaStatus(id, status) {
   return await axios.post(`/api/v1/knowledge/qa/status_switch`, {
     id,
-    status
+    status,
   });
 }
 
 /**
  * Qa问题新增/修改
  */
-export async function updateQa(id, data: { questions, answers, knowledge_id, source }) {
+export async function updateQa(
+  id,
+  data: { questions; answers; knowledge_id; source },
+) {
   if (id) {
-    data.id = id
+    data.id = id;
   }
 
   return await axios.post(`/api/v1/knowledge/qa/add`, data);
@@ -407,7 +451,7 @@ export async function updateQa(id, data: { questions, answers, knowledge_id, sou
  */
 export async function deleteQa(ids) {
   return await axios.delete(`/api/v1/knowledge/qa/delete`, {
-    data: { ids }
+    data: { ids },
   });
 }
 
@@ -421,7 +465,7 @@ export async function getQaDetail(id) {
 /**
  * 添加相似问到问题
  */
-export async function addSimilarQa(data: { ids: string[], question: string }) {
+export async function addSimilarQa(data: { ids: string[]; question: string }) {
   return await axios.post(`/api/v1/knowledge/qa/append`, data);
 }
 
@@ -430,9 +474,9 @@ export async function addSimilarQa(data: { ids: string[], question: string }) {
  */
 export async function generateSimilarQa(question, anwser) {
   return await axios.post(`/api/v1/knowledge/qa/auto_question`, {
-    "ori_question": question,
-    "anwser": anwser,
-    "number": 3
+    ori_question: question,
+    anwser: anwser,
+    number: 3,
   });
 }
 
@@ -447,21 +491,25 @@ export async function getEmbeddingModel(): Promise<{ models: string[] }> {
  * 获取文件地址
  */
 export async function getFilePathApi(file_id) {
-  return await axios.get(`/api/v1/knowledge/file_share`, { params: { file_id } });
+  return await axios.get(`/api/v1/knowledge/file_share`, {
+    params: { file_id },
+  });
 }
 
 /**
  * 获取文件chunk对应的文本
  */
 export async function getFileBboxApi(file_id) {
-  return await axios.get(`/api/v1/knowledge/file_bbox`, { params: { file_id } });
+  return await axios.get(`/api/v1/knowledge/file_bbox`, {
+    params: { file_id },
+  });
 }
 
 /**
  * 获取知识库详情
  */
 export async function getKnowledgeDetailApi(knowledge_id): Promise<any[]> {
-  let queryStr = knowledge_id.map(id => `knowledge_id=${id}`).join('&');
+  let queryStr = knowledge_id.map((id) => `knowledge_id=${id}`).join("&");
   return await axios.get(`/api/v1/knowledge/info?${queryStr}`);
 }
 
@@ -489,9 +537,16 @@ export async function getAllServicesApi(): Promise<any[]> {
 /**
  * 添加服务
  */
-export async function addServiceApi(name: string, ftUrl: string): Promise<{ id: number }> {
-  return await axios.post(`/api/v1/server/add`,
-    { endpoint: '', sft_endpoint: ftUrl, server: name, remark: 'RT模块创建' });
+export async function addServiceApi(
+  name: string,
+  ftUrl: string,
+): Promise<{ id: number }> {
+  return await axios.post(`/api/v1/server/add`, {
+    endpoint: "",
+    sft_endpoint: ftUrl,
+    server: name,
+    remark: "RT模块创建",
+  });
 }
 
 /**
@@ -509,10 +564,7 @@ export async function getModelInfoApi(id) {
   return await axios.get(`/api/v1/server/model/${id}`);
 }
 
-
-export async function postValidateCode(
-  code: string
-): Promise<any> {
+export async function postValidateCode(code: string): Promise<any> {
   return await axios.post("/api/v1/validate/code", { code });
 }
 
@@ -526,7 +578,7 @@ export async function postValidateCode(
 export async function postValidatePrompt(
   name: string,
   template: string,
-  frontend_node: APIClassType
+  frontend_node: APIClassType,
 ): Promise<any> {
   return await axios.post("/api/v1/validate/prompt", {
     name: name,
@@ -548,39 +600,44 @@ export const getChatsApi = (page) => {
     }
   }
 
-  return (axios.get(`/api/v1/chat/list?page=${page}&limit=40`) as Promise<any[]>).then(res => {
-    const result = res?.filter((el, i) => el.chat_id) || []
-    return result.map(el => {
-      const { intermediate_steps, message } = el.latest_message || { intermediate_steps: '', message: '' }
+  return (
+    axios.get(`/api/v1/chat/list?page=${page}&limit=40`) as Promise<any[]>
+  ).then((res) => {
+    const result = res?.filter((el, i) => el.chat_id) || [];
+    return result.map((el) => {
+      const { intermediate_steps, message } = el.latest_message || {
+        intermediate_steps: "",
+        message: "",
+      };
       const _message = (function () {
         if (intermediate_steps) return intermediate_steps;
         if (isJsonSerializable(message)) {
           const json = JSON.parse(message);
-          if (Array.isArray(json)) return message
-          const chatKey = el.flow_type === AppNumType.FLOW ? 'msg' : Object.keys(json)[0]
-          return json[chatKey] || ''
+          if (Array.isArray(json)) return message;
+          const chatKey =
+            el.flow_type === AppNumType.FLOW ? "msg" : Object.keys(json)[0];
+          return json[chatKey] || "";
         }
         return message;
-      }())
+      })();
 
       return {
         ...el,
         latest_message: {
           ...el.latest_message,
-          message: _message.substring(0, 40)
-        }
-      }
-    })
-  })
+          message: _message.substring(0, 40),
+        },
+      };
+    });
+  });
 };
 
 /**
  * 删除会话
  */
 export const deleteChatApi = (chatId) => {
-  return axios.delete(`/api/v1/chat/${chatId}`)
+  return axios.delete(`/api/v1/chat/${chatId}`);
 };
-
 
 /**
  * 获取会话消息记录
@@ -617,8 +674,15 @@ export interface MessageDB {
   user_id: number;
 }
 
-export async function getChatHistory(flowId: string, chatId: string, pageSize: number, id?: number): Promise<MessageDB[]> {
-  return await axios.get(`/api/v1/chat/history?flow_id=${flowId}&chat_id=${chatId}&page_size=${pageSize}&id=${id || ''}`);
+export async function getChatHistory(
+  flowId: string,
+  chatId: string,
+  pageSize: number,
+  id?: number,
+): Promise<MessageDB[]> {
+  return await axios.get(
+    `/api/v1/chat/history?flow_id=${flowId}&chat_id=${chatId}&page_size=${pageSize}&id=${id || ""}`,
+  );
 }
 
 /**
@@ -640,7 +704,7 @@ export const disLikeCommentApi = (message_id, comment) => {
  * */
 export const copyTrackingApi = (msgId) => {
   return axios.post(`/api/v1/chat/copied`, { message_id: msgId });
-}
+};
 
 /**
  * Fetches the version of the API.
@@ -660,7 +724,7 @@ export async function getVersion() {
  */
 export async function getBuildStatus(
   flowId: string,
-  versionId?: number
+  versionId?: number,
 ): Promise<BuildStatusTypeAPI> {
   const qstr = versionId ? `?version_id=${versionId}` : "";
   return await axios.get(`/api/v1/build/${flowId}/status${qstr}`);
@@ -674,13 +738,16 @@ export async function getBuildStatus(
  *
  */
 export async function postBuildInit(data: {
-  flow: FlowType
-  chatId?: string
-  versionId?: number
+  flow: FlowType;
+  chatId?: string;
+  versionId?: number;
 }): Promise<any> {
   const { flow, chatId, versionId } = data;
-  const qstr = versionId ? `?version_id=${versionId}` : ''
-  return await axios.post(`/api/v1/build/init/${flow.id}${qstr}`, chatId ? { chat_id: chatId } : flow);
+  const qstr = versionId ? `?version_id=${versionId}` : "";
+  return await axios.post(
+    `/api/v1/build/init/${flow.id}${qstr}`,
+    chatId ? { chat_id: chatId } : flow,
+  );
 }
 
 // fetch(`/upload/${id}`, {
@@ -692,17 +759,14 @@ export async function postBuildInit(data: {
  * @param {File} file - The file to upload.
  * @param {string} id - The ID of the flow to upload the file to.
  */
-export async function uploadFile(
-  file: File,
-  id: string
-): Promise<any> {
+export async function uploadFile(file: File, id: string): Promise<any> {
   const formData = new FormData();
   formData.append("file", file);
   return await axios.post(`/api/v1/upload/${id}`, formData);
 }
 
 /***************************
- * ************ model ************ 
+ * ************ model ************
  */
 /**
  * 获取知识库下文件列表
@@ -710,7 +774,7 @@ export async function uploadFile(
  */
 export async function serverListApi(byRtName?: string): Promise<any[]> {
   return await axios.get(`/api/v1/server/list`).then((list: any) => {
-    return byRtName ? list.filter(item => item.server === byRtName) : list
+    return byRtName ? list.filter((item) => item.server === byRtName) : list;
   });
 }
 
@@ -718,7 +782,9 @@ export async function serverListApi(byRtName?: string): Promise<any[]> {
  * 上下线
  */
 export async function switchOnLineApi(id, on) {
-  return await axios.post(`/api/v1/server/${on ? 'load' : 'unload'}`, { deploy_id: id });
+  return await axios.post(`/api/v1/server/${on ? "load" : "unload"}`, {
+    deploy_id: id,
+  });
 }
 
 /**
@@ -747,65 +813,85 @@ export async function getWorkstationConfigApi(): Promise<any> {
   return await axios.get(`api/v1/workstation/config`);
 }
 
-
 /***************************
- * ************ 溯源 ************ 
+ * ************ 溯源 ************
  */
 // 分词
-export async function splitWordApi(word: string, messageId: string): Promise<string[]> {
-  return await axios.get(`/api/v1/qa/keyword?message_id=${messageId}`)
+export async function splitWordApi(
+  word: string,
+  messageId: string,
+): Promise<string[]> {
+  return await axios.get(`/api/v1/qa/keyword?message_id=${messageId}`);
 }
 
 // 获取 chunks
-export async function getSourceChunksApi(chatId: string, messageId: number, keys: string) {
+export async function getSourceChunksApi(
+  chatId: string,
+  messageId: number,
+  keys: string,
+) {
   try {
     let chunks: any[] = await axios.post(`/api/v1/qa/chunk`, {
       chat_id: chatId,
       message_id: messageId,
       keys,
-    })
+    });
 
-    const fileMap = {}
-    chunks.forEach(chunk => {
-      const list = fileMap[chunk.file_id]
+    const fileMap = {};
+    chunks.forEach((chunk) => {
+      const list = fileMap[chunk.file_id];
       if (list) {
-        fileMap[chunk.file_id].push(chunk)
+        fileMap[chunk.file_id].push(chunk);
       } else {
-        fileMap[chunk.file_id] = [chunk]
+        fileMap[chunk.file_id] = [chunk];
       }
     });
 
-    return Object.keys(fileMap).map(fileId => {
-      const { file_id: id, source: fileName, source_url: fileUrl, original_url: originUrl, ...other } = fileMap[fileId][0]
+    return Object.keys(fileMap)
+      .map((fileId) => {
+        const {
+          file_id: id,
+          source: fileName,
+          source_url: fileUrl,
+          original_url: originUrl,
+          ...other
+        } = fileMap[fileId][0];
 
-      const chunks = fileMap[fileId].sort((a, b) => b.score - a.score)
-        .map(chunk => ({
-          box: chunk.chunk_bboxes,
-          score: chunk.score
-        }))
-      const score = chunks[0].score
+        const chunks = fileMap[fileId]
+          .sort((a, b) => b.score - a.score)
+          .map((chunk) => ({
+            box: chunk.chunk_bboxes,
+            score: chunk.score,
+          }));
+        const score = chunks[0].score;
 
-      return { id, fileName, fileUrl, originUrl, chunks, ...other, score }
-    }).sort((a, b) => b.score - a.score)
+        return { id, fileName, fileUrl, originUrl, chunks, ...other, score };
+      })
+      .sort((a, b) => b.score - a.score);
   } catch (error) {
     console.error(error);
     throw error;
   }
 }
 
-
 /**
  * 上传文件
  */
-export async function uploadFileApi({ fileKey, file, onProgress, onFinish, onFail, onAbort }:
-  {
-    fileKey: string,
-    file: File,
-    onProgress?: (progressEvent: number) => void,
-    onFail?: (error: any) => void,
-    onFinish?: (response: any) => void,
-    onAbort?: (abortCtlr: any) => void
-  }): Promise<any> {
+export async function uploadFileApi({
+  fileKey,
+  file,
+  onProgress,
+  onFinish,
+  onFail,
+  onAbort,
+}: {
+  fileKey: string;
+  file: File;
+  onProgress?: (progressEvent: number) => void;
+  onFail?: (error: any) => void;
+  onFinish?: (response: any) => void;
+  onAbort?: (abortCtlr: any) => void;
+}): Promise<any> {
   // 创建新的控制器
   const abortCtlr = new AbortController();
   onAbort(abortCtlr);
@@ -817,23 +903,27 @@ export async function uploadFileApi({ fileKey, file, onProgress, onFinish, onFai
     let isFinished = false;
 
     const config = {
-      headers: { 'Content-Type': 'multipart/form-data;charset=utf-8' },
+      headers: { "Content-Type": "multipart/form-data;charset=utf-8" },
       onUploadProgress: (progressEvent) => {
         const { loaded, total } = progressEvent;
         const progress = Math.min(99.99, (loaded * 100) / total);
         console.log(`Upload progress: ${file.name} ${progress}%`);
         // UI with the progress information here
-        !isFinished && onProgress(progress)
+        !isFinished && onProgress(progress);
       },
       signal: abortCtlr.signal,
-    }
-    const response = await axios.post('/api/v1/knowledge/upload', formData, config);
+    };
+    const response = await axios.post(
+      "/api/v1/knowledge/upload",
+      formData,
+      config,
+    );
     // 处理成功
     isFinished = true;
     onFinish(response);
   } catch (error) {
     if (error?.code === "ERR_CANCELED") {
-      console.log('用户取消了上传');
+      console.log("用户取消了上传");
     } else {
       onFail(error);
     }

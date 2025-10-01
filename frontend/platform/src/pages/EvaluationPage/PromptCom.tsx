@@ -1,8 +1,8 @@
-import { useContext, useEffect, useState } from "react";
 import { PopUpContext } from "@/contexts/popUpContext";
 import GenericModal from "@/modals/genericModal";
 import { TextAreaComponentType } from "@/types/components";
 import { TypeModal } from "@/utils";
+import { useContext, useEffect, useState } from "react";
 
 import { ExternalLink } from "lucide-react";
 
@@ -47,7 +47,7 @@ export default function PromptAreaComponent({
                 }}
                 nodeClass={nodeClass}
                 setNodeClass={setNodeClass}
-              />
+              />,
             );
           }}
           className={
@@ -71,7 +71,7 @@ export default function PromptAreaComponent({
                 setValue={handleSave}
                 nodeClass={nodeClass}
                 setNodeClass={setNodeClass}
-              />
+              />,
             );
           }}
         >

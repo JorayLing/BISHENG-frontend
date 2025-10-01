@@ -1,1 +1,4 @@
-export declare const graphvizRender: (element: HTMLElement, cdn?: string) => void;
+export declare const graphvizRender: (
+  element: HTMLElement,
+  cdn?: string,
+) => void;

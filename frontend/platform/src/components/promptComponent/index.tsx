@@ -14,7 +14,7 @@ export default function PromptAreaComponent({
   onChange,
   disabled,
   editNode = false,
-  type = TypeModal.PROMPT
+  type = TypeModal.PROMPT,
 }: TextAreaComponentType) {
   const [myValue, setMyValue] = useState(value);
   const { openPopUp } = useContext(PopUpContext);
@@ -46,7 +46,7 @@ export default function PromptAreaComponent({
   const handleSave = (t: string) => {
     setMyValue(t);
     onChange(t);
-  }
+  };
 
   return (
     <div className={disabled ? "pointer-events-none w-full " : "w-full"}>
@@ -65,14 +65,14 @@ export default function PromptAreaComponent({
                 }}
                 nodeClass={nodeClass}
                 setNodeClass={setNodeClass}
-              />
+              />,
             );
           }}
           className={
             editNode
               ? "input-edit-node input-dialog"
               : (disabled ? " input-disable text-ring " : "") +
-              " input-primary text-muted-foreground whitespace-wrap"
+                " input-primary text-muted-foreground whitespace-wrap"
           }
         >
           {myValue !== "" ? myValue : "enter your prompt"}
@@ -89,7 +89,7 @@ export default function PromptAreaComponent({
                 setValue={handleSave}
                 nodeClass={nodeClass}
                 setNodeClass={setNodeClass}
-              />
+              />,
             );
           }}
         >

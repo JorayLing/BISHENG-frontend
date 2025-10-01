@@ -8,7 +8,12 @@ export type ChatMessageType = {
   isSend: boolean;
   thought?: string;
   category?: string;
-  files?: Array<{ data: string; type: string; data_type: string, file_name?: string }>;
+  files?: Array<{
+    data: string;
+    type: string;
+    data_type: string;
+    file_name?: string;
+  }>;
   chatKey: string;
   end: boolean;
   id?: number;

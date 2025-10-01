@@ -38,10 +38,11 @@ export default function ChatInput({
           resize: "none",
           bottom: `${inputRef?.current?.scrollHeight}px`,
           maxHeight: "150px",
-          overflow: `${inputRef.current && inputRef.current.scrollHeight > 150
-            ? "auto"
-            : "hidden"
-            }`,
+          overflow: `${
+            inputRef.current && inputRef.current.scrollHeight > 150
+              ? "auto"
+              : "hidden"
+          }`,
         }}
         value={lockChat ? "Thinking..." : chatValue}
         onChange={(e) => {
@@ -54,7 +55,7 @@ export default function ChatInput({
               ? "form-modal-no-input bg-input"
               : " form-modal-lock-false bg-background",
 
-          "form-modal-lockchat"
+          "form-modal-lockchat",
         )}
         placeholder={
           noInput
@@ -70,7 +71,7 @@ export default function ChatInput({
               ? "bg-indigo-600 text-background"
               : chatValue === ""
                 ? "text-primary"
-                : "bg-emerald-600 text-background"
+                : "bg-emerald-600 text-background",
           )}
           disabled={lockChat}
           onClick={() => sendMessage()}

@@ -1,1 +1,4 @@
-export declare const setPreviewMode: (mode: "both" | "editor", vditor: IVditor) => void;
+export declare const setPreviewMode: (
+  mode: "both" | "editor",
+  vditor: IVditor,
+) => void;

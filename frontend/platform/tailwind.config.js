@@ -29,8 +29,8 @@ module.exports = {
     },
     extend: {
       screens: {
-        'my-size': '1800px',
-        'my-size-lg': '2200px'
+        "my-size": "1800px",
+        "my-size-lg": "2200px",
       },
       colors: {
         "search-input": "var(--search-input)",
@@ -44,7 +44,7 @@ module.exports = {
         "background-tip-darkhover": "var(--background-tip-darkhover)",
         "background-main-content": "var(--background-main-content)",
         "background-main": "var(--background-main)",
-        "button": "var(--button)",
+        button: "var(--button)",
         "login-input": "var(--login-input)",
         "tx-color": "var(--text-color)",
         "background-login": "var(--background-login)",
@@ -231,6 +231,6 @@ module.exports = {
         },
       });
     }),
-    require("@tailwindcss/typography")
+    require("@tailwindcss/typography"),
   ],
 };

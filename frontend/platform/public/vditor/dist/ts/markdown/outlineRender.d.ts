@@ -1,1 +1,5 @@
-export declare const outlineRender: (contentElement: HTMLElement, targetElement: Element, vditor?: IVditor) => string;
+export declare const outlineRender: (
+  contentElement: HTMLElement,
+  targetElement: Element,
+  vditor?: IVditor,
+) => string;

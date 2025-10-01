@@ -30,7 +30,7 @@ type locationContextType = {
   extraComponent: any;
   setExtraComponent: (newState: any) => void;
   appConfig: any;
-  reloadConfig: () => void
+  reloadConfig: () => void;
 };
 
 //initial value for location context
@@ -41,16 +41,16 @@ const initialValue = {
     window.innerWidth > 1024 && window.location.pathname.split("/")[1]
       ? true
       : false,
-  setCurrent: () => { },
-  setIsStackedOpen: () => { },
+  setCurrent: () => {},
+  setIsStackedOpen: () => {},
   showSideBar: window.location.pathname.split("/")[1] ? true : false,
-  setShowSideBar: () => { },
+  setShowSideBar: () => {},
   extraNavigation: { title: "" },
-  setExtraNavigation: () => { },
+  setExtraNavigation: () => {},
   extraComponent: <></>,
-  setExtraComponent: () => { },
+  setExtraComponent: () => {},
   appConfig: { libAccepts: [] },
-  reloadConfig: () => { }
+  reloadConfig: () => {},
 };
 
 export const locationContext = createContext<locationContextType>(initialValue);
@@ -58,7 +58,7 @@ export const locationContext = createContext<locationContextType>(initialValue);
 export function LocationProvider({ children }: { children: ReactNode }) {
   const [current, setCurrent] = useState(initialValue.current);
   const [isStackedOpen, setIsStackedOpen] = useState(
-    initialValue.isStackedOpen
+    initialValue.isStackedOpen,
   );
   const [showSideBar, setShowSideBar] = useState(initialValue.showSideBar);
   const [extraNavigation, setExtraNavigation] = useState({ title: "" });
@@ -66,14 +66,14 @@ export function LocationProvider({ children }: { children: ReactNode }) {
   const [appConfig, setAppConfig] = useState<any>({
     libAccepts: [],
     noFace: true,
-  })
+  });
 
   const loadConfig = () => {
     getAppConfig()
-      .then(res => {
+      .then((res) => {
         // Set all config values that come from getAppConfig
         setAppConfig({
-          isDev: res.env === 'dev',
+          isDev: res.env === "dev",
           libAccepts: res.uns_support,
           officeUrl: res.office_url,
           dialogTips: res.dialog_tips,
@@ -84,44 +84,45 @@ export function LocationProvider({ children }: { children: ReactNode }) {
           noFace: !res.show_github_and_help,
           register: !!res.enable_registration,
           uploadFileMaxSize: res.uploaded_files_maximum_size || 50,
-          enableEtl4lm: res.enable_etl4lm
+          enableEtl4lm: res.enable_etl4lm,
         });
 
         // backend version
-        res.version && console.log(
-          "%cversion " + res.version,
-          "background-color:#024de3;color:#fff;font-weight:bold;font-size: 38px;" +
-          "padding: 6px 12px;font-family:'american typewriter';text-shadow:1px 1px 3px black;"
-        );
+        res.version &&
+          console.log(
+            "%cversion " + res.version,
+            "background-color:#024de3;color:#fff;font-weight:bold;font-size: 38px;" +
+              "padding: 6px 12px;font-family:'american typewriter';text-shadow:1px 1px 3px black;",
+          );
 
         // Then get workstation config separately
         return getWorkstationConfigApi()
-          .then(bench => {
+          .then((bench) => {
             // Only update the benchMenu property
-            setAppConfig(prev => ({
+            setAppConfig((prev) => ({
               ...prev,
-              benchMenu: bench?.menuShow || false
+              benchMenu: bench?.menuShow || false,
             }));
           })
-          .catch(error => {
-            console.error('Failed to get workstation config:', error);
+          .catch((error) => {
+            console.error("Failed to get workstation config:", error);
             // Set default value for benchMenu if the request fails
-            setAppConfig(prev => ({
+            setAppConfig((prev) => ({
               ...prev,
-              benchMenu: false
+              benchMenu: false,
             }));
           });
       })
-      .catch(error => {
-        console.error('Failed to get app config:', error);
+      .catch((error) => {
+        console.error("Failed to get app config:", error);
         // You might want to set some default values here if the main config fails
       });
-  }
+  };
 
   // 获取系统配置
   useEffect(() => {
-    loadConfig()
-  }, [])
+    loadConfig();
+  }, []);
 
   return (
     <locationContext.Provider

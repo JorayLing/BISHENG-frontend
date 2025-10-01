@@ -16,11 +16,11 @@ export default function InputFileComponent({
   disabled,
   suffixes = [],
   fileTypes,
-  placeholder = 'The current file is empty',
+  placeholder = "The current file is empty",
   onFileChange,
   editNode = false,
   isSSO = false,
-  multiple = false
+  multiple = false,
 }: FileComponentType) {
   const [myValue, setMyValue] = useState(value);
   const [loading, setLoading] = useState(false);
@@ -47,18 +47,18 @@ export default function InputFileComponent({
     setMyValue(value);
   }, [value]);
 
-  const { appConfig } = useContext(locationContext)
-  const { toast } = useToast()
+  const { appConfig } = useContext(locationContext);
+  const { toast } = useToast();
   const checkFileSize = (file) => {
     const maxSize = (appConfig.uploadFileMaxSize || 50) * 1024 * 1024;
     if (file.size > maxSize) {
-      return `文件：${file.name} 超过 ${appConfig.uploadFileMaxSize} MB，已移除`
+      return `文件：${file.name} 超过 ${appConfig.uploadFileMaxSize} MB，已移除`;
     }
-    return ''
-  }
+    return "";
+  };
 
   const handleButtonClick = () => {
-    if (multiple) return batchUpload()
+    if (multiple) return batchUpload();
     // Create a file input element
     const input = document.createElement("input");
     input.type = "file";
@@ -72,46 +72,49 @@ export default function InputFileComponent({
       // Get the selected file
       const file = (e.target as HTMLInputElement).files?.[0];
 
-      const errorMsg = checkFileSize(file)
+      const errorMsg = checkFileSize(file);
       if (errorMsg) {
         toast({
-          variant: 'error',
-          description: errorMsg
-        })
+          variant: "error",
+          description: errorMsg,
+        });
         return setLoading(false);
       }
       // Check if the file type is correct
       // if (file && checkFileType(file.name)) {
       // Upload the file
-      isSSO ? uploadFileWithProgress(file, (progress) => { }).then(res => {
-        setLoading(false);
-        if (typeof res === 'string') return toast({
-          variant: 'error',
-          description: res
-        })
-        const { file_path } = res;
-        setMyValue(file.name);
-        onChange(file.name);
-        // sets the value that goes to the backend
-        onFileChange(file_path);
-      }) : uploadFile(file, flow.id)
-        .then((data) => {
-          console.log("File uploaded successfully");
-          // Get the file name from the response
-          const { file_path } = data;
+      isSSO
+        ? uploadFileWithProgress(file, (progress) => {}).then((res) => {
+            setLoading(false);
+            if (typeof res === "string")
+              return toast({
+                variant: "error",
+                description: res,
+              });
+            const { file_path } = res;
+            setMyValue(file.name);
+            onChange(file.name);
+            // sets the value that goes to the backend
+            onFileChange(file_path);
+          })
+        : uploadFile(file, flow.id)
+            .then((data) => {
+              console.log("File uploaded successfully");
+              // Get the file name from the response
+              const { file_path } = data;
 
-          // Update the state and callback with the name of the file
-          // sets the value to the user
-          setMyValue(file.name);
-          onChange(file.name);
-          // sets the value that goes to the backend
-          onFileChange(file_path);
-          setLoading(false);
-        })
-        .catch(() => {
-          console.error("Error occurred while uploading file");
-          setLoading(false);
-        });
+              // Update the state and callback with the name of the file
+              // sets the value to the user
+              setMyValue(file.name);
+              onChange(file.name);
+              // sets the value that goes to the backend
+              onFileChange(file_path);
+              setLoading(false);
+            })
+            .catch(() => {
+              console.error("Error occurred while uploading file");
+              setLoading(false);
+            });
       // } else {
       //   // Show an error if the file type is not allowed
       //   setErrorData({
@@ -144,46 +147,46 @@ export default function InputFileComponent({
       if (_files && _files.length > 0) {
         const filePaths = []; // This will hold the file paths after successful upload
 
-        const errorMsgs = []
-        const files = []
+        const errorMsgs = [];
+        const files = [];
         for (let i = 0; i < _files.length; i++) {
-          const errorMsg = checkFileSize(_files[i])
-          errorMsg ? errorMsgs.push(errorMsg) : files.push(_files[i])
+          const errorMsg = checkFileSize(_files[i]);
+          errorMsg ? errorMsgs.push(errorMsg) : files.push(_files[i]);
         }
 
         if (errorMsgs.length) {
           toast({
-            variant: 'error',
-            description: errorMsgs
-          })
+            variant: "error",
+            description: errorMsgs,
+          });
           // 文件都不符合要求 结束上传
           if (errorMsgs.length === _files.length) {
             return setLoading(false);
           }
         }
 
-        const fileNames = Array.from(files).map(file => file.name); // Extract file names
+        const fileNames = Array.from(files).map((file) => file.name); // Extract file names
 
         // Perform the upload for each file
-        const uploadPromises = Array.from(files).map(file => {
+        const uploadPromises = Array.from(files).map((file) => {
           return isSSO
-            ? uploadFileWithProgress(file, (progress) => { }) // Adjust upload method if needed
-              .then(res => {
-                if (typeof res === 'string') {
-                  setErrorData({ title: "Error", list: [res] });
-                  toast({
-                    variant: 'error',
-                    description: res
-                  })
-                  setLoading(false);
-                  throw new Error(res); // Exit the upload if error occurs
-                }
-                return res.file_path
-              })
+            ? uploadFileWithProgress(file, (progress) => {}) // Adjust upload method if needed
+                .then((res) => {
+                  if (typeof res === "string") {
+                    setErrorData({ title: "Error", list: [res] });
+                    toast({
+                      variant: "error",
+                      description: res,
+                    });
+                    setLoading(false);
+                    throw new Error(res); // Exit the upload if error occurs
+                  }
+                  return res.file_path;
+                })
             : uploadFile(file, flow.id).then((data) => {
-              console.log("File uploaded successfully");
-              return data.file_path
-            });
+                console.log("File uploaded successfully");
+                return data.file_path;
+              });
         });
 
         // Wait for all file uploads to finish
@@ -202,9 +205,9 @@ export default function InputFileComponent({
           });
       } else {
         toast({
-          variant: 'error',
-          description: '没有选择文件'
-        })
+          variant: "error",
+          description: "没有选择文件",
+        });
         setLoading(false); // Hide loading state if no files were selected
       }
     };
@@ -212,8 +215,6 @@ export default function InputFileComponent({
     // Trigger the file selection dialog
     input.click();
   };
-
-
 
   return (
     <div className={disabled ? "input-component-div" : "w-full"}>
@@ -235,11 +236,13 @@ export default function InputFileComponent({
             <FileSearch2
               strokeWidth={1.5}
               className={
-                (disabled ? " text-ring " : " hover:text-accent-foreground")
+                disabled ? " text-ring " : " hover:text-accent-foreground"
               }
             />
           )}
-          {!editNode && loading && (<LoadIcon className="text-primary duration-300 pointer-events-none" />)}
+          {!editNode && loading && (
+            <LoadIcon className="text-primary duration-300 pointer-events-none" />
+          )}
         </Button>
       </div>
     </div>

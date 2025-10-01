@@ -1,6 +1,9 @@
+import { Connection, Edge, Node, ReactFlowInstance } from "@xyflow/react";
 import clsx, { ClassValue } from "clsx";
+import i18next from "i18next";
 import cloneDeep from "lodash-es/cloneDeep";
 import {
+  Box,
   Compass,
   Cpu,
   FileInput,
@@ -11,6 +14,7 @@ import {
   HelpCircle,
   Laptop2,
   Layers,
+  LayoutPanelLeft,
   Lightbulb,
   Link,
   MessageCircle,
@@ -20,11 +24,8 @@ import {
   TerminalSquare,
   Wand2,
   Wrench,
-  LayoutPanelLeft,
-  Box
 } from "lucide-react";
 import { ComponentType, SVGProps } from "react";
-import { Connection, Edge, Node, ReactFlowInstance } from '@xyflow/react';
 import { twMerge } from "tailwind-merge";
 import { ADJECTIVES, DESCRIPTIONS, NOUNS } from "./flow_constants";
 import { AirbyteIcon } from "./icons/Airbyte";
@@ -50,19 +51,13 @@ import { SlackIcon } from "./icons/Slack";
 import { VertexAIIcon } from "./icons/VertexAI";
 import { HackerNewsIcon } from "./icons/hackerNews";
 import { SupabaseIcon } from "./icons/supabase";
-import {
-  APIDataType,
-  APITemplateType,
-  TemplateVariableType
-} from "./types/api";
+import { APITemplateType, TemplateVariableType } from "./types/api";
 import {
   IVarHighlightType,
   groupedObjType,
   nodeGroupedObjType,
-  tweakType
 } from "./types/components";
 import { FlowType, NodeType } from "./types/flow";
-import i18next from "i18next";
 
 export function classNames(...classes: Array<string>) {
   return classes.filter(Boolean).join(" ");
@@ -142,7 +137,7 @@ export const nodeColors: { [char: string]: string } = {
   str: "#049524",
   retrievers: "#e6b25a",
   input_output: "#0ea5e9",
-  autogen_roles: '#6366f1',
+  autogen_roles: "#6366f1",
   unknown: "#9CA3AF",
   custom_components: "#ab11ab",
 };
@@ -166,7 +161,7 @@ const nodeNames: { [char: string]: string } = {
   input_output: "输入输出/inputOutput",
   utilities: "通用工具/Utilities",
   output_parsers: "输出解析器/OutputParsers",
-  autogen_roles: '多智能体角色/AutogenRole',
+  autogen_roles: "多智能体角色/AutogenRole",
   custom_components: "自定义/Custom",
   unknown: "Unknown",
 };
@@ -190,13 +185,13 @@ const nodeEnNames: { [char: string]: string } = {
   input_output: "input/output",
   utilities: "Utilities",
   output_parsers: "OutputParsers",
-  autogen_roles: 'AutogenRole',
+  autogen_roles: "AutogenRole",
   custom_components: "Custom",
   unknown: "Unknown",
 };
 
 export function getNodeNames() {
-  return i18next.language === 'en' ? nodeEnNames : nodeNames
+  return i18next.language === "en" ? nodeEnNames : nodeNames;
 }
 
 export const nodeIconsLucide: {
@@ -357,7 +352,7 @@ export const nodeIconsLucide: {
   input_output: FileInput,
   // output: FileOutput,
   autogen_roles: LayoutPanelLeft,
-  custom_components: Box
+  custom_components: Box,
 };
 
 export const gradients = [
@@ -543,7 +538,7 @@ export function cn(...inputs: ClassValue[]) {
 export function measureTextHeight(
   text: string,
   width: number,
-  fontSize: number
+  fontSize: number,
 ) {
   const charHeight = fontSize;
   const lineHeight = charHeight * 1.5;
@@ -570,7 +565,7 @@ export function toCamelCase(str: string) {
     .map((word, index) =>
       index === 0
         ? word.toLowerCase()
-        : word[0].toUpperCase() + word.slice(1).toLowerCase()
+        : word[0].toUpperCase() + word.slice(1).toLowerCase(),
     )
     .join("");
 }
@@ -632,7 +627,7 @@ export function getConnectedNodes(edge: Edge, nodes: Array<Node>): Array<Node> {
 // 控制节点链接的验证，false 不可连
 export function isValidConnection(
   { source, target, sourceHandle, targetHandle }: Connection,
-  reactFlowInstance: ReactFlowInstance
+  reactFlowInstance: ReactFlowInstance,
 ) {
   if (
     targetHandle
@@ -646,7 +641,7 @@ export function isValidConnection(
         targetHandle
           .split("|")[0]
           .split(";")
-          .some((n) => n === t)
+          .some((n) => n === t),
       ) ||
     targetHandle.split("|")[0] === "str"
   ) {
@@ -686,7 +681,7 @@ export function removeApiKeys(flow: FlowType): FlowType {
 
 export function updateObject<T extends Record<string, any>>(
   reference: T,
-  objectToUpdate: T
+  objectToUpdate: T,
 ): T {
   let clonedObject = cloneDeep(objectToUpdate);
   // Loop through each key in the object to update
@@ -718,15 +713,18 @@ export function debounce(func, wait) {
 // 从模板中复制template
 export function updateTemplate(
   reference: APITemplateType,
-  objectToUpdate: APITemplateType
+  objectToUpdate: APITemplateType,
 ): APITemplateType {
   let clonedObject: APITemplateType = cloneDeep(reference); // temp clone
 
   // Loop through each key in the reference object
   for (const tmpkey in clonedObject) {
-    if (!objectToUpdate[tmpkey]) continue // 没有的 key直接使用template对象
+    if (!objectToUpdate[tmpkey]) continue; // 没有的 key直接使用template对象
     // If the tmpkey is not in the object to update, add it
-    if (objectToUpdate[tmpkey] && (objectToUpdate[tmpkey].value || objectToUpdate[tmpkey].type === 'bool')) {
+    if (
+      objectToUpdate[tmpkey] &&
+      (objectToUpdate[tmpkey].value || objectToUpdate[tmpkey].type === "bool")
+    ) {
       clonedObject[tmpkey].value = objectToUpdate[tmpkey].value;
     }
     if (
@@ -738,22 +736,22 @@ export function updateTemplate(
     }
 
     // file_path的文件类型不覆盖
-    if (tmpkey === 'file_path') {
-      clonedObject[tmpkey].fileTypes = objectToUpdate[tmpkey].fileTypes
-      clonedObject[tmpkey].suffixes = objectToUpdate[tmpkey].suffixes
+    if (tmpkey === "file_path") {
+      clonedObject[tmpkey].fileTypes = objectToUpdate[tmpkey].fileTypes;
+      clonedObject[tmpkey].suffixes = objectToUpdate[tmpkey].suffixes;
     }
-    if (objectToUpdate[tmpkey].hasOwnProperty('required')) {
-      clonedObject[tmpkey].required = objectToUpdate[tmpkey].required
+    if (objectToUpdate[tmpkey].hasOwnProperty("required")) {
+      clonedObject[tmpkey].required = objectToUpdate[tmpkey].required;
     }
-    if (objectToUpdate[tmpkey].hasOwnProperty('show')) {
-      clonedObject[tmpkey].show = objectToUpdate[tmpkey].show
+    if (objectToUpdate[tmpkey].hasOwnProperty("show")) {
+      clonedObject[tmpkey].show = objectToUpdate[tmpkey].show;
     }
-    if (objectToUpdate[tmpkey].hasOwnProperty('l2')) {
-      clonedObject[tmpkey].l2 = objectToUpdate[tmpkey].l2
-      clonedObject[tmpkey].l2_name = objectToUpdate[tmpkey].l2_name
+    if (objectToUpdate[tmpkey].hasOwnProperty("l2")) {
+      clonedObject[tmpkey].l2 = objectToUpdate[tmpkey].l2;
+      clonedObject[tmpkey].l2_name = objectToUpdate[tmpkey].l2_name;
     }
-    if (objectToUpdate[tmpkey].hasOwnProperty('collection_id')) {
-      clonedObject[tmpkey].collection_id = objectToUpdate[tmpkey].collection_id
+    if (objectToUpdate[tmpkey].hasOwnProperty("collection_id")) {
+      clonedObject[tmpkey].collection_id = objectToUpdate[tmpkey].collection_id;
     }
   }
   return clonedObject;
@@ -796,7 +794,7 @@ export function toTitleCase(str: string) {
     .map((word, index) => {
       if (index === 0) {
         return checkUpperWords(
-          word[0].toUpperCase() + word.slice(1).toLowerCase()
+          word[0].toUpperCase() + word.slice(1).toLowerCase(),
         );
       }
       return checkUpperWords(word.toLowerCase());
@@ -808,7 +806,7 @@ export function toTitleCase(str: string) {
     .map((word, index) => {
       if (index === 0) {
         return checkUpperWords(
-          word[0].toUpperCase() + word.slice(1).toLowerCase()
+          word[0].toUpperCase() + word.slice(1).toLowerCase(),
         );
       }
       return checkUpperWords(word.toLowerCase());
@@ -866,7 +864,7 @@ export function groupByFamily(
   data: any,
   baseClasses: string,
   left: boolean,
-  flow?: NodeType[]
+  flow?: NodeType[],
 ): groupedObjType[] {
   const baseClassesSet = new Set(baseClasses.split("\n"));
   let arrOfPossibleInputs: Array<{
@@ -900,7 +898,7 @@ export function groupByFamily(
         baseClassesSet.has(template.type)) ||
         (template.input_types &&
           template.input_types.some((inputType) =>
-            baseClassesSet.has(inputType)
+            baseClassesSet.has(inputType),
           )))
     );
   };
@@ -920,7 +918,7 @@ export function groupByFamily(
         hasBaseClassInBaseClasses:
           foundNode?.hasBaseClassInBaseClasses ||
           nodeData.node!.base_classes.some((baseClass) =>
-            baseClassesSet.has(baseClass)
+            baseClassesSet.has(baseClass),
           ), //seta como anterior ou verifica se o node tem base class
         displayName: nodeData.node?.display_name,
       });
@@ -937,10 +935,10 @@ export function groupByFamily(
       if (!foundNode) {
         foundNode = {
           hasBaseClassInTemplate: Object.values(node!.template).some(
-            checkBaseClass
+            checkBaseClass,
           ),
           hasBaseClassInBaseClasses: node!.base_classes.some((baseClass) =>
-            baseClassesSet.has(baseClass)
+            baseClassesSet.has(baseClass),
           ),
           displayName: node?.display_name,
         };
@@ -970,35 +968,40 @@ export function groupByFamily(
 
   return left
     ? arrOfPossibleOutputs.map((output) => ({
-      family: output.category,
-      type: output.full
-        ? ""
-        : output.nodes.map((item) => item.node).join(", "),
-      display_name: "",
-    }))
+        family: output.category,
+        type: output.full
+          ? ""
+          : output.nodes.map((item) => item.node).join(", "),
+        display_name: "",
+      }))
     : arrOfPossibleInputs.map((input) => ({
-      family: input.category,
-      type: input.full ? "" : input.nodes.map((item) => item.node).join(", "),
-      display_name: input.nodes.map((item) => item.displayName).join(", "),
-    }));
+        family: input.category,
+        type: input.full ? "" : input.nodes.map((item) => item.node).join(", "),
+        display_name: input.nodes.map((item) => item.displayName).join(", "),
+      }));
 }
 
 export function buildInputs(tabsState, id) {
-  if (tabsState &&
+  if (
+    tabsState &&
     tabsState[id] &&
     tabsState[id].formKeysData &&
-    tabsState[id].formKeysData.input_keys && tabsState[id].formKeysData.input_keys.length) {
-    const input = tabsState[id].formKeysData.input_keys.find(el => el.type !== 'file')
-    return JSON.stringify(input)
+    tabsState[id].formKeysData.input_keys &&
+    tabsState[id].formKeysData.input_keys.length
+  ) {
+    const input = tabsState[id].formKeysData.input_keys.find(
+      (el) => el.type !== "file",
+    );
+    return JSON.stringify(input);
   }
-  return '{"input": "message"}'
+  return '{"input": "message"}';
   // Object.keys(tabsState[id].formKeysData.input_keys).length > 0
   // ? JSON.stringify(tabsState[id].formKeysData.input_keys)
   // : '{"input": "message"}';
 }
 
 export function buildTweaks(flow) {
-  if (!flow.data) return {}
+  if (!flow.data) return {};
   return flow.data.nodes.reduce((acc, node) => {
     acc[node.data.id] = {};
     return acc;
@@ -1006,7 +1009,7 @@ export function buildTweaks(flow) {
 }
 export function validateNode(
   n: NodeType,
-  reactFlowInstance: ReactFlowInstance | any[]
+  reactFlowInstance: ReactFlowInstance | any[],
 ): Array<string> {
   if (!n.data?.node?.template || !Object.keys(n.data.node.template)) {
     return [
@@ -1018,41 +1021,38 @@ export function validateNode(
     type,
     node: { template },
   } = n.data;
-  return Object.keys(template).reduce(
-    (errors: Array<string>, t) => {
-      // 选择知识库不校验 embbadding
-      if (t === "embedding" &&
-        (template['collection_name']?.value ||
-          template['index_name']?.value)) {
-        return []
-      }
-      // （必填 && 显示 && 值为空 && 无连线） 即验证不通过
-      return errors.concat(
-        template[t].required &&
-          template[t].show &&
-          (template[t].value === undefined ||
-            template[t].value === null ||
-            template[t].value === "") &&
-          !(reactFlowInstance?.getEdges?.() || reactFlowInstance).some(
-            (e) =>
-              e.targetHandle.split("|")[1] === t &&
-              e.targetHandle.split("|")[2] === n.id
-          )
-          ? [
-            `${type} ${i18next.language === 'en' ? 'lost' : '缺少参数'} ${template.display_name || toTitleCase(template[t].name)}.`,
+  return Object.keys(template).reduce((errors: Array<string>, t) => {
+    // 选择知识库不校验 embbadding
+    if (
+      t === "embedding" &&
+      (template["collection_name"]?.value || template["index_name"]?.value)
+    ) {
+      return [];
+    }
+    // （必填 && 显示 && 值为空 && 无连线） 即验证不通过
+    return errors.concat(
+      template[t].required &&
+        template[t].show &&
+        (template[t].value === undefined ||
+          template[t].value === null ||
+          template[t].value === "") &&
+        !(reactFlowInstance?.getEdges?.() || reactFlowInstance).some(
+          (e) =>
+            e.targetHandle.split("|")[1] === t &&
+            e.targetHandle.split("|")[2] === n.id,
+        )
+        ? [
+            `${type} ${i18next.language === "en" ? "lost" : "缺少参数"} ${template.display_name || toTitleCase(template[t].name)}.`,
           ]
-          : []
-      )
-    }, [] as string[]
-  );
+        : [],
+    );
+  }, [] as string[]);
 }
 
 // 校验技能节点有效性
 export function validateNodes(reactFlowInstance: ReactFlowInstance) {
   if (reactFlowInstance.getNodes().length === 0) {
-    return [
-      "流程中未发现节点。请在流程中至少添加一个节点。",
-    ];
+    return ["流程中未发现节点。请在流程中至少添加一个节点。"];
   }
   return reactFlowInstance
     .getNodes()
@@ -1069,7 +1069,7 @@ export function getRandomDescription(): string {
 export function getRandomName(
   retry: number = 0,
   noSpace: boolean = false,
-  maxRetries: number = 3
+  maxRetries: number = 3,
 ): string {
   const left: string[] = ADJECTIVES;
   const right: string[] = NOUNS;
@@ -1129,16 +1129,15 @@ export const varHighlightHTML = ({ name }: IVarHighlightType) => {
   return html;
 };
 
-
 export const generateUUID = (length: number) => {
-  let d = new Date().getTime()
-  const uuid = ''.padStart(length, 'x').replace(/[xy]/g, (c) => {
-    const r = (d + Math.random() * 16) % 16 | 0
-    d = Math.floor(d / 16)
-    return (c == 'x' ? r : (r & 0x7 | 0x8)).toString(16)
-  })
-  return uuid
-}
+  let d = new Date().getTime();
+  const uuid = "".padStart(length, "x").replace(/[xy]/g, (c) => {
+    const r = (d + Math.random() * 16) % 16 | 0;
+    d = Math.floor(d / 16);
+    return (c == "x" ? r : (r & 0x7) | 0x8).toString(16);
+  });
+  return uuid;
+};
 
 const copyTextInDom = (dom) => {
   const range = document.createRange();
@@ -1148,29 +1147,29 @@ const copyTextInDom = (dom) => {
   window.getSelection().addRange(range);
 
   return new Promise((res) => {
-    document.execCommand('copy');
+    document.execCommand("copy");
     window.getSelection().removeAllRanges();
     res(dom.innerText);
-  })
-}
+  });
+};
 
 // 复制到剪切板
 export const copyText = (text: string | HTMLElement) => {
   // 复制 dom 内文本
-  if (typeof text !== 'string') return copyTextInDom(text)
+  if (typeof text !== "string") return copyTextInDom(text);
   // 高级 API直接复制文本（需要 https 环境）
   if (navigator.clipboard && navigator.clipboard.writeText) {
-    return navigator.clipboard.writeText(text)
+    return navigator.clipboard.writeText(text);
   }
   // 通过把文本写入 dom, 间接通过选中 dom 复制文本
   const areaDom = document.createElement("textarea");
   // 设置样式使其不在屏幕上显示
-  areaDom.style.position = 'absolute';
-  areaDom.style.left = '-9999px';
+  areaDom.style.position = "absolute";
+  areaDom.style.left = "-9999px";
   areaDom.value = text;
   document.body.appendChild(areaDom);
 
   return copyTextInDom(areaDom).then((str) => {
     document.body.removeChild(areaDom);
-  })
+  });
 };

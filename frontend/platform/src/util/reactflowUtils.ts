@@ -1,4 +1,3 @@
-import { cloneDeep } from "lodash-es";
 import {
   Connection,
   Edge,
@@ -7,13 +6,14 @@ import {
   ReactFlowJsonObject,
   XYPosition,
 } from "@xyflow/react";
+import { cloneDeep } from "lodash-es";
 
 // import { downloadFlowsFromDatabase } from "../controllers/API";
 import {
   APIKindType,
   APIObjectType,
   APITemplateType,
-  TemplateVariableType
+  TemplateVariableType,
 } from "../types/api";
 import {
   FlowType,
@@ -29,10 +29,7 @@ import {
   updateEdgesHandleIdsType,
 } from "../types/utils/reactflowUtils";
 import { generateUUID } from "../utils";
-import {
-  getFieldTitle,
-  toTitleCase
-} from "./utils";
+import { getFieldTitle, toTitleCase } from "./utils";
 
 export const LANGFLOW_SUPPORTED_TYPES = new Set([
   "str",
@@ -45,7 +42,7 @@ export const LANGFLOW_SUPPORTED_TYPES = new Set([
   "dict",
   "NestedDict",
   "bisheng_model",
-  "bisheng_embedding"
+  "bisheng_embedding",
 ]);
 
 // edges (线)文档
@@ -63,11 +60,13 @@ export function cleanEdges(nodes: Node[], edges: Edge[]) {
     const sourceHandle = edge.sourceHandle; //right
     const targetHandle = edge.targetHandle; //left
     if (targetHandle) {
-      const field = targetHandle.split('|')[1]
+      const field = targetHandle.split("|")[1];
       const targetNodeTargetHandle =
-        targetNode.data.node!.template[field]?.type + '|' +
-        field + '|' +
-        targetNode.data.id
+        targetNode.data.node!.template[field]?.type +
+        "|" +
+        field +
+        "|" +
+        targetNode.data.id;
 
       // if (targetNode.data.node!.template[field]?.proxy) {
       //   id.proxy = targetNode.data.node!.template[field]?.proxy;
@@ -78,9 +77,11 @@ export function cleanEdges(nodes: Node[], edges: Edge[]) {
     }
     if (sourceHandle) {
       const sourceNodeSourceHandle =
-        sourceNode.data.type + '|' +
-        sourceNode.data.id + '|' +
-        sourceNode.data.node!.base_classes.join('|')
+        sourceNode.data.type +
+        "|" +
+        sourceNode.data.id +
+        "|" +
+        sourceNode.data.node!.base_classes.join("|");
 
       if (sourceNodeSourceHandle !== sourceHandle) {
         newEdges = newEdges.filter((e) => e.id !== edge.id);
@@ -102,18 +103,18 @@ export function unselectAllNodes({ updateNodes, data }: unselectAllNodesType) {
 export function isValidConnection(
   { source, target, sourceHandle, targetHandle }: Connection,
   nodes: Node[],
-  edges: Edge[]
+  edges: Edge[],
 ) {
   const targetHandleObject: targetHandleType = scapeJSONParse(targetHandle!);
   const sourceHandleObject: sourceHandleType = scapeJSONParse(sourceHandle!);
   if (
     targetHandleObject.inputTypes?.some(
-      (n) => n === sourceHandleObject.dataType
+      (n) => n === sourceHandleObject.dataType,
     ) ||
     sourceHandleObject.baseClasses.some(
       (t) =>
         targetHandleObject.inputTypes?.some((n) => n === t) ||
-        t === targetHandleObject.type
+        t === targetHandleObject.type,
     )
   ) {
     let targetNode = nodes.find((node) => node.id === target!)?.data?.node;
@@ -146,7 +147,7 @@ export function removeApiKeys(flow: FlowType): FlowType {
 
 export function updateTemplate(
   reference: APITemplateType,
-  objectToUpdate: APITemplateType
+  objectToUpdate: APITemplateType,
 ): APITemplateType {
   let clonedObject: APITemplateType = cloneDeep(reference);
 
@@ -188,7 +189,7 @@ export function updateIds(newFlow: ReactFlowJsonObject) {
     newFlow.nodes.forEach((node: NodeType) => {
       // Generate a unique node ID
       let newId = getNodeId(
-        node.data.node?.flow ? "GroupNode" : node.data.type
+        node.data.node?.flow ? "GroupNode" : node.data.type,
       );
       idsMap[node.id] = newId;
       node.id = newId;
@@ -201,7 +202,7 @@ export function updateIds(newFlow: ReactFlowJsonObject) {
       edge.source = idsMap[edge.source];
       edge.target = idsMap[edge.target];
       const sourceHandleObject: sourceHandleType = scapeJSONParse(
-        edge.sourceHandle!
+        edge.sourceHandle!,
       );
       edge.sourceHandle = scapedJSONStringfy({
         ...sourceHandleObject,
@@ -211,7 +212,7 @@ export function updateIds(newFlow: ReactFlowJsonObject) {
         edge.data.sourceHandle.id = edge.source;
       }
       const targetHandleObject: targetHandleType = scapeJSONParse(
-        edge.targetHandle!
+        edge.targetHandle!,
       );
       edge.targetHandle = scapedJSONStringfy({
         ...targetHandleObject,
@@ -232,7 +233,7 @@ export function updateIds(newFlow: ReactFlowJsonObject) {
 }
 
 export function buildTweaks(flow: FlowType) {
-  if (!flow.data) return {}
+  if (!flow.data) return {};
   return flow.data!.nodes.reduce((acc, node) => {
     acc[node.data.id] = {};
     return acc;
@@ -261,9 +262,9 @@ export function validateNode(node: NodeType, edges: Edge[]): Array<string> {
       !edges.some(
         (edge) =>
           (scapeJSONParse(edge.targetHandle!) as targetHandleType).fieldName ===
-          t &&
+            t &&
           (scapeJSONParse(edge.targetHandle!) as targetHandleType).id ===
-          node.id
+            node.id,
       )
     ) {
       errors.push(`${type} is missing ${getFieldTitle(template, t)}.`);
@@ -279,12 +280,12 @@ export function validateNode(node: NodeType, edges: Edge[]): Array<string> {
         errors.push(
           `${type} (${getFieldTitle(
             template,
-            t
-          )}) contains duplicate keys with the same values.`
+            t,
+          )}) contains duplicate keys with the same values.`,
         );
       if (hasEmptyKey(template[t].value))
         errors.push(
-          `${type} (${getFieldTitle(template, t)}) field must not be empty.`
+          `${type} (${getFieldTitle(template, t)}) field must not be empty.`,
         );
     }
     return errors;
@@ -304,7 +305,7 @@ export function updateEdges(edges: Edge[]) {
   if (edges)
     edges.forEach((edge) => {
       const targetHandleObject: targetHandleType = scapeJSONParse(
-        edge.targetHandle!
+        edge.targetHandle!,
       );
       edge.className =
         (targetHandleObject.type === "Text"
@@ -375,7 +376,7 @@ export function handleKeyDown(
     | React.KeyboardEvent<HTMLInputElement>
     | React.KeyboardEvent<HTMLTextAreaElement>,
   inputValue: string | string[] | null,
-  block: string
+  block: string,
 ) {
   //condition to fix bug control+backspace on Windows/Linux
   if (
@@ -384,7 +385,9 @@ export function handleKeyDown(
       e.key === "Backspace" &&
       (inputValue === block ||
         inputValue?.charAt(inputValue?.length - 1) === " " ||
-        /[!@#$%^&*()\-_=+[\]{}|;:'",.<>/?\\`´]/.test(inputValue?.charAt(inputValue?.length - 1)))) ||
+        /[!@#$%^&*()\-_=+[\]{}|;:'",.<>/?\\`´]/.test(
+          inputValue?.charAt(inputValue?.length - 1),
+        ))) ||
     (navigator.userAgent.toUpperCase().includes("MAC") &&
       e.ctrlKey === true &&
       e.key === "Backspace")
@@ -400,7 +403,7 @@ export function handleKeyDown(
 }
 
 export function handleOnlyIntegerInput(
-  event: React.KeyboardEvent<HTMLInputElement>
+  event: React.KeyboardEvent<HTMLInputElement>,
 ) {
   if (
     event.key === "." ||
@@ -416,7 +419,7 @@ export function handleOnlyIntegerInput(
 
 export function getConnectedNodes(
   edge: Edge,
-  nodes: Array<NodeType>
+  nodes: Array<NodeType>,
 ): Array<NodeType> {
   const sourceId = edge.source;
   const targetId = edge.target;
@@ -517,7 +520,7 @@ export function checkOldEdgesHandles(edges: Edge[]): boolean {
       !edge.sourceHandle ||
       !edge.targetHandle ||
       !edge.sourceHandle.includes("{") ||
-      !edge.targetHandle.includes("{")
+      !edge.targetHandle.includes("{"),
   );
 }
 
@@ -540,7 +543,7 @@ export function customStringify(obj: any): string {
 
   const keys = Object.keys(obj).sort();
   const keyValuePairs = keys.map(
-    (key) => `"${key}":${customStringify(obj[key])}`
+    (key) => `"${key}":${customStringify(obj[key])}`,
   );
   return `{${keyValuePairs.join(",")}}`;
 }
@@ -569,7 +572,7 @@ export function getHandleId(
   source: string,
   sourceHandle: string,
   target: string,
-  targetHandle: string
+  targetHandle: string,
 ) {
   return (
     "reactflow__edge-" + source + sourceHandle + "-" + target + targetHandle
@@ -580,7 +583,7 @@ export function generateFlow(
   selection: OnSelectionChangeParams,
   nodes: Node[],
   edges: Edge[],
-  name: string
+  name: string,
 ): generateFlowType {
   const newFlowData = { nodes, edges, viewport: { zoom: 1, x: 0, y: 0 } };
   /*	remove edges that are not connected to selected nodes on both ends
@@ -588,7 +591,7 @@ export function generateFlow(
   newFlowData.edges = selection.edges.filter(
     (edge) =>
       selection.nodes.some((node) => node.id === edge.target) &&
-      selection.nodes.some((node) => node.id === edge.source)
+      selection.nodes.some((node) => node.id === edge.source),
   );
   newFlowData.nodes = selection.nodes;
 
@@ -601,7 +604,7 @@ export function generateFlow(
     id: generateUUID(5),
     status: 0,
     write: false,
-    guide_word: ""
+    guide_word: "",
   };
   // filter edges that are not connected to selected nodes on both ends
   // using O(n²) aproach because the number of edges is small
@@ -612,7 +615,7 @@ export function generateFlow(
       (edge) =>
         (selection.nodes.some((node) => node.id === edge.target) ||
           selection.nodes.some((node) => node.id === edge.source)) &&
-        newFlowData.edges.every((e) => e.id !== edge.id)
+        newFlowData.edges.every((e) => e.id !== edge.id),
     ),
   };
 }
@@ -626,21 +629,21 @@ export function reconnectEdges(groupNode: NodeType, excludedEdges: Edge[]) {
     // 选中的 node 有链接其他 node
     if (lastNode && edge.source === lastNode.id) {
       edge.source = groupNode.id;
-      const sourceHandleArr = edge.sourceHandle.split('|')
-      sourceHandleArr[1] = groupNode.id
-      edge.sourceHandle = sourceHandleArr.join('|');
+      const sourceHandleArr = edge.sourceHandle.split("|");
+      sourceHandleArr[1] = groupNode.id;
+      edge.sourceHandle = sourceHandleArr.join("|");
       // edge.data.sourceHandle = newSourceHandle;
     }
     // 选中的 node 有被链接的 node
     if (nodes.some((node) => node.id === edge.target)) {
       const targetNode = nodes.find((node) => node.id === edge.target)!;
-      const targetHandleArr = edge.targetHandle.split('|')
+      const targetHandleArr = edge.targetHandle.split("|");
       targetHandleArr[targetHandleArr.length - 1] = groupNode.id;
       targetHandleArr[1] = targetHandleArr[1] + "_" + targetNode.id;
       // const proxy = { id: targetNode.id, field: targetHandle.fieldName };
       // newTargetHandle.proxy = proxy;
       edge.target = groupNode.id;
-      edge.targetHandle = targetHandleArr.join('|');
+      edge.targetHandle = targetHandleArr.join("|");
       // edge.data.targetHandle = newTargetHandle;
     }
   });
@@ -650,7 +653,7 @@ export function reconnectEdges(groupNode: NodeType, excludedEdges: Edge[]) {
 export function filterFlow(
   selection: OnSelectionChangeParams,
   setNodes: (update: Node[] | ((oldState: Node[]) => Node[])) => void,
-  setEdges: (update: Edge[] | ((oldState: Edge[]) => Edge[])) => void
+  setEdges: (update: Edge[] | ((oldState: Edge[]) => Edge[])) => void,
 ) {
   setNodes((nodes) => nodes.filter((node) => !selection.nodes.includes(node)));
   setEdges((edges) => edges.filter((edge) => !selection.edges.includes(edge)));
@@ -688,7 +691,7 @@ export function updateFlowPosition(NewPosition: XYPosition, flow: FlowType) {
 export function concatFlows(
   flow: FlowType,
   setNodes: (update: Node[] | ((oldState: Node[]) => Node[])) => void,
-  setEdges: (update: Edge[] | ((oldState: Edge[]) => Edge[])) => void
+  setEdges: (update: Edge[] | ((oldState: Edge[]) => Edge[])) => void,
 ) {
   const { nodes, edges } = flow.data!;
   setNodes((old) => [...old, ...nodes]);
@@ -697,7 +700,7 @@ export function concatFlows(
 
 export function validateSelection(
   selection: OnSelectionChangeParams,
-  edges: Edge[]
+  edges: Edge[],
 ): Array<string> {
   //add edges to selection if selection mode selected only nodes
   if (selection.edges.length === 0) {
@@ -708,7 +711,7 @@ export function validateSelection(
   let nodesSet = new Set(selection.nodes.map((n) => n.id));
   // then filter the edges that are connected to the nodes in the set
   let connectedEdges = selection.edges.filter(
-    (e) => nodesSet.has(e.source) && nodesSet.has(e.target)
+    (e) => nodesSet.has(e.source) && nodesSet.has(e.target),
   );
   // add the edges to the selection
   selection.edges = connectedEdges;
@@ -722,7 +725,7 @@ export function validateSelection(
   //check if there are two or more nodes with free outputs
   if (
     selection.nodes.filter(
-      (n) => !selection.edges.some((e) => e.source === n.id)
+      (n) => !selection.edges.some((e) => e.source === n.id),
     ).length > 1
   ) {
     errorsArray.push("Please select only one node with free outputs");
@@ -733,7 +736,7 @@ export function validateSelection(
     selection.nodes.some(
       (node) =>
         !selection.edges.some((edge) => edge.target === node.id) &&
-        !selection.edges.some((edge) => edge.source === node.id)
+        !selection.edges.some((edge) => edge.source === node.id),
     )
   ) {
     errorsArray.push("Please select only nodes that are connected");
@@ -802,7 +805,7 @@ function isHandleConnected(
   edges: Edge[],
   key: string,
   field: TemplateVariableType,
-  nodeId: string
+  nodeId: string,
 ) {
   /*
     this function receives a flow and a handleId and check if there is a connection with this handle
@@ -818,15 +821,15 @@ function isHandleConnected(
             id: nodeId,
             proxy: { id: field.proxy!.id, field: field.proxy!.field },
             inputTypes: field.input_types,
-          } as targetHandleType)
+          } as targetHandleType),
       )
     ) {
       return true;
     }
   } else {
-    if (edges.some(
-      (e) => e.targetHandle === `${field.type}|${key}|${nodeId}`
-    )) {
+    if (
+      edges.some((e) => e.targetHandle === `${field.type}|${key}|${nodeId}`)
+    ) {
       return true;
     }
   }
@@ -847,7 +850,7 @@ export function generateNodeTemplate(Flow: FlowType) {
 
 export function generateNodeFromFlow(
   flow: FlowType,
-  getNodeId: (type: string) => string
+  getNodeId: (type: string) => string,
 ): NodeType {
   const { nodes } = flow.data!;
   const outputNode = cloneDeep(findLastNode(flow.data!));
@@ -855,12 +858,14 @@ export function generateNodeFromFlow(
   let data = cloneDeep(flow);
   const id = getNodeId(outputNode?.data.type!);
   // 检查是否有 fileinput
-  const hasFileInput = flow.data.nodes.some((node) => node.data.type === "InputFileNode")
+  const hasFileInput = flow.data.nodes.some(
+    (node) => node.data.type === "InputFileNode",
+  );
 
   const newGroupNode: NodeType = {
     data: {
       id,
-      type: hasFileInput ? 'InputFileNode' : outputNode?.data.type!,
+      type: hasFileInput ? "InputFileNode" : outputNode?.data.type!,
       node: {
         output_types: outputNode!.data.node!.output_types,
         display_name: "Group",
@@ -881,7 +886,7 @@ export function generateNodeFromFlow(
 export function connectedInputNodesOnHandle(
   nodeId: string,
   handleId: string,
-  { nodes, edges }: { nodes: NodeType[]; edges: Edge[] }
+  { nodes, edges }: { nodes: NodeType[]; edges: Edge[] },
 ) {
   const connectedNodes: Array<{ name: string; id: string; isGroup: boolean }> =
     [];
@@ -918,7 +923,7 @@ export function connectedInputNodesOnHandle(
 
 function updateProxyIdsOnTemplate(
   template: APITemplateType,
-  idsMap: { [key: string]: string }
+  idsMap: { [key: string]: string },
 ) {
   Object.keys(template).forEach((key) => {
     if (template[key].proxy && idsMap[template[key].proxy!.id]) {
@@ -959,7 +964,7 @@ export function expandGroupNode(
   nodes: Node[],
   edges: Edge[],
   setNodes: (update: Node[] | ((oldState: Node[]) => Node[])) => void,
-  setEdges: (update: Edge[] | ((oldState: Edge[]) => Edge[])) => void
+  setEdges: (update: Edge[] | ((oldState: Edge[]) => Edge[])) => void,
 ) {
   // const idsMap = updateIds(flow!.data!);
   // updateProxyIdsOnTemplate(template, idsMap);
@@ -974,14 +979,14 @@ export function expandGroupNode(
     // group 组件输入线
     if (newEdge.target === id) {
       const targetHandleArr = newEdge.targetHandle.split("|");
-      const _index = targetHandleArr[1].lastIndexOf('_');
-      const tempField = targetHandleArr[1].slice(0, _index)
-      const nodeId = targetHandleArr[1].slice(_index + 1)
-      targetHandleArr[1] = tempField
-      targetHandleArr[2] = nodeId
+      const _index = targetHandleArr[1].lastIndexOf("_");
+      const tempField = targetHandleArr[1].slice(0, _index);
+      const nodeId = targetHandleArr[1].slice(_index + 1);
+      targetHandleArr[1] = tempField;
+      targetHandleArr[2] = nodeId;
 
-      newEdge.target = nodeId
-      newEdge.targetHandle = targetHandleArr.join('|')
+      newEdge.target = nodeId;
+      newEdge.targetHandle = targetHandleArr.join("|");
 
       // const targetHandle: targetHandleType = newEdge.targetHandle;
       // if (targetHandle.proxy) {
@@ -1013,11 +1018,11 @@ export function expandGroupNode(
     if (newEdge.source === id) {
       const lastNode = cloneDeep(findLastNode(flow!.data!));
       newEdge.source = lastNode!.id;
-      const sourceHandleArr = newEdge.sourceHandle.split('|')
+      const sourceHandleArr = newEdge.sourceHandle.split("|");
       sourceHandleArr[1] = lastNode!.id;
 
       // newEdge.data.sourceHandle = newSourceHandle;
-      newEdge.sourceHandle = sourceHandleArr.join('|');
+      newEdge.sourceHandle = sourceHandleArr.join("|");
     }
     if (edge.target === id || edge.source === id) {
       updatedEdges.push(newEdge);
@@ -1067,7 +1072,7 @@ export function expandGroupNode(
 
 export function getGroupStatus(
   flow: FlowType,
-  ssData: { [key: string]: { valid: boolean; params: string } }
+  ssData: { [key: string]: { valid: boolean; params: string } },
 ) {
   let status = { valid: true, params: "Built sucessfully ✨" };
   const { nodes } = flow.data!;
@@ -1086,7 +1091,7 @@ export function getGroupStatus(
 
 export function createFlowComponent(
   nodeData: NodeDataType,
-  version: string
+  version: string,
 ): FlowType {
   const flowNode: FlowType = {
     data: {
@@ -1108,7 +1113,7 @@ export function createFlowComponent(
     last_tested_version: version,
     status: 0,
     write: false,
-    guide_word: ""
+    guide_word: "",
   };
   return flowNode;
 }
@@ -1125,8 +1130,8 @@ export function downloadNode(NodeFLow: any) {
 
 export function updateComponentNameAndType(
   data: any,
-  component: NodeDataType
-) { }
+  component: NodeDataType,
+) {}
 
 export function removeFileNameFromComponents(flow: FlowType) {
   flow.data!.nodes.forEach((node: NodeType) => {
@@ -1169,7 +1174,7 @@ export function templatesGenerator(data: APIObjectType) {
 export function downloadFlow(
   flow: FlowType,
   flowName: string,
-  flowDescription?: string
+  flowDescription?: string,
 ) {
   let clonedFlow = cloneDeep(flow);
   removeFileNameFromComponents(clonedFlow);
@@ -1179,7 +1184,7 @@ export function downloadFlow(
       ...clonedFlow,
       name: flowName,
       description: flowDescription,
-    })
+    }),
   )}`;
 
   // create a link element and set its properties
@@ -1193,10 +1198,10 @@ export function downloadFlow(
 
 export const createNewFlow = (
   flowData: ReactFlowJsonObject,
-  flow: FlowType
+  flow: FlowType,
 ) => {
   return {
-    description: flow?.description ?? '',
+    description: flow?.description ?? "",
     name: flow?.name ? flow.name : "Untitled document",
     data: flowData,
     id: "",

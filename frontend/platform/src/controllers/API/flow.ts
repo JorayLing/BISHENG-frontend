@@ -6,89 +6,108 @@ import axios from "../request";
  * 保存组件 variables 变量
  */
 export function saveVariableApi(data): Promise<{ id: string }> {
-    return axios.post(`/api/v1/variable/`, data);
+  return axios.post(`/api/v1/variable/`, data);
 }
 
 export const enum VariableType {
-    /** 文本 */
-    Text = "text",
-    /** 下拉框 */
-    Select = "select",
-    /** 文件 */
-    File = "file"
+  /** 文本 */
+  Text = "text",
+  /** 下拉框 */
+  Select = "select",
+  /** 文件 */
+  File = "file",
 }
 export interface Variable {
-    id: string | number;
-    update: boolean;
-    name: string;
-    maxLength: number;
-    type: VariableType;
-    nodeId: string;
-    required: boolean;
-    options: {
-        key: string;
-        value: string;
-    }[];
-    value?: string;
+  id: string | number;
+  update: boolean;
+  name: string;
+  maxLength: number;
+  type: VariableType;
+  nodeId: string;
+  required: boolean;
+  options: {
+    key: string;
+    value: string;
+  }[];
+  value?: string;
 }
 /**
  * get组件 variables 变量
  * params flow_id, node_id
  */
 export function getVariablesApi(params) {
-    return (axios.get(`/api/v1/variable/list`, { params }) as Promise<any[]>).then(res => {
-        return res.map((item) => {
-            const types = ['', VariableType.Text, VariableType.Select, VariableType.File]
-            return {
-                id: item.id,
-                update: true,
-                name: item.variable_name,
-                type: types[item.value_type],
-                nodeId: item.node_id,
-                required: item.is_option === 1,
-                maxLength: item.value_type === 1 ? item.value : '',
-                options: item.value_type === 2 ? item.value
-                    .split(',')
-                    .map((op, i) => ({ key: i, value: op })) : [],
-                value: ''
-            }
-        }) as Variable[]
-    });
+  return (
+    axios.get(`/api/v1/variable/list`, { params }) as Promise<any[]>
+  ).then((res) => {
+    return res.map((item) => {
+      const types = [
+        "",
+        VariableType.Text,
+        VariableType.Select,
+        VariableType.File,
+      ];
+      return {
+        id: item.id,
+        update: true,
+        name: item.variable_name,
+        type: types[item.value_type],
+        nodeId: item.node_id,
+        required: item.is_option === 1,
+        maxLength: item.value_type === 1 ? item.value : "",
+        options:
+          item.value_type === 2
+            ? item.value.split(",").map((op, i) => ({ key: i, value: op }))
+            : [],
+        value: "",
+      };
+    }) as Variable[];
+  });
 }
 
 /**
  * 删除 变量
  */
 export function delVariableApi(id) {
-    return axios.delete(`/api/v1/variable/del`, {
-        params: { id }
-    });
+  return axios.delete(`/api/v1/variable/del`, {
+    params: { id },
+  });
 }
 
 /**
  * 保存变量和filenodename必填和排序信息
  */
 export function saveReportFormApi(vid, flowId, data: Variable[]) {
-    const _data = data.map((item) => {
-        const { id, maxLength, name: variable_name, nodeId: node_id, options, required, type } = item
-        const types = {
-            [VariableType.Text]: () => ({ type: 1, value: maxLength }),
-            [VariableType.Select]: () => ({ type: 2, value: options.map((op) => op.value).join(',') }),
-            [VariableType.File]: () => ({ type: 3, value: "0" }),
-        }
-        const typeInfo = types[type]()
-        return {
-            id,
-            version_id: vid,
-            flow_id: flowId,
-            node_id,
-            is_option: Number(required),
-            variable_name,
-            value_type: typeInfo.type,
-            value: typeInfo.value
-        }
-    })
-    return axios.post(`/api/v1/variable/save_all`, _data);
+  const _data = data.map((item) => {
+    const {
+      id,
+      maxLength,
+      name: variable_name,
+      nodeId: node_id,
+      options,
+      required,
+      type,
+    } = item;
+    const types = {
+      [VariableType.Text]: () => ({ type: 1, value: maxLength }),
+      [VariableType.Select]: () => ({
+        type: 2,
+        value: options.map((op) => op.value).join(","),
+      }),
+      [VariableType.File]: () => ({ type: 3, value: "0" }),
+    };
+    const typeInfo = types[type]();
+    return {
+      id,
+      version_id: vid,
+      flow_id: flowId,
+      node_id,
+      is_option: Number(required),
+      variable_name,
+      value_type: typeInfo.type,
+      value: typeInfo.value,
+    };
+  });
+  return axios.post(`/api/v1/variable/save_all`, _data);
 }
 
 /**
@@ -102,9 +121,9 @@ export function saveReportFormApi(vid, flowId, data: Variable[]) {
  * 获取 report表单信息
  */
 export function getReportFormApi(flow_id): Promise<any> {
-    return axios.get(`/api/v1/report/report_temp`, {
-        params: { flow_id }
-    })
+  return axios.get(`/api/v1/report/report_temp`, {
+    params: { flow_id },
+  });
 }
 
 /**
@@ -114,8 +133,11 @@ export function getReportFormApi(flow_id): Promise<any> {
  * @returns {Promise<any>} The flow data.
  * @throws Will throw an error if fetching fails.
  */
-export async function getFlowApi(flowId: string, version: string = 'v1'): Promise<FlowType> {
-    return await axios.get(`/api/${version}/flows/${flowId}`)
+export async function getFlowApi(
+  flowId: string,
+  version: string = "v1",
+): Promise<FlowType> {
+  return await axios.get(`/api/${version}/flows/${flowId}`);
 }
 
 /**
@@ -126,49 +148,64 @@ export async function getFlowApi(flowId: string, version: string = 'v1'): Promis
  * @throws Will throw an error if saving fails.
  */
 export async function saveFlowToDatabase(newFlow: {
-    name: string;
-    id: string;
-    data: ReactFlowJsonObject;
-    description: string;
-    style?: FlowStyleType;
+  name: string;
+  id: string;
+  data: ReactFlowJsonObject;
+  description: string;
+  style?: FlowStyleType;
 }): Promise<FlowType> {
-    const id = newFlow.id ? { flow_id: newFlow.id } : {}
-    const response: FlowType = await axios.post("/api/v1/flows/", {
-        ...id,
-        name: newFlow.name,
-        data: newFlow.data,
-        description: newFlow.description,
-    });
-    return response
+  const id = newFlow.id ? { flow_id: newFlow.id } : {};
+  const response: FlowType = await axios.post("/api/v1/flows/", {
+    ...id,
+    name: newFlow.name,
+    data: newFlow.data,
+    description: newFlow.description,
+  });
+  return response;
 }
 
 /**
-* Reads all flows from the database.
-*
-* @returns {Promise<any>} The flows data.
-* @throws Will throw an error if reading fails.
-*/
-export async function readFlowsFromDatabase(page: number = 1, pageSize: number = 20, search: string, tag_id = -1) {
-    const tagIdStr = tag_id === -1 ? '' : `&tag_id=${tag_id}`
-    const { data, total }: { data: any[], total: number } = await axios.get(`/api/v1/flows/?page_num=${page}&page_size=${pageSize}&name=${search}${tagIdStr}`);
-    return { data, total };
+ * Reads all flows from the database.
+ *
+ * @returns {Promise<any>} The flows data.
+ * @throws Will throw an error if reading fails.
+ */
+export async function readFlowsFromDatabase(
+  page: number = 1,
+  pageSize: number = 20,
+  search: string,
+  tag_id = -1,
+) {
+  const tagIdStr = tag_id === -1 ? "" : `&tag_id=${tag_id}`;
+  const { data, total }: { data: any[]; total: number } = await axios.get(
+    `/api/v1/flows/?page_num=${page}&page_size=${pageSize}&name=${search}${tagIdStr}`,
+  );
+  return { data, total };
 }
 
 /* app list */
-export async function getAppsApi({ page = 1, pageSize = 20, keyword, tag_id = -1, type }) {
-    const tagIdStr = tag_id === -1 ? '' : `&tag_id=${tag_id}`
-    const map = { assistant: 5, skill: 1, flow: 10 }
-    const flowType = map[type] ? `&flow_type=${map[type]}` : ''
-    const { data, total }: { data: any[], total: number } = await axios.get(`/api/v1/workflow/list?page_num=${page}&page_size=${pageSize}&name=${keyword}${tagIdStr}${flowType}`);
-    const newData = data.map(item => {
-        if (item.flow_type !== 5) return item
-        return {
-            ...item,
-            description: item.desc,
-            version_list: item.version_list || [],
-        }
-    })
-    return { data: newData, total };
+export async function getAppsApi({
+  page = 1,
+  pageSize = 20,
+  keyword,
+  tag_id = -1,
+  type,
+}) {
+  const tagIdStr = tag_id === -1 ? "" : `&tag_id=${tag_id}`;
+  const map = { assistant: 5, skill: 1, flow: 10 };
+  const flowType = map[type] ? `&flow_type=${map[type]}` : "";
+  const { data, total }: { data: any[]; total: number } = await axios.get(
+    `/api/v1/workflow/list?page_num=${page}&page_size=${pageSize}&name=${keyword}${tagIdStr}${flowType}`,
+  );
+  const newData = data.map((item) => {
+    if (item.flow_type !== 5) return item;
+    return {
+      ...item,
+      description: item.desc,
+      version_list: item.version_list || [],
+    };
+  });
+  return { data: newData, total };
 }
 
 /**
@@ -179,7 +216,7 @@ export async function getAppsApi({ page = 1, pageSize = 20, keyword, tag_id = -1
  * @throws Will throw an error if deletion fails.
  */
 export async function deleteFlowFromDatabase(flowId: string) {
-    return await axios.delete(`/api/v1/flows/${flowId}`);
+  return await axios.delete(`/api/v1/flows/${flowId}`);
 }
 
 /**
@@ -187,27 +224,30 @@ export async function deleteFlowFromDatabase(flowId: string) {
  * @param 技能名称 技能描述
  * @param 创建人
  */
-export const createCustomFlowApi = async (params: {
-    logo: string,
-    name: string,
-    description: string,
-    guide_word: string
-}, userName: string) => {
-    if (params.logo) {
-        // logo保存相对路径
-        params.logo = params.logo.match(/(icon.*)\?/)?.[1]
-    }
-    const response: FlowType = await axios.post("/api/v1/flows/", {
-        ...params,
-        data: null
-    });
+export const createCustomFlowApi = async (
+  params: {
+    logo: string;
+    name: string;
+    description: string;
+    guide_word: string;
+  },
+  userName: string,
+) => {
+  if (params.logo) {
+    // logo保存相对路径
+    params.logo = params.logo.match(/(icon.*)\?/)?.[1];
+  }
+  const response: FlowType = await axios.post("/api/v1/flows/", {
+    ...params,
+    data: null,
+  });
 
-    return {
-        ...response,
-        write: true,
-        status: 1,
-        user_name: userName
-    }
+  return {
+    ...response,
+    write: true,
+    status: 1,
+    user_name: userName,
+  };
 };
 
 /**
@@ -217,20 +257,18 @@ export const createCustomFlowApi = async (params: {
  * @returns {Promise<any>} The updated flow data.
  * @throws Will throw an error if the update fails.
  */
-export async function updateFlowApi(
-    updatedFlow: FlowType
-): Promise<FlowType> {
-    if (updatedFlow.logo) {
-        // logo保存相对路径
-        updatedFlow.logo = updatedFlow.logo.replace('/bisheng', '')
-    }
-    return await axios.patch(`/api/v1/flows/${updatedFlow.id}`, {
-        logo: updatedFlow.logo || '',
-        name: updatedFlow.name,
-        data: updatedFlow.data,
-        description: updatedFlow.description,
-        guide_word: updatedFlow.guide_word
-    });
+export async function updateFlowApi(updatedFlow: FlowType): Promise<FlowType> {
+  if (updatedFlow.logo) {
+    // logo保存相对路径
+    updatedFlow.logo = updatedFlow.logo.replace("/bisheng", "");
+  }
+  return await axios.patch(`/api/v1/flows/${updatedFlow.id}`, {
+    logo: updatedFlow.logo || "",
+    name: updatedFlow.name,
+    data: updatedFlow.data,
+    description: updatedFlow.description,
+    guide_word: updatedFlow.guide_word,
+  });
 }
 
 /**
@@ -238,11 +276,11 @@ export async function updateFlowApi(
  *
  */
 export async function updataOnlineState(id, updatedFlow, open) {
-    return await axios.patch(`/api/v1/flows/${id}`, {
-        name: updatedFlow.name,
-        description: updatedFlow.description,
-        status: open ? 2 : 1
-    });
+  return await axios.patch(`/api/v1/flows/${id}`, {
+    name: updatedFlow.name,
+    description: updatedFlow.description,
+    status: open ? 2 : 1,
+  });
 }
 
 /**
@@ -251,22 +289,25 @@ export async function updataOnlineState(id, updatedFlow, open) {
  * @returns {Promise<any>}.
  * @throws .
  */
-export async function readOnlineFlows(page: number = 1, searchKey: string = "") {
-    const data: { data: any, total: number } = await axios.get(`/api/v1/flows/?page_num=${page}&page_size=${100}&status=2&name=${searchKey}`);
-    return data;
+export async function readOnlineFlows(
+  page: number = 1,
+  searchKey: string = "",
+) {
+  const data: { data: any; total: number } = await axios.get(
+    `/api/v1/flows/?page_num=${page}&page_size=${100}&status=2&name=${searchKey}`,
+  );
+  return data;
 }
-
 
 // 解析 custom 组件节点
 export async function reloadCustom(code): Promise<any> {
-    const response = await axios.post("/api/v1/component/custom_component", {
-        code,
-        "field": "",
-        "frontend_node": {}
-    });
-    return response
+  const response = await axios.post("/api/v1/component/custom_component", {
+    code,
+    field: "",
+    frontend_node: {},
+  });
+  return response;
 }
-
 
 /**
  * 获取技能对应的版本列表.
@@ -274,10 +315,12 @@ export async function reloadCustom(code): Promise<any> {
  * @returns {Promise<any>}.
  * @throws .
  */
-export async function getFlowVersions(flow_id): Promise<{ data: FlowVersionItem[], total: number }> {
-    return await axios.get(`/api/v1/flows/versions`, {
-        params: { flow_id }
-    });
+export async function getFlowVersions(
+  flow_id,
+): Promise<{ data: FlowVersionItem[]; total: number }> {
+  return await axios.get(`/api/v1/flows/versions`, {
+    params: { flow_id },
+  });
 }
 
 /**
@@ -287,8 +330,19 @@ export async function getFlowVersions(flow_id): Promise<{ data: FlowVersionItem[
  * @returns {Promise<any>}.
  * @throws .
  */
-export async function createFlowVersion(flow_id, versionData: { name: string, description: string, original_version_id: number, data: any }) {
-    return await axios.post(`/api/v1/flows/versions?flow_id=${flow_id}`, versionData);
+export async function createFlowVersion(
+  flow_id,
+  versionData: {
+    name: string;
+    description: string;
+    original_version_id: number;
+    data: any;
+  },
+) {
+  return await axios.post(
+    `/api/v1/flows/versions?flow_id=${flow_id}`,
+    versionData,
+  );
 }
 
 /**
@@ -299,7 +353,7 @@ export async function createFlowVersion(flow_id, versionData: { name: string, de
  * @throws .
  */
 export async function getVersionDetails(versionId: string) {
-    return await axios.get(`/api/v1/flows/versions/${versionId}`);
+  return await axios.get(`/api/v1/flows/versions/${versionId}`);
 }
 
 /**
@@ -310,8 +364,11 @@ export async function getVersionDetails(versionId: string) {
  * @returns {Promise<any>}.
  * @throws .
  */
-export async function updateVersion(versionId: string, versionData: { name: string, description: string, data: any }) {
-    return await axios.put(`/api/v1/flows/versions/${versionId}`, versionData);
+export async function updateVersion(
+  versionId: string,
+  versionData: { name: string; description: string; data: any },
+) {
+  return await axios.put(`/api/v1/flows/versions/${versionId}`, versionData);
 }
 
 /**
@@ -322,7 +379,7 @@ export async function updateVersion(versionId: string, versionData: { name: stri
  * @throws .
  */
 export async function deleteVersion(versionId: string) {
-    return await axios.delete(`/api/v1/flows/versions/${versionId}`);
+  return await axios.delete(`/api/v1/flows/versions/${versionId}`);
 }
 
 /**
@@ -332,33 +389,48 @@ export async function deleteVersion(versionId: string) {
  * @returns {Promise<any>}.
  * @throws .
  */
-export async function changeCurrentVersion({ flow_id, version_id }: { flow_id: string, version_id: number }) {
-    return await axios.post(`/api/v1/flows/change_version?flow_id=${flow_id}&version_id=${version_id}`);
+export async function changeCurrentVersion({
+  flow_id,
+  version_id,
+}: {
+  flow_id: string;
+  version_id: number;
+}) {
+  return await axios.post(
+    `/api/v1/flows/change_version?flow_id=${flow_id}&version_id=${version_id}`,
+  );
 }
 
 /**
  * 运行测试用例.
  */
-export async function runTestCase(data: { question_list, version_list, node_id, inputs }): Promise<any[]> {
-    return await axios.post(`/api/v1/flows/compare`, data);
+export async function runTestCase(data: {
+  question_list;
+  version_list;
+  node_id;
+  inputs;
+}): Promise<any[]> {
+  return await axios.post(`/api/v1/flows/compare`, data);
 }
 
 /**
  * 聊天窗上传文件
  */
 export async function uploadChatFile(v, file: File, onProgress): Promise<any> {
-    const formData = new FormData();
-    formData.append("file", file);
-    return await axios.post(`/api/v1/knowledge/upload`, formData, {
-        headers: {
-            "Content-Type": "multipart/form-data"
-        },
-        onUploadProgress: (progressEvent) => {
-            // Calculate progress percentage
-            if (progressEvent.total) {
-                const progress = Math.round((progressEvent.loaded * 100) / progressEvent.total);
-                onProgress(progress);
-            }
-        }
-    });
+  const formData = new FormData();
+  formData.append("file", file);
+  return await axios.post(`/api/v1/knowledge/upload`, formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+    onUploadProgress: (progressEvent) => {
+      // Calculate progress percentage
+      if (progressEvent.total) {
+        const progress = Math.round(
+          (progressEvent.loaded * 100) / progressEvent.total,
+        );
+        onProgress(progress);
+      }
+    },
+  });
 }

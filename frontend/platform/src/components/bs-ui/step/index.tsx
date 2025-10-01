@@ -11,10 +11,10 @@ import React from "react";
     labels	string[]	[]	自定义步骤文字，数组长度需与steps一致，未提供时显示"第 x 步"
  */
 interface StepProgressProps {
-    steps?: number;
-    currentStep?: number;
-    align?: "left" | "center" | "right";
-    labels?: string[];
+  steps?: number;
+  currentStep?: number;
+  align?: "left" | "center" | "right";
+  labels?: string[];
 }
 
 /**
@@ -28,52 +28,54 @@ interface StepProgressProps {
     />
 */
 export default function StepProgress({
-    steps = 2,
-    currentStep = 1,
-    align = "left",
-    labels = []
+  steps = 2,
+  currentStep = 1,
+  align = "left",
+  labels = [],
 }: StepProgressProps) {
-    steps = labels.length || steps;
-    // 处理边界情况
-    const validatedStep = Math.min(Math.max(currentStep, 1), steps);
-    const alignmentClasses = {
-        left: "justify-start",
-        center: "justify-center",
-        right: "justify-end"
-    };
+  steps = labels.length || steps;
+  // 处理边界情况
+  const validatedStep = Math.min(Math.max(currentStep, 1), steps);
+  const alignmentClasses = {
+    left: "justify-start",
+    center: "justify-center",
+    right: "justify-end",
+  };
 
-    return (
-        <div className={`flex items-center gap-6 my-6 px-12 text-md font-bold ${alignmentClasses[align]}`}>
-            {Array.from({ length: steps }).map((_, index) => {
-                const isCompleted = index < validatedStep - 1;
-                const isCurrent = index === validatedStep - 1;
+  return (
+    <div
+      className={`flex items-center gap-6 my-6 px-12 text-md font-bold ${alignmentClasses[align]}`}
+    >
+      {Array.from({ length: steps }).map((_, index) => {
+        const isCompleted = index < validatedStep - 1;
+        const isCurrent = index === validatedStep - 1;
 
-                return (
-                    <React.Fragment key={index}>
-                        <div className="flex items-center gap-2">
-                            {/* 圆形指示器 */}
-                            <div
-                                className={`size-[26px] rounded-full flex items-center justify-center text-[#fff] transition-colors
+        return (
+          <React.Fragment key={index}>
+            <div className="flex items-center gap-2">
+              {/* 圆形指示器 */}
+              <div
+                className={`size-[26px] rounded-full flex items-center justify-center text-[#fff] transition-colors
                     ${isCompleted || isCurrent ? "bg-primary " : "bg-primary/30"}`}
-                            >
-                                {isCompleted ? <Check size={16} /> : <span>{index + 1}</span>}
-                            </div>
-                            {/* 步骤文字 */}
-                            <span
-                                className={`transition-colors ${isCompleted || isCurrent ? "text-primary" : "text-gray-600"}`}
-                            >
-                                {labels[index] || `第 ${index + 1} 步`}
-                            </span>
-                        </div>
-                        {/* 步骤连接线 */}
-                        {index !== steps - 1 && (
-                            <div
-                                className={`h-[1px] flex-grow transition-colors max-w-10 ${isCompleted ? "bg-primary" : "bg-gray-300"}`}
-                            />
-                        )}
-                    </React.Fragment>
-                );
-            })}
-        </div>
-    );
+              >
+                {isCompleted ? <Check size={16} /> : <span>{index + 1}</span>}
+              </div>
+              {/* 步骤文字 */}
+              <span
+                className={`transition-colors ${isCompleted || isCurrent ? "text-primary" : "text-gray-600"}`}
+              >
+                {labels[index] || `第 ${index + 1} 步`}
+              </span>
+            </div>
+            {/* 步骤连接线 */}
+            {index !== steps - 1 && (
+              <div
+                className={`h-[1px] flex-grow transition-colors max-w-10 ${isCompleted ? "bg-primary" : "bg-gray-300"}`}
+              />
+            )}
+          </React.Fragment>
+        );
+      })}
+    </div>
+  );
 }

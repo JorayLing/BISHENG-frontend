@@ -1,18 +1,7 @@
-import { QuestionMarkIcon } from "@/components/bs-icons/questionMark";
-import { UploadIcon } from "@/components/bs-icons/upload";
-import { Input } from "@/components/bs-ui/input";
-import { AssistantItemDB, getAssistantsApi } from "@/controllers/API/assistant";
-import { createEvaluationApi } from "@/controllers/API/evaluate";
-import { TypeModal } from "@/utils";
-import { SelectViewport } from "@radix-ui/react-select";
-import { debounce, find } from "lodash-es";
-import { ArrowLeft } from "lucide-react";
-import { useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
-import { useDropzone } from "react-dropzone";
-import { useTranslation } from "react-i18next";
-import { useNavigate, useParams } from "react-router-dom";
 import ShadTooltip from "@/components/ShadTooltipComponent";
+import { UploadIcon } from "@/components/bs-icons/upload";
 import { Button } from "@/components/bs-ui/button";
+import { Input } from "@/components/bs-ui/input";
 import { Label } from "@/components/bs-ui/label";
 import {
   Select,
@@ -22,31 +11,41 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/bs-ui/select";
-import {
-  QuestionTooltip,
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/bs-ui/tooltip";
-import { alertContext } from "@/contexts/alertContext";
+import { useToast } from "@/components/bs-ui/toast/use-toast";
+import { QuestionTooltip } from "@/components/bs-ui/tooltip";
 import { TabsContext } from "@/contexts/tabsContext";
+import { AssistantItemDB, getAssistantsApi } from "@/controllers/API/assistant";
+import { createEvaluationApi } from "@/controllers/API/evaluate";
 import { readFlowsFromDatabase } from "@/controllers/API/flow";
+import { TypeModal } from "@/utils";
+import { SelectViewport } from "@radix-ui/react-select";
+import { debounce, find } from "lodash-es";
+import { ArrowLeft } from "lucide-react";
+import {
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
+import { useDropzone } from "react-dropzone";
+import { useTranslation } from "react-i18next";
+import { useNavigate, useParams } from "react-router-dom";
 import PromptAreaComponent from "./PromptCom";
 import defaultPrompt from "./defaultPrompt";
-import { useToast } from "@/components/bs-ui/toast/use-toast";
 
 export default function EvaluatingCreate() {
   const { t } = useTranslation();
 
   const { id } = useParams();
   const { flow: nextFlow } = useContext(TabsContext);
-  const { toast } = useToast()
+  const { toast } = useToast();
   const flow = useMemo(() => {
     return id ? nextFlow : null;
   }, [nextFlow]);
   const [selectedType, setSelectedType] = useState<"flow" | "assistant" | "">(
-    ""
+    "",
   );
   const [selectedKeyId, setSelectedKeyId] = useState("");
   const [selectedVersion, setSelectedVersion] = useState("");
@@ -60,13 +59,13 @@ export default function EvaluatingCreate() {
 
   const onDrop = (acceptedFiles) => {
     fileRef.current = acceptedFiles[0];
-    const size = fileRef.current.size
+    const size = fileRef.current.size;
     const errorlist = [];
 
     // 限制文件最大为 10M
     if (size > 10 * 1024 * 1024) {
       errorlist.push(t("evaluation.fileSizeLimit"));
-      fileRef.current = null
+      fileRef.current = null;
       return handleError(errorlist);
     }
 
@@ -113,7 +112,7 @@ export default function EvaluatingCreate() {
   const handleError = (list) => {
     toast({
       variant: "error",
-      description: list
+      description: list,
     });
   };
 
@@ -140,17 +139,20 @@ export default function EvaluatingCreate() {
     document.body.removeChild(link);
   };
 
-  const handleSearch = useCallback(debounce((value) => {
-    if (selectedType === "flow") {
-      readFlowsFromDatabase(1, 100, value).then((_flow) => {
-        setDataSource(_flow.data);
-      });
-    } else if (selectedType === "assistant") {
-      getAssistantsApi(1, 100, value).then((data) => {
-        setDataSource((data as any).data as AssistantItemDB[]);
-      });
-    }
-  }, 300), [selectedType])
+  const handleSearch = useCallback(
+    debounce((value) => {
+      if (selectedType === "flow") {
+        readFlowsFromDatabase(1, 100, value).then((_flow) => {
+          setDataSource(_flow.data);
+        });
+      } else if (selectedType === "assistant") {
+        getAssistantsApi(1, 100, value).then((data) => {
+          setDataSource((data as any).data as AssistantItemDB[]);
+        });
+      }
+    }, 300),
+    [selectedType],
+  );
 
   const handleInputChange = (event) => {
     setQuery(event.target.value);

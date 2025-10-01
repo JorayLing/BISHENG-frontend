@@ -48,11 +48,12 @@ export default function FormModal({
       if (!formKeysData) {
         throw new Error("formKeysData is undefined");
       }
-      const inputKeys = formKeysData.input_keys.filter(el => !el.type)[0] || {};
+      const inputKeys =
+        formKeysData.input_keys.filter((el) => !el.type)[0] || {};
       const handleKeys = formKeysData.handle_keys;
 
       const keyToUse = Object.keys(inputKeys).find(
-        (k) => !handleKeys.some((j) => j === k) && inputKeys[k] === ""
+        (k) => !handleKeys.some((j) => j === k) && inputKeys[k] === "",
       );
 
       return inputKeys[keyToUse];
@@ -73,7 +74,8 @@ export default function FormModal({
   const id = useRef(flow.id);
   const tabsStateFlowId = tabsState[flow.id];
   const tabsStateFlowIdFormKeysData = tabsStateFlowId.formKeysData;
-  const [chatKey, setChatKey] = useState(''
+  const [chatKey, setChatKey] = useState(
+    "",
     // tabsState[flow.id].formKeysData.input_keys.find()
     // Object.keys(tabsState[flow.id].formKeysData.input_keys).find(
     //   (k) =>
@@ -103,7 +105,7 @@ export default function FormModal({
     chatKey: string,
     template?: string,
     thought?: string,
-    files?: Array<any>
+    files?: Array<any>,
   ) => {
     setChatHistory((old) => {
       let newChat = cloneDeep(old);
@@ -136,26 +138,26 @@ export default function FormModal({
     files?: Array<any>;
   }) {
     setChatHistory((old) => {
-      if (!old.length) return old // 拒绝 chatHistory无数据时接收数据
+      if (!old.length) return old; // 拒绝 chatHistory无数据时接收数据
       let newChat = [...old];
-      let prevChat = newChat[newChat.length - 2]
+      let prevChat = newChat[newChat.length - 2];
       // let lastChat = newChat[newChat.length - 1]
       // 上一条log时，当前条与上一条合并(确保log在一条中)
       if (end && !prevChat?.message && prevChat?.thought) {
-        prevChat.message += str || '';
-        prevChat.thought += thought || '';
-        newChat.pop()
+        prevChat.message += str || "";
+        prevChat.thought += thought || "";
+        newChat.pop();
         return newChat;
       }
       // 最后一条与上一条msg相同，合并处理
       if (end && str && newChat.length > 1 && str === prevChat.message) {
-        newChat.pop()
-        return newChat
+        newChat.pop();
+        return newChat;
       }
       // 过滤空消息
       if (end && !newChat[newChat.length - 1].message && !str) {
-        newChat.pop()
-        return newChat
+        newChat.pop();
+        return newChat;
       }
       if (str) {
         if (end) {
@@ -166,7 +168,8 @@ export default function FormModal({
         }
       }
       if (reasoning_log) {
-        newChat[newChat.length - 1].thought = (newChat[newChat.length - 1].thought || '') + reasoning_log;
+        newChat[newChat.length - 1].thought =
+          (newChat[newChat.length - 1].thought || "") + reasoning_log;
       }
       if (thought) {
         newChat[newChat.length - 1].thought = thought;
@@ -180,7 +183,7 @@ export default function FormModal({
 
   function handleOnClose(event: CloseEvent) {
     if (isOpen.current) {
-      setErrorData({ title: 'ws is close;' + event.reason });
+      setErrorData({ title: "ws is close;" + event.reason });
       setTimeout(() => {
         // connectWS();
         setLockChat(false);
@@ -188,22 +191,23 @@ export default function FormModal({
     }
   }
 
-  const { appConfig } = useContext(locationContext)
+  const { appConfig } = useContext(locationContext);
 
   function getWebSocketUrl(chatId, isDevelopment = false) {
     const isSecureProtocol = window.location.protocol === "https:";
     const webSocketProtocol = isSecureProtocol ? "wss" : "ws";
-    const host = appConfig.websocketHost || window.location.host // isDevelopment ? "localhost:7860" : window.location.host;
+    const host = appConfig.websocketHost || window.location.host; // isDevelopment ? "localhost:7860" : window.location.host;
     const chatEndpoint = `${__APP_ENV__.BASE_URL}/api/v1/chat/${chatId}`;
 
-    const token = localStorage.getItem("ws_token") || '';
-    return `${isDevelopment ? "ws" : webSocketProtocol
-      }://${host}${chatEndpoint}?t=${token}`;
+    const token = localStorage.getItem("ws_token") || "";
+    return `${
+      isDevelopment ? "ws" : webSocketProtocol
+    }://${host}${chatEndpoint}?t=${token}`;
   }
 
   function handleWsMessage(data: any) {
     if (Array.isArray(data)) {
-      return []
+      return [];
     }
     if (data.type === "start") {
       addChatHistory("", false, chatKey);
@@ -211,13 +215,17 @@ export default function FormModal({
     }
 
     // deepseek
-    let message = ''
-    let reasoning_log = data.message.reasoning_content || ''
-    if (typeof data.message !== 'string' && data.message && 'reasoning_content' in data.message) {
-      message = (data.message.content || '')
-      reasoning_log = (data.message.reasoning_content || '')
+    let message = "";
+    let reasoning_log = data.message.reasoning_content || "";
+    if (
+      typeof data.message !== "string" &&
+      data.message &&
+      "reasoning_content" in data.message
+    ) {
+      message = data.message.content || "";
+      reasoning_log = data.message.reasoning_content || "";
     } else {
-      message = data.message
+      message = data.message;
     }
     if (data.type === "end") {
       if (data.message) {
@@ -242,7 +250,11 @@ export default function FormModal({
       isStream = false;
     }
     if (data.type === "stream" && isStream) {
-      updateLastMessage({ str: message, reasoning_log, thought: data.intermediate_steps });
+      updateLastMessage({
+        str: message,
+        reasoning_log,
+        thought: data.intermediate_steps,
+      });
     }
   }
 
@@ -250,7 +262,7 @@ export default function FormModal({
     try {
       const urlWs = getWebSocketUrl(
         id.current,
-        process.env.NODE_ENV === "development"
+        process.env.NODE_ENV === "development",
       );
       const newWs = new WebSocket(urlWs);
       newWs.onopen = () => {
@@ -270,11 +282,12 @@ export default function FormModal({
           // connectWS();
         } else {
           setErrorData({
-            title: "Network connection error, please try the following methods:",
+            title:
+              "Network connection error, please try the following methods:",
             list: [
               "Refresh the page.",
               "Use a new flow tab.",
-              "Check if the background is running."
+              "Check if the background is running.",
             ],
           });
         }
@@ -342,7 +355,7 @@ export default function FormModal({
     let nodeValidationErrors = validateNodes(reactFlowInstance);
     if (nodeValidationErrors.length === 0) {
       let inputs: any = tabsState[id.current].formKeysData.input_keys;
-      inputs = inputs.find((el: any) => !el.type) || {}
+      inputs = inputs.find((el: any) => !el.type) || {};
       // const chatKey = Object.keys(inputs)[0];
 
       // if (!chatKey) return setErrorData({ title: "提示", list: ["至少选择一个inputkey"] });
@@ -353,7 +366,7 @@ export default function FormModal({
         message,
         true,
         chatKey,
-        tabsState[flow.id].formKeysData.template
+        tabsState[flow.id].formKeysData.template,
       );
       sendAll({
         ...reactFlowInstance.toObject(),
@@ -390,7 +403,10 @@ export default function FormModal({
   function handleOnCheckedChange(checked: boolean, i: string) {
     if (checked === true) {
       setChatKey(i);
-      const input = tabsState[flow.id].formKeysData.input_keys.find((el: any) => !el.type) || {}
+      const input =
+        tabsState[flow.id].formKeysData.input_keys.find(
+          (el: any) => !el.type,
+        ) || {};
       setChatValue(input[i]);
     } else {
       setChatKey(null);
@@ -399,10 +415,13 @@ export default function FormModal({
   }
 
   const input_keys = useMemo(() => {
-    return tabsState[flow.id].formKeysData.input_keys.find((el: any) => !el.type) || {}
-  }, [tabsState])
+    return (
+      tabsState[flow.id].formKeysData.input_keys.find((el: any) => !el.type) ||
+      {}
+    );
+  }, [tabsState]);
 
-  const { t } = useTranslation()
+  const { t } = useTranslation();
 
   return (
     <Dialog open={open} onOpenChange={setModalOpen}>
@@ -417,7 +436,7 @@ export default function FormModal({
                 aria-hidden="true"
               />
             </DialogTitle>
-            <DialogDescription>{t('chat.chatDialogTip')}</DialogDescription>
+            <DialogDescription>{t("chat.chatDialogTip")}</DialogDescription>
           </DialogHeader>
 
           <div className="form-modal-iv-box ">
@@ -439,65 +458,66 @@ export default function FormModal({
                 </div>
               </div>
               <Accordion type="multiple" className="w-full">
-                {Object.keys(input_keys).map(
-                  (i, k) => (
-                    <div className="file-component-accordion-div" key={k}>
-                      <AccordionItem className="w-full" key={k} value={i}>
-                        <AccordionTrigger className="flex gap-2">
-                          <div className="file-component-badge-div">
-                            <Badge variant="gray" size="md">
-                              {i}
-                            </Badge>
+                {Object.keys(input_keys).map((i, k) => (
+                  <div className="file-component-accordion-div" key={k}>
+                    <AccordionItem className="w-full" key={k} value={i}>
+                      <AccordionTrigger className="flex gap-2">
+                        <div className="file-component-badge-div">
+                          <Badge variant="gray" size="md">
+                            {i}
+                          </Badge>
 
-                            <div
-                              className="-mb-1"
-                              onClick={(event) => {
-                                event.stopPropagation();
-                              }}
-                            >
-                              <ToggleShadComponent
-                                enabled={chatKey === i}
-                                setEnabled={(value) =>
-                                  handleOnCheckedChange(value, i)
-                                }
-                                size="small"
-                                disabled={tabsState[
-                                  id.current
-                                ].formKeysData.handle_keys.some((t) => t === i)}
-                              />
-                            </div>
-                          </div>
-                        </AccordionTrigger>
-                        <AccordionContent>
-                          <div className="file-component-tab-column">
-                            {tabsState[
-                              id.current
-                            ].formKeysData.handle_keys.some((t) => t === i) && (
-                                <div className="font-normal text-muted-foreground ">
-                                  Source: Component
-                                </div>
-                              )}
-                            <Textarea
-                              value={
-                                input_keys[i]
+                          <div
+                            className="-mb-1"
+                            onClick={(event) => {
+                              event.stopPropagation();
+                            }}
+                          >
+                            <ToggleShadComponent
+                              enabled={chatKey === i}
+                              setEnabled={(value) =>
+                                handleOnCheckedChange(value, i)
                               }
-                              onChange={(e) => {
-                                setTabsState((old) => {
-                                  let newTabsState = cloneDeep(old);
-                                  const input = newTabsState[id.current].formKeysData.input_keys.find((el: any) => !el.type) || {}
-                                  input[i] = e.target.value;
-                                  return newTabsState;
-                                });
-                              }}
-                              disabled={chatKey === i}
-                              placeholder="Enter text..."
-                            ></Textarea>
+                              size="small"
+                              disabled={tabsState[
+                                id.current
+                              ].formKeysData.handle_keys.some((t) => t === i)}
+                            />
                           </div>
-                        </AccordionContent>
-                      </AccordionItem>
-                    </div>
-                  )
-                )}
+                        </div>
+                      </AccordionTrigger>
+                      <AccordionContent>
+                        <div className="file-component-tab-column">
+                          {tabsState[id.current].formKeysData.handle_keys.some(
+                            (t) => t === i,
+                          ) && (
+                            <div className="font-normal text-muted-foreground ">
+                              Source: Component
+                            </div>
+                          )}
+                          <Textarea
+                            value={input_keys[i]}
+                            onChange={(e) => {
+                              setTabsState((old) => {
+                                let newTabsState = cloneDeep(old);
+                                const input =
+                                  newTabsState[
+                                    id.current
+                                  ].formKeysData.input_keys.find(
+                                    (el: any) => !el.type,
+                                  ) || {};
+                                input[i] = e.target.value;
+                                return newTabsState;
+                              });
+                            }}
+                            disabled={chatKey === i}
+                            placeholder="Enter text..."
+                          ></Textarea>
+                        </div>
+                      </AccordionContent>
+                    </AccordionItem>
+                  </div>
+                ))}
                 {tabsState[id.current].formKeysData.memory_keys.map((i, k) => (
                   <AccordionItem key={k} value={i}>
                     <div className="tab-accordion-badge-div group">
@@ -521,7 +541,7 @@ export default function FormModal({
                         "h-5 w-5",
                         lockChat
                           ? "animate-pulse text-primary"
-                          : "text-primary hover:text-gray-600"
+                          : "text-primary hover:text-gray-600",
                       )}
                       aria-hidden="true"
                     />
@@ -541,13 +561,12 @@ export default function FormModal({
                     ))
                   ) : (
                     <div className="chat-alert-box">
-                      <span>
-                        👋{" "}
-                      </span>
+                      <span>👋 </span>
                       <br />
                       <div className="bisheng-chat-desc">
                         <span className="bisheng-chat-desc-span">
-                          Start the conversation and click on the agent's analysis process{" "}
+                          Start the conversation and click on the agent's
+                          analysis process{" "}
                           <span>
                             <THOUGHTS_ICON className="mx-1 inline h-5 w-5 animate-bounce " />
                           </span>{" "}
@@ -569,7 +588,12 @@ export default function FormModal({
                         setChatValue(value);
                         setTabsState((old) => {
                           let newTabsState = cloneDeep(old);
-                          const input = newTabsState[id.current].formKeysData.input_keys.find((el: any) => !el.type) || {}
+                          const input =
+                            newTabsState[
+                              id.current
+                            ].formKeysData.input_keys.find(
+                              (el: any) => !el.type,
+                            ) || {};
                           input[chatKey] = value;
                           return newTabsState;
                         });

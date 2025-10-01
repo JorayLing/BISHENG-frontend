@@ -33,8 +33,7 @@ export const SETTINGS_DIALOG_SUBTITLE = "编辑项目详情。";
  * The base text for subtitle of Code Dialog (Toolbar)
  * @constant
  */
-export const CODE_DIALOG_SUBTITLE =
-  "导出您的技能，以便与此代码一起使用。";
+export const CODE_DIALOG_SUBTITLE = "导出您的技能，以便与此代码一起使用。";
 
 /**
  * The base text for subtitle of Chat Form
@@ -72,8 +71,7 @@ export const FLOW_NOT_BUILT_TITLE = "技能没有被构建";
 
 export const THOUGHTS_ICON = MessageSquare;
 
-export const FLOW_NOT_BUILT_DESCRIPTION =
-  "请在聊天前构建技能。";
+export const FLOW_NOT_BUILT_DESCRIPTION = "请在聊天前构建技能。";
 
 /**
  * The base text for subtitle of Text Dialog
@@ -89,7 +87,7 @@ export const TEXT_DIALOG_SUBTITLE = "编辑文本";
 export const getPythonApiCode = (
   flow: FlowType,
   tweak?: any[],
-  tabsState?: TabsState
+  tabsState?: TabsState,
 ): string => {
   const flowId = flow.id;
 
@@ -106,10 +104,11 @@ BASE_API_URL = "${window.location.protocol}//${window.location.host}/api/v1/proc
 FLOW_ID = "${flowId}"
 # You can tweak the flow by adding a tweaks dictionary
 # e.g {"OpenAI-XXXXX": {"model_name": "gpt-4"}}
-TWEAKS = ${tweak && tweak.length > 0
+TWEAKS = ${
+    tweak && tweak.length > 0
       ? buildTweakObject(tweak)
       : JSON.stringify(tweaks, null, 2)
-    }
+  }
 
 def run_flow(inputs: dict, flow_id: str, tweaks: Optional[dict] = None) -> dict:
     """
@@ -142,20 +141,22 @@ print(run_flow(inputs, flow_id=FLOW_ID, tweaks=TWEAKS))`;
 export const getCurlCode = (
   flow: FlowType,
   tweak?: any[],
-  tabsState?: TabsState
+  tabsState?: TabsState,
 ): string => {
   const flowId = flow.id;
   const tweaks = buildTweaks(flow);
   const inputs = buildInputs(tabsState, flow.id);
 
   return `curl -X POST \\
-  ${window.location.protocol}//${window.location.host
-    }/api/v1/process/${flowId} \\
+  ${window.location.protocol}//${
+    window.location.host
+  }/api/v1/process/${flowId} \\
   -H 'Content-Type: application/json' \\
-  -d '{"inputs": ${inputs}, "tweaks": ${tweak && tweak.length > 0
+  -d '{"inputs": ${inputs}, "tweaks": ${
+    tweak && tweak.length > 0
       ? buildTweakObject(tweak)
       : JSON.stringify(tweaks, null, 2)
-    }}'`;
+  }}'`;
 };
 /**
  * Function to get the python code for the API
@@ -165,16 +166,17 @@ export const getCurlCode = (
 export const getPythonCode = (
   flow: FlowType,
   tweak?: any[],
-  tabsState?: TabsState
+  tabsState?: TabsState,
 ): string => {
   const flowName = flow.name;
   const tweaks = buildTweaks(flow);
   const inputs = buildInputs(tabsState, flow.id);
   return `from bisheng import load_flow_from_json
-TWEAKS = ${tweak && tweak.length > 0
+TWEAKS = ${
+    tweak && tweak.length > 0
       ? buildTweakObject(tweak)
       : JSON.stringify(tweaks, null, 2)
-    }
+  }
 flow = load_flow_from_json("${flowName}.json", tweaks=TWEAKS)
 # Now you can use it like any chain
 inputs = ${inputs}
@@ -187,7 +189,7 @@ function buildTweakObject(tweak) {
       for (let kp in el[key]) {
         try {
           el[key][kp] = JSON.parse(el[key][kp]);
-        } catch { }
+        } catch {}
       }
     });
   });

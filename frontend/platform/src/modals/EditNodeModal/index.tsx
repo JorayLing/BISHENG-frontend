@@ -1,15 +1,6 @@
+import { useToast } from "@/components/bs-ui/toast/use-toast";
 import { useContext, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import CodeAreaComponent from "../../components/codeAreaComponent";
-import Dropdown from "../../components/dropdownComponent";
-import FloatComponent from "../../components/floatComponent";
-import InputComponent from "../../components/inputComponent";
-import InputFileComponent from "../../components/inputFileComponent";
-import InputListComponent from "../../components/inputListComponent";
-import IntComponent from "../../components/intComponent";
-import PromptAreaComponent from "../../components/promptComponent";
-import TextAreaComponent from "../../components/textAreaComponent";
-import ToggleShadComponent from "../../components/toggleShadComponent";
 import { Badge } from "../../components/bs-ui/badge";
 import { Button } from "../../components/bs-ui/button";
 import {
@@ -21,7 +12,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "../../components/bs-ui/dialog";
-import EditLabel from "../../components/ui/editLabel";
 import {
   Table,
   TableBody,
@@ -30,12 +20,22 @@ import {
   TableHeader,
   TableRow,
 } from "../../components/bs-ui/table";
+import CodeAreaComponent from "../../components/codeAreaComponent";
+import Dropdown from "../../components/dropdownComponent";
+import FloatComponent from "../../components/floatComponent";
+import InputComponent from "../../components/inputComponent";
+import InputFileComponent from "../../components/inputFileComponent";
+import InputListComponent from "../../components/inputListComponent";
+import IntComponent from "../../components/intComponent";
+import PromptAreaComponent from "../../components/promptComponent";
+import TextAreaComponent from "../../components/textAreaComponent";
+import ToggleShadComponent from "../../components/toggleShadComponent";
+import EditLabel from "../../components/ui/editLabel";
 import { PopUpContext } from "../../contexts/popUpContext";
 import { TabsContext } from "../../contexts/tabsContext";
 import { typesContext } from "../../contexts/typesContext";
 import { NodeDataType } from "../../types/flow";
 import { classNames, limitScrollFieldsModal } from "../../utils";
-import { useToast } from "@/components/bs-ui/toast/use-toast";
 
 export default function EditNodeModal({ data }: { data: NodeDataType }) {
   const [open, setOpen] = useState(true);
@@ -50,14 +50,15 @@ export default function EditNodeModal({ data }: { data: NodeDataType }) {
           data.node.template[t].type === "code" ||
           data.node.template[t].type === "prompt" ||
           data.node.template[t].type === "file" ||
-          data.node.template[t].type === "int")
-    ).length
+          data.node.template[t].type === "int"),
+    ).length,
   );
   const [nodeValue, setNodeValue] = useState(null);
   const { closePopUp } = useContext(PopUpContext);
   const { types } = useContext(typesContext);
   const ref = useRef();
-  const { isOnlineVersion, version, setTabsState, flow } = useContext(TabsContext);
+  const { isOnlineVersion, version, setTabsState, flow } =
+    useContext(TabsContext);
   const { reactFlowInstance } = useContext(typesContext);
 
   let disabled =
@@ -74,14 +75,15 @@ export default function EditNodeModal({ data }: { data: NodeDataType }) {
     }
   }
 
-  const { message } = useToast()
+  const { message } = useToast();
   const handleSave = () => {
-    if (isOnlineVersion()) return message({
-      description: '上线中不可编辑保存',
-      variant: 'warning'
-    })
-    setModalOpen(false)
-  }
+    if (isOnlineVersion())
+      return message({
+        description: "上线中不可编辑保存",
+        variant: "warning",
+      });
+    setModalOpen(false);
+  };
 
   function changeAdvanced(node) {
     Object.keys(data.node.template).map((n, i) => {
@@ -96,7 +98,8 @@ export default function EditNodeModal({ data }: { data: NodeDataType }) {
   const handleOnNewValue = (newValue: any, name) => {
     data.node.template[name].value = newValue;
     // 手动修改知识库，collection_id 清空
-    if (['index_name', 'collection_name'].includes(name)) delete data.node.template[name].collection_id
+    if (["index_name", "collection_name"].includes(name))
+      delete data.node.template[name].collection_id;
     // Set state to pending
     setTabsState((prev) => {
       return {
@@ -109,15 +112,17 @@ export default function EditNodeModal({ data }: { data: NodeDataType }) {
     });
   };
 
-  const idArr = data.id.split('-')
+  const idArr = data.id.split("-");
   const handleChangeId = (id) => {
-    const oldId = data.id
-    const newId = `${idArr[0]}-${id}`
-    document.dispatchEvent(new CustomEvent('idChange', { detail: [newId, oldId] }))
-    setOpen(!open)
-  }
+    const oldId = data.id;
+    const newId = `${idArr[0]}-${id}`;
+    document.dispatchEvent(
+      new CustomEvent("idChange", { detail: [newId, oldId] }),
+    );
+    setOpen(!open);
+  };
 
-  const { t } = useTranslation()
+  const { t } = useTranslation();
   return (
     <Dialog open={true} onOpenChange={setModalOpen}>
       <DialogTrigger asChild></DialogTrigger>
@@ -125,29 +130,32 @@ export default function EditNodeModal({ data }: { data: NodeDataType }) {
         <DialogHeader>
           <DialogTitle className="flex items-center">
             <span className="pr-2">{data.type}</span>
-            <Badge variant="secondary">ID:{idArr[0]}-
+            <Badge variant="secondary">
+              ID:{idArr[0]}-
               <EditLabel
                 rule={[
                   {
                     // 正则字母和数字 5 位数
                     pattern: /^[a-zA-Z0-9]{5}$/,
-                    message: t('flow.incorrectIdFormatMessage'),
+                    message: t("flow.incorrectIdFormatMessage"),
                   },
                   {
                     // required: true,
                     // 自定义函数校验
                     validator: (val) => {
-                      const node = window._flow.data.nodes.find((node) =>
-                        node.data.id.split('-')[1] === val &&
-                        node.data.id !== data.id // 排除self
-                      )
-                      return !node
+                      const node = window._flow.data.nodes.find(
+                        (node) =>
+                          node.data.id.split("-")[1] === val &&
+                          node.data.id !== data.id, // 排除self
+                      );
+                      return !node;
                     },
-                    message: t('flow.idAlreadyExistsMessage'),
-                  }
+                    message: t("flow.idAlreadyExistsMessage"),
+                  },
                 ]}
                 str={idArr[1]}
-                onChange={handleChangeId}>
+                onChange={handleChangeId}
+              >
                 {(val) => <>{val}</>}
               </EditLabel>
             </Badge>
@@ -157,7 +165,7 @@ export default function EditNodeModal({ data }: { data: NodeDataType }) {
               <p className="sm:max-w-[700px] lg:max-w-[700px] break-words">
                 {data.node?.description}
               </p>
-              
+
               <div className="flex pt-3">
                 {/* <Variable className="edit-node-modal-variable "></Variable> */}
                 <span className="edit-node-modal-span">List</span>
@@ -172,7 +180,7 @@ export default function EditNodeModal({ data }: { data: NodeDataType }) {
               "edit-node-modal-box",
               nodeLength > limitScrollFieldsModal
                 ? "overflow-scroll overflow-x-hidden custom-scroll"
-                : "overflow-hidden"
+                : "overflow-hidden",
             )}
           >
             {nodeLength > 0 && (
@@ -180,8 +188,12 @@ export default function EditNodeModal({ data }: { data: NodeDataType }) {
                 <Table className="table-fixed bg-muted outline-1">
                   <TableHeader className="edit-node-modal-table-header">
                     <TableRow className="">
-                      <TableHead className="h-7 text-center">parameter</TableHead>
-                      <TableHead className="h-7 p-0 text-center">value</TableHead>
+                      <TableHead className="h-7 text-center">
+                        parameter
+                      </TableHead>
+                      <TableHead className="h-7 p-0 text-center">
+                        value
+                      </TableHead>
                       <TableHead className="h-7 text-center">show</TableHead>
                     </TableRow>
                   </TableHeader>
@@ -198,7 +210,7 @@ export default function EditNodeModal({ data }: { data: NodeDataType }) {
                             data.node.template[t].type === "prompt" ||
                             data.node.template[t].type === "file" ||
                             data.node.template[t].type === "int" ||
-                            data.node.template[t].type === "dict")
+                            data.node.template[t].type === "dict"),
                       )
                       .map((n, i) => (
                         <TableRow key={i} className="h-10">
@@ -209,7 +221,7 @@ export default function EditNodeModal({ data }: { data: NodeDataType }) {
                           </TableCell>
                           <TableCell className="w-[300px] p-0 text-center text-xs text-foreground ">
                             {data.node.template[n].type === "str" &&
-                              !data.node.template[n].options ? (
+                            !data.node.template[n].options ? (
                               <div className="mx-auto">
                                 {data.node.template[n].list ? (
                                   <InputListComponent
@@ -217,7 +229,7 @@ export default function EditNodeModal({ data }: { data: NodeDataType }) {
                                     disabled={disabled}
                                     value={
                                       !data.node.template[n].value ||
-                                        data.node.template[n].value === ""
+                                      data.node.template[n].value === ""
                                         ? [""]
                                         : data.node.template[n].value
                                     }
@@ -367,7 +379,13 @@ export default function EditNodeModal({ data }: { data: NodeDataType }) {
         </div>
 
         <DialogFooter>
-          <Button className="mt-3 rounded-full" onClick={handleSave} type="submit" >save</Button>
+          <Button
+            className="mt-3 rounded-full"
+            onClick={handleSave}
+            type="submit"
+          >
+            save
+          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

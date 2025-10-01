@@ -13,65 +13,88 @@ import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
 
 export default function AppChatDetail() {
-    const { fid, cid, type: typeStr } = useParams()
-    const type = Number(typeStr)
-    // console.log('fid, cid :>> ', fid, cid);
-    const { t } = useTranslation()
+  const { fid, cid, type: typeStr } = useParams();
+  const type = Number(typeStr);
+  // console.log('fid, cid :>> ', fid, cid);
+  const { t } = useTranslation();
 
-    const loading = false;
-    const title = t('log.detailedSession');
-    const { loadAssistantState, destroy } = useAssistantStore()
-    const { loadHistoryMsg, loadMoreHistoryMsg, changeChatId, clearMsgs } = useMessageStore()
-    const {
-        loadHistoryMsg: loadFlowHistoryMsg,
-        loadMoreHistoryMsg: loadMoreFlowHistoryMsg,
-        changeChatId: changeFlowChatId,
-        clearMsgs: clearFlowMsgs } = useFlowMessageStore()
+  const loading = false;
+  const title = t("log.detailedSession");
+  const { loadAssistantState, destroy } = useAssistantStore();
+  const { loadHistoryMsg, loadMoreHistoryMsg, changeChatId, clearMsgs } =
+    useMessageStore();
+  const {
+    loadHistoryMsg: loadFlowHistoryMsg,
+    loadMoreHistoryMsg: loadMoreFlowHistoryMsg,
+    changeChatId: changeFlowChatId,
+    clearMsgs: clearFlowMsgs,
+  } = useFlowMessageStore();
 
-    useEffect(() => {
-        type === AppNumType.ASSISTANT && loadAssistantState(fid, 'v1')
+  useEffect(() => {
+    type === AppNumType.ASSISTANT && loadAssistantState(fid, "v1");
 
-        type === AppNumType.FLOW ? loadFlowHistoryMsg(fid, cid, {
-            appendHistory: true,
-            lastMsg: ""
-        }) : loadHistoryMsg(fid, cid, {
-            appendHistory: true,
-            lastMsg: ''
+    type === AppNumType.FLOW
+      ? loadFlowHistoryMsg(fid, cid, {
+          appendHistory: true,
+          lastMsg: "",
         })
-        changeChatId(cid)
-        changeFlowChatId(cid)
-        return () => {
-            clearMsgs()
-            clearFlowMsgs()
-            type === AppNumType.ASSISTANT && destroy()
-        }
-    }, [])
+      : loadHistoryMsg(fid, cid, {
+          appendHistory: true,
+          lastMsg: "",
+        });
+    changeChatId(cid);
+    changeFlowChatId(cid);
+    return () => {
+      clearMsgs();
+      clearFlowMsgs();
+      type === AppNumType.ASSISTANT && destroy();
+    };
+  }, []);
 
-    return <div>
-        {loading && <div className="absolute w-full h-full top-0 left-0 flex justify-center items-center z-10 bg-[rgba(255,255,255,0.6)] dark:bg-blur-shared">
-            <LoadingIcon />
-        </div>}
-        <div className="bg-background-login px-4">
-            <div className="flex justify-between items-center py-4">
-                <div className="flex items-center">
-                    <ShadTooltip content={t('back')} side="top">
-                        <Button
-                            className="w-[36px] px-2 rounded-full"
-                            variant="outline"
-                            onClick={() => window.history.back()}
-                        ><ArrowLeft className="side-bar-button-size" /></Button>
-                    </ShadTooltip>
-                    <span className=" text-gray-700 text-sm font-black pl-4">{title}</span>
-                </div>
-            </div>
-            <div className="h-[calc(100vh-132px)]">
-                {type === AppNumType.FLOW
-                    ? <ChatMessages logo={''} debug useName={''} guideWord={''} loadMore={() => loadMoreFlowHistoryMsg(fid, true)} onMarkClick={null}></ChatMessages>
-                    : <MessagePanne logo='' useName='' guideWord=''
-                        loadMore={() => loadMoreHistoryMsg(fid, true)}
-                    ></MessagePanne>
-                }
-            </div>
+  return (
+    <div>
+      {loading && (
+        <div className="absolute w-full h-full top-0 left-0 flex justify-center items-center z-10 bg-[rgba(255,255,255,0.6)] dark:bg-blur-shared">
+          <LoadingIcon />
         </div>
-    </div >
-};
+      )}
+      <div className="bg-background-login px-4">
+        <div className="flex justify-between items-center py-4">
+          <div className="flex items-center">
+            <ShadTooltip content={t("back")} side="top">
+              <Button
+                className="w-[36px] px-2 rounded-full"
+                variant="outline"
+                onClick={() => window.history.back()}
+              >
+                <ArrowLeft className="side-bar-button-size" />
+              </Button>
+            </ShadTooltip>
+            <span className=" text-gray-700 text-sm font-black pl-4">
+              {title}
+            </span>
+          </div>
+        </div>
+        <div className="h-[calc(100vh-132px)]">
+          {type === AppNumType.FLOW ? (
+            <ChatMessages
+              logo={""}
+              debug
+              useName={""}
+              guideWord={""}
+              loadMore={() => loadMoreFlowHistoryMsg(fid, true)}
+              onMarkClick={null}
+            ></ChatMessages>
+          ) : (
+            <MessagePanne
+              logo=""
+              useName=""
+              guideWord=""
+              loadMore={() => loadMoreHistoryMsg(fid, true)}
+            ></MessagePanne>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}

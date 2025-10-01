@@ -1,0 +1,109 @@
+.chat-music-container {
+    width: 320px;
+    background: url("../images/music-bg.png") no-repeat center;
+    background-size: 110% 110%;
+    border-radius: 20px;
+    padding: 20px;
+    color: white;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+    margin-left: 24px;
+}
+
+.music-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+}
+
+.avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    overflow: hidden;
+}
+
+.avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.music-info h3 {
+    margin: 0;
+    font-size: 1.2rem;
+    font-weight: 600;
+}
+
+.music-info p {
+    margin: 4px 0 0;
+    font-size: 0.9rem;
+    opacity: 0.8;
+}
+
+.play-button {
+    background: url("../images/music-play.png") no-repeat;
+    background-size: 100% 100%;
+    border: none;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s;
+}
+
+
+.progress-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.progress-slider {
+    -webkit-appearance: none;
+    width: 100%;
+    height: 6px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 3px;
+    outline: none;
+    transition: background 0.2s;
+}
+
+.progress-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: #6C63FF;
+    cursor: pointer;
+    border: 2px solid white;
+}
+
+.progress-slider::-moz-range-thumb {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: #6C63FF;
+    cursor: pointer;
+    border: 2px solid white;
+}
+
+.lyrics-container {
+    font-family: PingFangSC-Medium;
+    font-size: 14px;
+    color: #FFFFFF;
+    letter-spacing: 0;
+    line-height: 24px;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.20);
+    font-weight: 500;
+    margin-top: 10px;
+}

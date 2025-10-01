@@ -6,9 +6,7 @@ import { Badge } from "../../components/bs-ui/badge";
 import { Button } from "../../components/bs-ui/button";
 import { DialogTitle } from "../../components/bs-ui/dialog";
 import { Textarea } from "../../components/bs-ui/input";
-import {
-  MAX_WORDS_HIGHLIGHT
-} from "../../constants";
+import { MAX_WORDS_HIGHLIGHT } from "../../constants";
 import { alertContext } from "../../contexts/alertContext";
 import { darkContext } from "../../contexts/darkContext";
 import { PopUpContext } from "../../contexts/popUpContext";
@@ -91,7 +89,7 @@ export default function GenericModal({
     }
 
     const filteredWordsHighlight = matches.filter(
-      (word) => !invalid_chars.includes(word)
+      (word) => !invalid_chars.includes(word),
     );
 
     setWordsHighlight(filteredWordsHighlight);
@@ -198,7 +196,7 @@ export default function GenericModal({
           <div
             className={classNames(
               !isEdit ? "rounded-lg border" : "",
-              "flex h-full w-full"
+              "flex h-full w-full",
             )}
           >
             {type === TypeModal.PROMPT && isEdit ? (
@@ -263,7 +261,7 @@ export default function GenericModal({
                               <span>
                                 {word.replace(/[{}]/g, "").length > 59
                                   ? word.replace(/[{}]/g, "").slice(0, 56) +
-                                  "..."
+                                    "..."
                                   : word.replace(/[{}]/g, "")}
                               </span>
                             </div>
@@ -273,7 +271,8 @@ export default function GenericModal({
                     </div>
                   </div>
                   <span className="mt-1 text-xs text-muted-foreground">
-                    The name of the prompt word can be freely chosen within curly braces, for example {"{variable_name}"}
+                    The name of the prompt word can be freely chosen within
+                    curly braces, for example {"{variable_name}"}
                   </span>
                 </div>
               )}
@@ -296,7 +295,10 @@ export default function GenericModal({
                 }
               }}
               type="submit"
-            > {myButtonText} </Button>
+            >
+              {" "}
+              {myButtonText}{" "}
+            </Button>
           </div>
         </div>
       </BaseModal.Content>

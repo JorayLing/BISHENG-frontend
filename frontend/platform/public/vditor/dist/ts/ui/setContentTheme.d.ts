@@ -1,1 +1,4 @@
-export declare const setContentTheme: (contentTheme: string, path: string) => void;
+export declare const setContentTheme: (
+  contentTheme: string,
+  path: string,
+) => void;

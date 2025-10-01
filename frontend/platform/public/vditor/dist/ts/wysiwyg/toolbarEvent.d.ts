@@ -1,1 +1,5 @@
-export declare const toolbarEvent: (vditor: IVditor, actionBtn: Element, event: Event) => void;
+export declare const toolbarEvent: (
+  vditor: IVditor,
+  actionBtn: Element,
+  event: Event,
+) => void;

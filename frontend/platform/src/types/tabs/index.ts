@@ -8,7 +8,7 @@ export type TabsContextType = {
   downloadFlow: (
     flow: FlowType,
     flowName: string,
-    flowDescription?: string
+    flowDescription?: string,
   ) => void;
   uploadFlow: (file?: File) => void;
   getNodeId: (nodeType: string) => string;
@@ -16,14 +16,14 @@ export type TabsContextType = {
   setTabsState: Dispatch<SetStateAction<TabsState>>;
   paste: (
     selection: { nodes: any; edges: any },
-    position: { x: number; y: number; paneX?: number; paneY?: number }
+    position: { x: number; y: number; paneX?: number; paneY?: number },
   ) => void;
   lastCopiedSelection: { nodes: any; edges: any };
   setLastCopiedSelection: (selection: { nodes: any; edges: any }) => void;
   setTweak: (tweak: TweaksType) => void;
   getTweak: TweaksType[];
-  setVersion: (version: FlowVersionItem | null) => {},
-  version: FlowVersionItem
+  setVersion: (version: FlowVersionItem | null) => {};
+  version: FlowVersionItem;
 };
 
 export type TabsState = {

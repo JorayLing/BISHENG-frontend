@@ -1,1 +1,5 @@
-export declare const highlightRender: (hljsOption?: IHljs, element?: HTMLElement | Document, cdn?: string) => void;
+export declare const highlightRender: (
+  hljsOption?: IHljs,
+  element?: HTMLElement | Document,
+  cdn?: string,
+) => void;

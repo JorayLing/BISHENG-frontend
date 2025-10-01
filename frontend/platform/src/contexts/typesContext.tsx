@@ -1,5 +1,5 @@
-import { createContext, ReactNode, useEffect, useState } from "react";
 import { Node } from "@xyflow/react";
+import { createContext, ReactNode, useEffect, useState } from "react";
 import { getAll } from "../controllers/API";
 import { APIKindType } from "../types/api";
 import { typesContextType } from "../types/typesContext";
@@ -48,7 +48,7 @@ export function TypesProvider({ children }: { children: ReactNode }) {
                 acc[c] = result[curr][c];
               });
               return acc;
-            }, {})
+            }, {}),
           );
           // Set the types by reducing over the keys of the result data and updating the accumulator.
           setTypes(
@@ -56,17 +56,15 @@ export function TypesProvider({ children }: { children: ReactNode }) {
             Object.keys(result)
               .reverse()
               .reduce((acc, curr) => {
-                Object.keys(result[curr]).forEach(
-                  (c: keyof APIKindType) => {
-                    acc[c] = curr;
-                    // Add the base classes to the accumulator as well.
-                    result[curr][c].base_classes?.forEach((b) => {
-                      acc[b] = curr;
-                    });
-                  }
-                );
+                Object.keys(result[curr]).forEach((c: keyof APIKindType) => {
+                  acc[c] = curr;
+                  // Add the base classes to the accumulator as well.
+                  result[curr][c].base_classes?.forEach((b) => {
+                    acc[b] = curr;
+                  });
+                });
                 return acc;
-              }, {})
+              }, {}),
           );
         }
         // Clear the interval if successful.
@@ -88,7 +86,7 @@ export function TypesProvider({ children }: { children: ReactNode }) {
     }
 
     // Start the initial interval.
-    getTypes()
+    getTypes();
     // intervalId = setInterval(getTypes, delay);
 
     return () => {
@@ -100,14 +98,14 @@ export function TypesProvider({ children }: { children: ReactNode }) {
   }, []);
 
   function deleteNode(idx: string) {
-    if (!reactFlowInstance) return
+    if (!reactFlowInstance) return;
     reactFlowInstance.setNodes(
-      reactFlowInstance.getNodes().filter((n: Node) => n.id !== idx)
+      reactFlowInstance.getNodes().filter((n: Node) => n.id !== idx),
     );
     reactFlowInstance.setEdges(
       reactFlowInstance
         .getEdges()
-        .filter((ns) => ns.source !== idx && ns.target !== idx)
+        .filter((ns) => ns.source !== idx && ns.target !== idx),
     );
   }
 
