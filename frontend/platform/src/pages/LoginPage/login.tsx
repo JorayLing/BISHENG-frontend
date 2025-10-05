@@ -159,62 +159,67 @@ export const LoginPage = () => {
   };
 
   return (
-    <div className="w-full h-full bg-background-dark">
-      <div className="fixed z-10 sm:w-[1280px] w-full sm:h-[720px] h-full translate-x-[-50%] translate-y-[-50%] left-[50%] top-[50%] border rounded-lg shadow-xl overflow-hidden bg-background-login">
-        <div className="w-[420px] h-[704px] m-[8px] hidden sm:block relative z-20">
+    <div className="w-full h-full   indexbgimage">
+      <div className="fixed z-10 sm:w-[1280px] w-full sm:h-[720px] h-full translate-x-[-50%] translate-y-[-50%] left-[50%] top-[50%]   rounded-lg  overflow-hidden  bg-background-color">
+        <div
+          className="w-[600px]  m-[8px] hidden sm:block relative z-20"
+          style={{ paddingTop: "100px" }}
+        >
           <img
-            src={__APP_ENV__.BASE_URL + "/login-logo-big.png"}
+            src={"/src/assets/loginbody.png"}
             alt="logo_picture"
             className="w-full h-full dark:hidden"
           />
-          <img
-            src={__APP_ENV__.BASE_URL + "/login-logo-dark.png"}
-            alt="logo_picture"
-            className="w-full h-full hidden dark:block"
-          />
-          {/* <iframe src={__APP_ENV__.BASE_URL + '/face.html'} className='w-full h-full'></iframe> */}
+
+          {/* <iframe src={__APP_ENV__.BASE_URL + '/face.html'} className='w-full h-full'></iframe>  sm:px-[266px] px-[20px] pyx-[200px]*/}
         </div>
         <div className="absolute w-full h-full z-10 flex justify-end top-0">
-          <div className="w-[852px] sm:px-[266px] px-[20px] pyx-[200px] bg-background-login relative">
-            <div>
-              <img
-                src={__APP_ENV__.BASE_URL + "/login-logo-small.png"}
-                className="block w-[114px] h-[36px] m-auto mt-[140px] dark:w-[124px] dark:pr-[10px] dark:hidden"
-                alt=""
-              />
-              <img
-                src={__APP_ENV__.BASE_URL + "/logo-small-dark.png"}
-                className="w-[114px] h-[36px] m-auto mt-[140px] dark:w-[124px] dark:pr-[10px] dark:block hidden"
-                alt=""
-              />
-              <span className="block w-fit m-auto font-normal text-[14px] text-tx-color mt-[24px]">
-                {t("login.slogen")}
-              </span>
-            </div>
+          <div
+            className="w-[600px] px-[100px]   relative loginbgimgimg"
+            style={{ paddingTop: "200px" }}
+          >
             <div className="grid gap-[12px] mt-[68px]">
-              <div className="grid">
-                <Input
+              <div className="grid" style={{ position: "relative" }}>
+                <input
                   id="email"
-                  className="h-[48px] dark:bg-login-input"
                   ref={mailRef}
+                  style={{ paddingLeft: "140px" }}
                   placeholder={t("login.account")}
                   type="email"
                   autoCapitalize="none"
                   autoComplete="email"
                   autoCorrect="off"
+                  className="h-[48px] w-full rounded-[40px] border border-input bg-search-input px-3 py-1 text-sm text-[#111] dark:text-gray-50 dark:bg-login-input shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
                 />
+                <div className="absolute  top-[25px] left-[-10px] translate-y-[-50%]">
+                  <img
+                    src={"/src/assets/username.png"}
+                    alt="username"
+                    className="w-[62px] h-[70px] imageShadow"
+                  />
+                </div>
               </div>
-              <div className="grid">
-                <Input
+              <div
+                className="grid"
+                style={{ position: "relative", marginTop: "20px" }}
+              >
+                <input
                   id="pwd"
-                  className="h-[48px] dark:bg-login-input"
                   ref={pwdRef}
                   placeholder={t("login.password")}
                   type="password"
                   onKeyDown={(e) =>
                     e.key === "Enter" && showLogin && handleLogin()
                   }
+                  className="h-[48px] w-full rounded-[40px] border border-input bg-search-input px-3 py-1 text-sm text-[#111] dark:text-gray-50 dark:bg-login-input shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
                 />
+                <div className="absolute  top-[25px] left-[-10px] translate-y-[-50%]">
+                  <img
+                    src={"/src/assets/pasweord.png"}
+                    alt="password"
+                    className="w-[62px] h-[70px] imageShadow"
+                  />
+                </div>
               </div>
               {!showLogin && (
                 <div className="grid">
@@ -257,13 +262,26 @@ export const LoginPage = () => {
                       </a>
                     )}
                   </div>
-                  <Button
+                  {/**     <Button
                     className="h-[48px] mt-[32px] dark:bg-button"
                     disabled={isLoading}
                     onClick={handleLogin}
                   >
                     {t("login.loginButton")}
-                  </Button>
+                  </Button> */}
+
+                  <div
+                    className=" mt-[22px] flex justify-center relative"
+                    onClick={handleLogin}
+                  >
+                    <img
+                      src={"/src/assets/yellowbtn.png"}
+                      className="w-[261px] h-[90px] absolute   "
+                    />
+                    <div className="absolute w-[100%] cursor-pointer flex items-center justify-center " style={{color: '#fff',	fontSize: '32px',lineHeight: '60px',textShadow: '0 2px 6px #DC6D0A'}}>
+                      {t("login.loginButton")}
+                    </div>
+                  </div>
                 </>
               ) : (
                 <>

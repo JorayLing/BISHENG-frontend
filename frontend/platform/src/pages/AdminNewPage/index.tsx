@@ -1,14 +1,24 @@
-import React from "react";
-import { useNavigate, useLocation, Outlet } from "react-router-dom";
-import { MessageCircle, Users, Settings, Home, FileText, Shield, Menu, X, ChevronDown, ChevronRight } from "lucide-react";
-import HomeSubRoute from "./HomeSubRoute";
-import ChatSubRoute from "./ChatSubRoute";
-import UsersSubRoute from "./UsersSubRoute";
-import TestSubRoute from "./TestSubRoute";
-import ChatFlowAuthSubRoute from "./ChatFlowAuthSubRoute";
+import {
+  ChevronDown,
+  ChevronRight,
+  CircleChevronLeft,
+  CircleChevronRight,
+} from "lucide-react";
+import React, { useContext } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import logoImage from "../../assets/logo.png";
+import { bsConfirm } from "../../components/bs-ui/alertDialog/useConfirm";
+import { userContext } from "../../contexts/userContext";
+import { logoutApi } from "../../controllers/API/user";
+import { captureAndAlertRequestErrorHoc } from "../../controllers/request";
 import ChatAssistantAuthSubRoute from "./ChatAssistantAuthSubRoute";
+import ChatFlowAuthSubRoute from "./ChatFlowAuthSubRoute";
+import ChatSubRoute from "./ChatSubRoute";
+import HomeSubRoute from "./HomeSubRoute";
 import IframeSubRoute from "./IframeSubRoute";
-import { menuGroupsConfig, homeMenuConfig, chatMenuConfig } from "./menuConfig";
+import { chatMenuConfig, homeMenuConfig, menuGroupsConfig } from "./menuConfig";
+import TestSubRoute from "./TestSubRoute";
+import UsersSubRoute from "./UsersSubRoute";
 
 // 标签页类型定义
 interface TabItem {
@@ -39,14 +49,59 @@ interface MenuGroup {
 }
 
 export default function AdminNewPage() {
+  const { user, setUser } = useContext(userContext);
+  const [showUserMenu, setShowUserMenu] = React.useState(false);
+  const [showLeftScroll, setShowLeftScroll] = React.useState(false);
+  const [showRightScroll, setShowRightScroll] = React.useState(false);
   const navigate = useNavigate();
   const location = useLocation();
+
+  // 退出登录
+  const handleLogout = () => {
+    bsConfirm({
+      title: "提示!",
+      desc: "确认退出登录？",
+      okTxt: "确认",
+      onOk(next) {
+        captureAndAlertRequestErrorHoc(logoutApi()).then((_) => {
+          setUser(null);
+          localStorage.removeItem("isLogin");
+          navigate("/login");
+        });
+        next();
+      },
+    });
+  };
+
+  // 修改密码
+  const handleChangePassword = () => {
+    localStorage.setItem("account", user.user_name);
+    navigate("/reset");
+  };
+
+  // 点击其他区域关闭用户菜单
+  React.useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as HTMLElement;
+      if (!target.closest(".user-menu-container")) {
+        setShowUserMenu(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
   const [sidebarOpen, setSidebarOpen] = React.useState(true);
   const [tabs, setTabs] = React.useState<TabItem[]>([]);
   const [activeTabId, setActiveTabId] = React.useState<string>("home");
-  const [collapsedGroups, setCollapsedGroups] = React.useState<Record<string, boolean>>({
+  const [collapsedGroups, setCollapsedGroups] = React.useState<
+    Record<string, boolean>
+  >({
     basic: false,
-    more: true
+    more: true,
   });
 
   // 动态生成组件映射
@@ -56,32 +111,38 @@ export default function AdminNewPage() {
       test: TestSubRoute,
       chat: ChatSubRoute,
       users: UsersSubRoute,
-      roles: () => React.createElement("div", { className: "p-6" }, 
-        React.createElement("h2", { className: "text-xl font-semibold" }, "角色管理")
+      roles: () => (
+        <div className="p-6">
+          <h2 className="text-xl font-semibold">角色管理</h2>
+        </div>
       ),
-      docs: () => React.createElement("div", { className: "p-6" }, 
-        React.createElement("h2", { className: "text-xl font-semibold" }, "项目文档")
+      docs: () => (
+        <div className="p-6">
+          <h2 className="text-xl font-semibold">项目文档</h2>
+        </div>
       ),
-      settings: () => React.createElement("div", { className: "p-6" }, 
-        React.createElement("h2", { className: "text-xl font-semibold" }, "系统设置")
+      settings: () => (
+        <div className="p-6">
+          <h2 className="text-xl font-semibold">系统设置</h2>
+        </div>
       ),
     };
 
     // 动态添加聊天菜单项
-    chatMenuConfig.forEach(chat => {
-      if (chat.type === 'assistant') {
+    chatMenuConfig.forEach((chat) => {
+      if (chat.type === "assistant") {
         baseMap[chat.id] = ChatAssistantAuthSubRoute;
-      } else if (chat.type === 'flow') {
+      } else if (chat.type === "flow") {
         baseMap[chat.id] = ChatFlowAuthSubRoute;
-      } else if (chat.type === 'iframe') {
+      } else if (chat.type === "iframe") {
         baseMap[chat.id] = IframeSubRoute;
       }
     });
 
     // 处理更多功能分组中的iframe菜单项
-    menuGroupsConfig.forEach(group => {
-      group.items.forEach(item => {
-        if (item.type === 'iframe' && item.chatConfig) {
+    menuGroupsConfig.forEach((group) => {
+      group.items.forEach((item) => {
+        if (item.type === "iframe" && item.chatConfig) {
           baseMap[item.id] = IframeSubRoute;
         }
       });
@@ -91,45 +152,62 @@ export default function AdminNewPage() {
   };
 
   const componentMap = getComponentMap();
-
-  // 使用配置文件中的菜单结构
   const menuGroups = menuGroupsConfig;
   const homeMenuItem = homeMenuConfig;
-
-  // 获取所有菜单项的扁平列表（用于查找）
-  const allMenuItems = [homeMenuItem, ...menuGroups.flatMap(group => group.items)];
+  const allMenuItems = [
+    homeMenuItem,
+    ...menuGroups.flatMap((group) => group.items),
+  ];
 
   // 切换分组折叠状态
   const toggleGroup = (groupId: string) => {
-    setCollapsedGroups(prev => ({
-      ...prev,
-      [groupId]: !prev[groupId]
-    }));
+    setCollapsedGroups((prev) => {
+      // 创建新的状态对象，默认所有组都折叠
+      const newState = Object.keys(prev).reduce(
+        (acc, key) => {
+          acc[key] = true;
+          return acc;
+        },
+        {} as Record<string, boolean>,
+      );
+
+      // 切换当前点击的组的状态
+      newState[groupId] = prev[groupId];
+
+      return {
+        ...newState,
+        [groupId]: !prev[groupId],
+      };
+    });
   };
 
   const handleMenuClick = (item: any) => {
-    console.log('点击菜单:', item.label, '路径:', item.path);
-    
+    // console.log("点击菜单:", item.label, "路径:", item.path);
+
     // 检查标签页是否已存在
-    const existingTab = tabs.find(tab => tab.id === item.id);
-    
+    const existingTab = tabs.find((tab) => tab.id === item.id);
+
     if (existingTab) {
       // 如果标签页已存在，切换到该标签页
       setActiveTabId(item.id);
-      navigate(item.path);
+      if (item.chatConfig?.type === "iframe") {
+        navigate(`/adminNew/iframe/${item.id}`);
+      } else {
+        navigate(`/adminNew/${item.path}`);
+      }
     } else {
       // 如果标签页不存在，创建新标签页
       const chatConfig = item.chatConfig;
       let props = {};
-      
+
       if (chatConfig) {
-        if (chatConfig.type === 'iframe') {
+        if (chatConfig.type === "iframe") {
           props = { url: chatConfig.chatId, title: chatConfig.name };
         } else {
           props = { id: chatConfig.chatId };
         }
       }
-      
+
       const newTab: TabItem = {
         id: item.id,
         label: item.label,
@@ -137,18 +215,22 @@ export default function AdminNewPage() {
         icon: item.icon,
         isActive: true,
         component: componentMap[item.id],
-        props: props
+        props: props,
       };
-      
+
       // 更新所有标签页的激活状态
-      const updatedTabs = tabs.map(tab => ({ ...tab, isActive: false }));
+      const updatedTabs = tabs.map((tab) => ({ ...tab, isActive: false }));
       updatedTabs.push(newTab);
-      
+
       setTabs(updatedTabs);
       setActiveTabId(item.id);
-      navigate(item.path);
+      if (item.chatConfig?.type === "iframe") {
+        navigate(`/adminNew/iframe/${item.id}`);
+      } else {
+        navigate(`/adminNew/${item.path}`);
+      }
     }
-    
+
     // 在移动端点击菜单后关闭侧边栏
     if (window.innerWidth < 768) {
       setSidebarOpen(false);
@@ -158,12 +240,12 @@ export default function AdminNewPage() {
   // 关闭标签页
   const closeTab = (tabId: string, e: React.MouseEvent) => {
     e.stopPropagation();
-    
+
     if (tabs.length <= 1) return; // 至少保留一个标签页
-    
-    const updatedTabs = tabs.filter(tab => tab.id !== tabId);
+
+    const updatedTabs = tabs.filter((tab) => tab.id !== tabId);
     setTabs(updatedTabs);
-    
+
     // 如果关闭的是当前激活的标签页，切换到其他标签页
     if (activeTabId === tabId) {
       const newActiveTab = updatedTabs[updatedTabs.length - 1];
@@ -175,7 +257,7 @@ export default function AdminNewPage() {
   // 切换标签页
   const switchTab = (tabId: string) => {
     setActiveTabId(tabId);
-    const tab = tabs.find(t => t.id === tabId);
+    const tab = tabs.find((t) => t.id === tabId);
     if (tab) {
       navigate(tab.path);
     }
@@ -183,217 +265,362 @@ export default function AdminNewPage() {
 
   const getCurrentActiveMenu = () => {
     const currentPath = location.pathname;
-    console.log('当前路径:', currentPath);
-    
+    // console.log("当前路径:", currentPath);
+
     // 移除 /adminNew 前缀，获取相对路径
-    const relativePath = currentPath.replace('/adminNew', '') || '/';
-    console.log('相对路径:', relativePath);
-    
-    const menuItem = allMenuItems.find(item => {
-      if (item.path === '') {
-        return relativePath === '/' || relativePath === '';
+    const relativePath = currentPath.replace("/adminNew", "") || "/";
+    // console.log("相对路径:", relativePath);
+
+    const menuItem = allMenuItems.find((item) => {
+      if (item.path === "") {
+        return relativePath === "/" || relativePath === "";
       }
       return relativePath === `/${item.path}` || relativePath === item.path;
     });
-    
-    console.log('匹配的菜单项:', menuItem);
+
+    // console.log("匹配的菜单项:", menuItem);
     return menuItem ? menuItem.id : "home";
   };
 
-  // 初始化首页标签页
+  // 初始化首页标签页和事件监听
   React.useEffect(() => {
     if (tabs.length === 0) {
       const homeTab: TabItem = {
         id: "home",
         label: "首页",
         path: "",
-        icon: Home,
+        icon: "/src/assets/menushouye.png",
         isActive: true,
         component: componentMap.home,
-        props: {}
+        props: {},
       };
       setTabs([homeTab]);
       setActiveTabId("home");
     }
+
+    // 添加自定义菜单点击事件监听
+    const handleMenuClickEvent = (e: any) => {
+      const item = e.detail;
+      handleMenuClick(item);
+    };
+
+    document.addEventListener('menuclick', handleMenuClickEvent);
+    return () => {
+      document.removeEventListener('menuclick', handleMenuClickEvent);
+    };
   }, [tabs.length]);
 
-  const currentMenu = allMenuItems.find(item => getCurrentActiveMenu() === item.id);
+  const currentMenu = allMenuItems.find(
+    (item) => getCurrentActiveMenu() === item.id,
+  );
 
-  return React.createElement("div", { className: "flex h-screen bg-gray-50" },
-    // 移动端遮罩层
-    sidebarOpen && React.createElement("div", {
-      className: "fixed inset-0 bg-black bg-opacity-50 z-40 md:hidden",
-      onClick: () => setSidebarOpen(false)
-    }),
+  return (
+    <div className="flex flex-col h-screen bg-gray-50 indexbgimage">
+      {/* 顶部栏 */}
+      <div className="h-16 flex items-center justify-between px-6">
+        {/* 左侧 Logo 区域 */}
+        <div className="flex items-center">
+          <div className="h-8 rounded flex items-center justify-center">
+            <img src={logoImage} alt="logo" className="h-8" />
+          </div>
+          {/* <span className="ml-3 text-xl font-semibold text-gray-800">人工智能学习平台</span> */}
+        </div>
 
-    // 侧边栏
-    React.createElement("div", {
-      className: `
-        fixed md:relative z-50 md:z-auto
-        w-64 bg-white shadow-lg transform transition-transform duration-300 ease-in-out
-        ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}
-        md:translate-x-0
-        h-full
-      `
-    },
-      // 侧边栏头部
-      React.createElement("div", { className: "p-6 border-b border-gray-200" },
-        React.createElement("div", { className: "flex items-center justify-between" },
-          React.createElement("div", { className: "flex items-center space-x-3" },
-            React.createElement("div", { className: "w-8 h-8 bg-green-500 rounded flex items-center justify-center" },
-              React.createElement("span", { className: "text-white font-bold text-sm" }, "ME")
-            ),
-            React.createElement("span", { className: "text-xl font-semibold text-gray-800" }, "AI智能学习助手")
-          ),
-          React.createElement("button", {
-            className: "md:hidden p-1 rounded-md hover:bg-gray-100",
-            onClick: () => setSidebarOpen(false)
-          },
-            React.createElement(X, { className: "w-5 h-5" })
-          )
-        )
-      ),
-      
-      // 导航菜单
-      React.createElement("nav", { className: "mt-6" },
-        // 首页菜单项（独立显示）
-        React.createElement("div", { className: "mb-4" },
-          React.createElement("button", {
-            onClick: () => handleMenuClick(homeMenuItem),
-            className: `w-full flex items-center px-6 py-3 text-left transition-colors duration-200 ${
-              getCurrentActiveMenu() === homeMenuItem.id
-                ? "bg-green-50 text-green-600 border-r-2 border-green-600"
-                : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
-            }`
-          },
-            React.createElement(Home, { className: "w-5 h-5 mr-3" }),
-            React.createElement("span", { className: "font-medium" }, homeMenuItem.label)
-          )
-        ),
-        
-        // 分组菜单
-        menuGroups.map((group) => {
-          const GroupIcon = group.icon;
-          const isCollapsed = collapsedGroups[group.id];
-          
-          return React.createElement("div", { key: group.id, className: "mb-2" },
-            // 分组标题
-            React.createElement("button", {
-              onClick: () => toggleGroup(group.id),
-              className: "w-full flex items-center justify-between px-6 py-3 text-left text-gray-700 hover:bg-gray-50 transition-colors duration-200"
-            },
-              React.createElement("div", { className: "flex items-center" },
-                React.createElement(GroupIcon, { className: "w-5 h-5 mr-3" }),
-                React.createElement("span", { className: "font-medium text-sm" }, group.label)
-              ),
-              React.createElement(isCollapsed ? ChevronRight : ChevronDown, { 
-                className: "w-4 h-4 text-gray-400" 
-              })
-            ),
-            
-            // 分组内容
-            !isCollapsed && React.createElement("div", { className: "ml-4" },
-              group.items.map((item) => {
-                const Icon = item.icon;
-                const isActive = getCurrentActiveMenu() === item.id;
-                
-                return React.createElement("button", {
-                  key: item.id,
-                  onClick: () => handleMenuClick(item),
-                  className: `w-full flex items-center px-6 py-2 text-left transition-colors duration-200 rounded-md ${
-                    isActive
-                      ? "bg-green-50 text-green-600"
-                      : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
-                  }`
-                },
-                  React.createElement(Icon, { className: "w-4 h-4 mr-3" }),
-                  React.createElement("span", { className: "font-medium text-sm" }, item.label)
-                );
-              })
-            )
-          );
-        })
-      )
-    ),
+        {/* 右侧用户信息 */}
+        <div className="flex items-center space-x-4">
+          <div className="text-sm" style={{ color: "#5A87FB" }}>
+            你好～{user?.user_name || "未登录"}
+          </div>
+          <div className="relative user-menu-container flex items-center">
+            <div
+              className="w-[56px] h-[56px] userheadbg flex items-center justify-center mt-[-8px] cursor-pointer"
+              onClick={() => setShowUserMenu(!showUserMenu)}
+            >
+              <div>
+                <img
+                  src={"/src/assets/head.png"}
+                  className="w-[46px] h-[46px]"
+                  alt="userhead"
+                />
+              </div>
+            </div>
+            <img
+              src={"/src/assets/downarrow.png"}
+              className={`w-[12px] h-[8px] ml-2 transition-transform duration-200 ${showUserMenu ? "rotate-180" : ""}`}
+              alt="arrow"
+            />
 
-    // 主内容区域
-    React.createElement("div", { className: "flex-1 flex flex-col min-w-0" },
-      // 顶部导航栏
-      React.createElement("div", { className: "bg-white shadow-sm border-b border-gray-200" },
-        // 标题栏
-        React.createElement("div", { className: "px-4 py-4 md:px-6" },
-          React.createElement("div", { className: "flex items-center justify-between" },
-            React.createElement("div", { className: "flex items-center space-x-4" },
-              React.createElement("button", {
-                className: "md:hidden p-2 rounded-md hover:bg-gray-100",
-                onClick: () => setSidebarOpen(true)
-              },
-                React.createElement(Menu, { className: "w-5 h-5" })
-              ),
-              React.createElement("h1", { className: "text-xl md:text-2xl font-semibold text-gray-800" },
-                currentMenu?.label || "首页"
-              )
-            ),
-            React.createElement("div", { className: "flex items-center space-x-4" },
-              React.createElement("div", { className: "text-sm text-gray-500 hidden md:block" },
-                "欢迎使用管理后台"
-              ),
-              React.createElement("div", { className: "w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center" },
-                React.createElement("span", { className: "text-sm font-medium text-gray-600" }, "A")
-              )
-            )
-          )
-        ),
-        
-        // 标签页栏
-        tabs.length > 1 && React.createElement("div", { className: "px-4 pb-2 md:px-6" },
-          React.createElement("div", { className: "flex space-x-1 overflow-x-auto" },
-            tabs.map((tab) => {
-              const Icon = tab.icon;
-              const isActive = activeTabId === tab.id;
-              
-              return React.createElement("div", {
-                key: tab.id,
-                onClick: () => switchTab(tab.id),
-                className: `flex items-center px-3 py-2 rounded-t-lg text-sm font-medium cursor-pointer transition-colors duration-200 ${
-                  isActive
-                    ? "bg-green-50 text-green-600 border-b-2 border-green-600"
-                    : "bg-gray-100 text-gray-600 hover:bg-gray-200"
-                }`
-              },
-                React.createElement(Icon, { className: "w-4 h-4 mr-2" }),
-                React.createElement("span", { className: "whitespace-nowrap" }, tab.label),
-                tabs.length > 1 && React.createElement("button", {
-                  onClick: (e) => closeTab(tab.id, e),
-                  className: "ml-2 p-1 rounded-full hover:bg-gray-300 transition-colors duration-200",
-                  title: "关闭标签页"
-                },
-                  React.createElement("span", { className: "text-xs" }, "×")
-                )
+            {/* 用户菜单 */}
+            {showUserMenu && (
+              <div className="absolute top-[30px] right-0 mt-2 w-[140px] bg-white rounded-lg shadow-lg py-2 z-50">
+                <button
+                  onClick={() => {
+                    handleChangePassword();
+                    setShowUserMenu(false);
+                  }}
+                  className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600 flex items-center"
+                >
+                  修改密码
+                </button>
+                <button
+                  onClick={() => {
+                    handleLogout();
+                    setShowUserMenu(false);
+                  }}
+                  className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600 flex items-center"
+                >
+                  退出登录
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* 下方主要内容区域 */}
+      <div className="flex flex-1 overflow-hidden">
+        {/* 左侧菜单 */}
+        <div
+          className={`
+          w-64  transition-transform duration-300 ease-in-out
+          ${sidebarOpen ? "translate-x-0" : "-translate-x-full"}
+          md:translate-x-0 pr-[20px]
+        `}
+        >
+          <nav className="h-full py-4">
+            {/* 首页菜单项 */}
+            <div className="mb-4">
+              <button
+                onClick={() => handleMenuClick(homeMenuItem)}
+                className={`w-full flex items-center text-left transition-colors duration-200 h-[50px] ${
+                  getCurrentActiveMenu() === homeMenuItem.id
+                    ? "selectmenucss"
+                    : "normalmenucss"
+                }`}
+              >
+                {/* <Home className="w-5 h-5 mr-3" /> */}
+                <img
+                  src={homeMenuItem.icon}
+                  alt="home"
+                  className="w-[50px] h-[50px] mr-3"
+                />
+                <span className="font-medium" style={{ color: `${ getCurrentActiveMenu() === homeMenuItem.id ? "#fff" : "#0057FF"}`}}>
+                  {homeMenuItem.label}
+                </span>
+              </button>
+            </div>
+
+            {/* 分组菜单 */}
+            {menuGroups.map((group) => {
+              const GroupIcon = group.icon;
+              const isCollapsed = collapsedGroups[group.id];
+
+              return (
+                <div key={group.id} className="mb-2">
+                  <button
+                    onClick={() => toggleGroup(group.id)}
+                    className="w-full flex items-center justify-between px-6 py-3 text-left groupmenucss h-[50px]"
+                  >
+                    <div className="flex items-center">
+                      {/*  <GroupIcon className="w-5 h-5 mr-3" /> */}
+                      <span
+                        className="font-medium text-sm"
+                        style={{ color: "#0057FF" }}
+                      >
+                        {group.label}
+                      </span>
+                    </div>
+                    {isCollapsed ? (
+                      <img src={"/src/assets/opengroup.png"} className="w-4 h-4 rotate-[-90deg]" alt="down" />
+
+                    ) : (
+                    
+                      <img src={"/src/assets/opengroup.png"} className="w-4 h-4" alt="down" />
+                    )}
+                  </button>
+
+                  {!isCollapsed && (
+                    <div className="max-h-[calc(100vh-250px)] overflow-y-auto custom-scrollbar">
+                      {group.items.map((item) => {
+                        const Icon = item.icon;
+                        const isActive = getCurrentActiveMenu() === item.id;
+
+                        return (
+                          <button
+                            key={item.id}
+                            onClick={() => handleMenuClick(item)}
+                            className={`w-full flex items-center px-6 py-2 text-left h-[50px] mt-[10px] ${
+                              isActive ? "selectmenucss" : "normalmenucss"
+                            }`}
+                          >
+                            <img
+                              src={item.icon}
+                              alt={item.label}
+                              className="w-[50px] h-[50px] mr-3"
+                            />
+                            <span
+                              className="font-medium text-sm"
+                              style={{
+                                color: `${isActive ? "#fff" : "#5A87FB"}`,
+                              }}
+                            >
+                              {item.label}
+                            </span>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
               );
-            })
-          )
-        )
-      ),
+            })}
+          </nav>
+        </div>
 
-       // 内容区域
-       React.createElement("div", { className: "flex-1 overflow-hidden" },
-         React.createElement("div", { className: "h-full" },
-           // 渲染所有标签页内容，但只显示当前激活的标签页
-           tabs.map((tab) => {
-             const Component = tab.component;
-             if (!Component) return null;
+        {/* 右侧内容区域 */}
+        <div className="flex-1 flex flex-col overflow-hidden">
+          {/* 标签页栏 */}
+          <div className="border-gray-200 h-[46px] flex items-center relative">
+            {/* 左翻页按钮 */}
+            {showLeftScroll && (
+              <button
+                onClick={() => {
+                  const container = document.getElementById("tabs-container");
+                  if (container) {
+                    container.scrollLeft -= 200;
+                  }
+                }}
+                className="absolute left-0 z-10 px-1 h-full flex items-center justify-center  "
+              >
+                <img src={"/src/assets/tagleftarrow.png"} className="w-8 h-8  " alt="left" />
+            
+              </button>
+            )}
+
+            {/* 右翻页按钮 */}
+            {showRightScroll && (
+              <button
+                onClick={() => {
+                  const container = document.getElementById("tabs-container");
+                  if (container) {
+                    container.scrollLeft += 200;
+                  }
+                }}
+                className="absolute right-0 z-10 px-1 h-full flex items-center justify-center "
+              >
+                <img src={"/src/assets/tagrightarrow.png"} className="w-8 h-8  " alt="right" />
              
-             return React.createElement("div", {
-               key: tab.id,
-               className: `h-full w-full ${activeTabId === tab.id ? 'block' : 'hidden'}`,
-               style: { display: activeTabId === tab.id ? 'block' : 'none' }
-             },
-               React.createElement(Component, tab.props || {})
-             );
-           })
-         )
-       )
-    )
+              </button>
+            )}
+
+            {/* 标签容器 */}
+            <div
+              id="tabs-container"
+              className="flex flex-nowrap space-x-1 overflow-x-hidden mx-[40px] pr-[10px] pl-[10px] scroll-smooth gap-[5px]"
+              onScroll={(e) => {
+                const container = e.currentTarget;
+                setShowLeftScroll(container.scrollLeft > 0);
+                setShowRightScroll(
+                  container.scrollLeft <
+                    container.scrollWidth - container.clientWidth,
+                );
+              }}
+              ref={(el) => {
+                if (el) {
+                  const checkScroll = () => {
+                    setShowLeftScroll(el.scrollLeft > 0);
+                    setShowRightScroll(
+                      el.scrollLeft < el.scrollWidth - el.clientWidth,
+                    );
+                  };
+                  checkScroll();
+                  // 监听容器大小变化
+                  const observer = new ResizeObserver(checkScroll);
+                  observer.observe(el);
+                }
+              }}
+            >
+              {tabs.map((tab) => {
+                const Icon = tab.icon;
+                const isActive = activeTabId === tab.id;
+
+                return (
+                  <div
+                    key={tab.id}
+                    onClick={() => switchTab(tab.id)}
+                    className={`group relative flex-none flex items-center h-[36px] px-3 pr-[14px] text-sm font-medium cursor-pointer     relative ${
+                      isActive
+                        ? "tagselectcss  h-[46px] "
+                        : "tagnormalcss mt-[5px]"
+                    }`}
+                  >
+                    {isActive && (
+                      <>
+                        <div className="absolute left-[-10px] bottom-0 w-[10px] h-[10px] ">
+                          <img
+                            src={"/src/assets/leftra.png"}
+                            className="w-[10px] h-[10px]"
+                            alt="left"
+                          />
+                        </div>
+                        <div className="absolute right-[-10px] bottom-0 w-[10px] h-[10px]  ">
+                          <img
+                            src={"/src/assets/rightra.png"}
+                            className="w-[10px] h-[10px]"
+                            alt="right"
+                          />
+                        </div>
+                      </>
+                    )}
+                    {/** 标签页图标<img
+                       src={tab.icon}
+                       alt={tab.label}
+                       className="w-[20px] h-[20px] "
+                     /> */}
+                    <span className="whitespace-nowrap">{tab.label}</span>
+                    {tabs.length > 1 && (
+                      <button
+                        onClick={(e) => closeTab(tab.id, e)}
+                        className="opacity-0 group-hover:opacity-100 absolute right-0 h-[14px] w-[14px] top-0   transition-all duration-200"
+                        title="关闭标签页"
+                      >
+                        <img src={"/src/assets/tagcloseicon.png"} className="w-[14px] h-[14px]" alt="close" />
+                        {/* <span className="text-xs">×</span> */}
+                      </button>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* 内容区域 */}
+          <div className="flex-1 infoRidau overflow-hidden  w-[calc(100%-20px)]">
+            {tabs.map((tab) => {
+              const Component = tab.component;
+              if (!Component) return null;
+
+              return (
+                <div
+                  key={tab.id}
+                  className={`h-full w-full ${activeTabId === tab.id ? "block" : "hidden"}`}
+                  style={{ display: activeTabId === tab.id ? "block" : "none" }}
+                >
+                  <Component {...(tab.props || {})} />
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+
+      {/* 移动端遮罩层 */}
+      {/**sidebarOpen && (
+        <div
+          className="fixed inset-0 bg-black z-40 md:hidden"
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}*/}
+    </div>
   );
 }

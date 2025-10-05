@@ -48,7 +48,7 @@ export default function IframeSubRoute({ url, title = "页面" }: IframeSubRoute
         title: iframeTitle,
         className: "w-full h-full border-0",
         allowFullScreen: true,
-        sandbox: "allow-scripts allow-same-origin allow-forms allow-popups allow-top-navigation"
+        sandbox: "allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox"
       })
     )
   );

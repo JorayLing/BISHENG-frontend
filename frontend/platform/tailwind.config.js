@@ -99,6 +99,7 @@ module.exports = {
         "chat-user-icon": "var(--chat-user-icon)",
         "black-button": "hsl(var(--black-button))",
         white: "var(--white)",
+        "white-color": "var(--white)",
         border: "hsl(var(--border))",
         input: "hsl(var(--input)/0.15)",
         ring: "hsl(var(--ring))",

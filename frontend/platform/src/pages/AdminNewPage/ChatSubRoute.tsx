@@ -9,7 +9,7 @@ export default function ChatSubRoute() {
   // 如果没有提供ID，使用默认的聊天ID
   const chatId = id || "1b87aea2a46b40febe3e0d8bc10364bf";
   
-  console.log('ChatSubRoute - 接收到的ID:', id, '使用的chatId:', chatId);
+  // console.log('ChatSubRoute - 接收到的ID:', id, '使用的chatId:', chatId);
   
   // 构建 WebSocket URL
   const wsUrl = `/api/v2/workflow/chat/${chatId}?`;

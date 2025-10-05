@@ -10,7 +10,7 @@ export default function ChatAssistantAuthSubRoute({ id }: ChatAssistantAuthSubRo
   // 如果没有提供ID，使用默认的聊天ID
   const chatId = id || "236d01bc20f14a09a12bd24daa2ff14b";
   
-  console.log('ChatAssistantAuthSubRoute - 接收到的ID:', id, '使用的chatId:', chatId);
+  // console.log('ChatAssistantAuthSubRoute - 接收到的ID:', id, '使用的chatId:', chatId);
   
   return React.createElement("div", { className: "h-full w-full" },
     
