@@ -89,7 +89,9 @@ export const LoginPage = () => {
         localStorage.setItem("isLogin", "1");
         const path =
           location.href.indexOf("from=workspace") === -1 ? "" : "/workspace/";
-        location.href = path ? location.origin + path : location.href;
+        // location.href = path ? location.origin + path : location.href;
+        navigate("/adminNew")
+        // router.push("/adminNew")
         // location.href = __APP_ENV__.BASE_URL + '/'
       }),
       (error) => {
