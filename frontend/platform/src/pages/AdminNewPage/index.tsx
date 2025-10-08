@@ -16,7 +16,7 @@ import ChatFlowAuthSubRoute from "./ChatFlowAuthSubRoute";
 import ChatSubRoute from "./ChatSubRoute";
 import HomeSubRoute from "./HomeSubRoute";
 import IframeSubRoute from "./IframeSubRoute";
-import { chatMenuConfig, homeMenuConfig, menuGroupsConfig } from "./menuConfig";
+import { homeMenuConfig, menuGroupsConfig } from "./menuConfig";
 import TestSubRoute from "./TestSubRoute";
 import UsersSubRoute from "./UsersSubRoute";
 
@@ -105,7 +105,7 @@ export default function AdminNewPage() {
   });
 
   // 动态生成组件映射
-  const getComponentMap = () => {
+  const getComponentMap = (groups: typeof menuGroups) => {
     const baseMap: Record<string, React.ComponentType<any>> = {
       home: HomeSubRoute,
       test: TestSubRoute,
@@ -129,35 +129,34 @@ export default function AdminNewPage() {
     };
 
     // 动态添加聊天菜单项
-    chatMenuConfig.forEach((chat) => {
-      if (chat.type === "assistant") {
-        baseMap[chat.id] = ChatAssistantAuthSubRoute;
-      } else if (chat.type === "flow") {
-        baseMap[chat.id] = ChatFlowAuthSubRoute;
-      } else if (chat.type === "iframe") {
-        baseMap[chat.id] = IframeSubRoute;
-      }
-    });
-
-    // 处理更多功能分组中的iframe菜单项
-    menuGroupsConfig.forEach((group) => {
+    menuGroups.forEach((group) => {
       group.items.forEach((item) => {
-        if (item.type === "iframe" && item.chatConfig) {
+        const chatConfig = item.chatConfig;
+        if (!chatConfig) return;
+
+        if (chatConfig.type === "assistant") {
+          baseMap[item.id] = ChatAssistantAuthSubRoute;
+        } else if (chatConfig.type === "flow" || chatConfig.type === "chat") {
+          baseMap[item.id] = ChatFlowAuthSubRoute;
+        } else if (chatConfig.type === "iframe") {
           baseMap[item.id] = IframeSubRoute;
         }
+        // console.log('Mapping component for:', item.id, chatConfig.type);
       });
     });
+
+    // 已经在上面处理过所有菜单项的组件映射
 
     return baseMap;
   };
 
-  const componentMap = getComponentMap();
   const menuGroups = menuGroupsConfig;
   const homeMenuItem = homeMenuConfig;
   const allMenuItems = [
     homeMenuItem,
     ...menuGroups.flatMap((group) => group.items),
   ];
+  const componentMap = getComponentMap(menuGroups);
 
   // 切换分组折叠状态
   const toggleGroup = (groupId: string) => {
@@ -204,7 +203,7 @@ export default function AdminNewPage() {
         if (chatConfig.type === "iframe") {
           props = { url: chatConfig.chatId, title: chatConfig.name };
         } else {
-          props = { id: chatConfig.chatId };
+          props = { flowId: chatConfig.chatId };
         }
       }
 

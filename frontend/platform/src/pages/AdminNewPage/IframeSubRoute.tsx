@@ -1,6 +1,6 @@
 import React from 'react';
 import { useParams } from 'react-router-dom';
-import { chatMenuConfig, menuGroupsConfig } from './menuConfig';
+import { changedatatomenu, menuGroupsConfig } from './menuConfig';
 
 interface IframeSubRouteProps {
   url?: string;
@@ -15,18 +15,13 @@ export default function IframeSubRoute({ url, title = "页面" }: IframeSubRoute
   let iframeTitle = title;
   
   if (!iframeUrl && id) {
-    // 首先从聊天配置中查找
-    let chatItem = chatMenuConfig.find(chat => chat.id === id && chat.type === 'iframe');
+    // 从菜单配置中查找
+    const { baseMenu, ortherMenu } = changedatatomenu();
+    let chatItem = baseMenu.find(chat => chat.id === id && chat.type === 'iframe');
     
-    // 如果没找到，从菜单分组配置中查找
+    // 如果在基础菜单中没找到，尝试在更多功能菜单中查找
     if (!chatItem) {
-      for (const group of menuGroupsConfig) {
-        const item = group.items.find(item => item.id === id && item.type === 'iframe');
-        if (item && item.chatConfig) {
-          chatItem = item.chatConfig;
-          break;
-        }
-      }
+      chatItem = ortherMenu.find(chat => chat.id === id && chat.type === 'iframe');
     }
     
     if (chatItem) {

@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { menuGroupsConfig} from "./menuConfig";
+import { getHomePageMenuItems } from "./menuConfig";
 
 interface ImageCardProps {
   src: string;
@@ -45,12 +45,8 @@ export default function HomeSubRoute() {
     document.dispatchEvent(event);
   };
 
-  // 获取指定菜单项
-  const namelist = ["AI创作版", "AI原理学习游戏", "AI对话助手", "心理小屋", "AI绘图（基础）"];
-  // 按照 namelist 的顺序排序菜单项
-  const menuItems = namelist.map(name => 
-    menuGroupsConfig[0].items.find(item => item.label === name)
-  ).filter(Boolean);
+  // 获取首页菜单项
+  const menuItems = getHomePageMenuItems();
 
   return (
     <div className="p-6 h-full overflow-y-auto shouyebgimage   justify-center flex ">
