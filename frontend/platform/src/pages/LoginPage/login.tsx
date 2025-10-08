@@ -14,6 +14,7 @@ import { useNavigate } from "react-router-dom";
 import {
   getCaptchaApi,
   getUserInfo,
+  menuConfigApi,
   loginApi,
   registerApi,
 } from "../../controllers/API/user";
@@ -106,8 +107,19 @@ export const LoginPage = () => {
 
       try {
         // 获取用户信息
-        const userInfo = await getUserInfo();
+        const userInfo = await getUserInfo(); 
+       
         
+        try {
+          const menuConfig = await menuConfigApi();
+          if (Array.isArray(menuConfig)) {
+            localStorage.setItem('menuConfig', JSON.stringify(menuConfig));
+            // console.log('Menu config saved:', menuConfig);
+          }
+        } catch (error) {
+          console.warn('Failed to load menu config:', error);
+          // 菜单配置加载失败不影响登录
+        }
         // 设置登录状态
         localStorage.setItem("isLogin", "1");
         localStorage.setItem("UUR_INFO", String(userInfo.user_id));

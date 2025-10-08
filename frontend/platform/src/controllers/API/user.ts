@@ -1,6 +1,7 @@
 import { paramsSerializer } from ".";
 import { ROLE, User } from "../../types/api/user";
 import axios from "../request";
+import Axios from "axios";
 
 // 获取 key
 export const getPublicKeyApi = async (): Promise<{ public_key: string }> => {
@@ -14,6 +15,22 @@ export const getCaptchaApi = (): Promise<any> => {
 // 校验登录
 export async function getUserInfo(): Promise<User> {
   return await axios.get(`/api/v1/user/info`);
+}
+export async function menuConfigApi(data?) {
+  const instance = Axios.create({
+    baseURL: '',
+    timeout: 5000,
+    withCredentials: false,
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json'
+    }
+  });
+
+  const response = await instance.get('https://aixuexi.cc/api/bisheng/menus_copy', {
+    ...data
+  });
+  return response.data;
 }
 // 退出登录
 export async function logoutApi() {

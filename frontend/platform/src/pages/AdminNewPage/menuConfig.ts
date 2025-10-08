@@ -26,7 +26,7 @@ export interface MenuGroupConfig {
 }
 // 聊天菜单配置
 
-/** 
+/**
  */
 export const chatMenuConfig: ChatMenuItem[] = [
   {
@@ -37,10 +37,18 @@ export const chatMenuConfig: ChatMenuItem[] = [
     icon: "/src/assets/chuangzuoban.png",
   },
   {
+    id: "ceshchat",
+    name: "测试chat",
+    type: "flow",
+    chatId: "27d7770ed1d04fadae9b0d633607821f",
+    icon: "/src/assets/aiyuanli.png",
+  },
+  {
     id: "chat3",
     name: "AI原理学习游戏",
     type: "iframe",
-    chatId: "https://aixuexi.cc/ai3/youxi/tP8yS5gD2eM6eN4wI0jZ9vZ5uS9fS0dU8pH6vI3mV3fC2fC5rQ9xU7oX3tZ9hD0eS5sG7fX7tW0nV6zV2.html",
+    chatId:
+      "https://aixuexi.cc/ai3/youxi/tP8yS5gD2eM6eN4wI0jZ9vZ5uS9fS0dU8pH6vI3mV3fC2fC5rQ9xU7oX3tZ9hD0eS5sG7fX7tW0nV6zV2.html",
     icon: "/src/assets/aiyuanli.png",
   },
   {
@@ -141,14 +149,6 @@ export const chatMenuConfig: ChatMenuItem[] = [
     chatId: "2070ef768422436b809e370626c01d2c",
     icon: "/src/assets/aiyuinyuejia.png",
   },
-  // 可以在这里添加更多聊天菜单项
-  // {
-  //   id: "chat4",
-  //   name: "聊天4",
-  //   type: "assistant",
-  //   chatId: "your-chat-id-here",
-  //   icon: MessageCircle
-  // }
 ];
 
 // 更多功能菜单配置
@@ -185,10 +185,75 @@ export const moreMenuConfig: ChatMenuItem[] = [
     id: "sucaijiaoxue",
     name: "教学素材",
     type: "iframe",
-    chatId: "http://admin.aixuexi.cc/boots/S9Ij984bcgI79I8kMnLJWmY2?TOKEN_USER=lrXF8hhIVgELEkAyyCtcBnq7t56Q5AWiFWkSMlu-lA7ibJsroqw1p1dUeWXKKRXJjsXXe4a9ZqrHq29EgvJePw==_753",
+    chatId:
+      "http://admin.aixuexi.cc/boots/S9Ij984bcgI79I8kMnLJWmY2?TOKEN_USER=lrXF8hhIVgELEkAyyCtcBnq7t56Q5AWiFWkSMlu-lA7ibJsroqw1p1dUeWXKKRXJjsXXe4a9ZqrHq29EgvJePw==_753",
     icon: "/src/assets/jiaoxuesucai.png",
-  }
+  },
 ];
+
+const changedatatomenu = () => {
+  let baseMenu: ChatMenuItem[] = [];
+  let ortherMenu: ChatMenuItem[] = [];
+  let data: any = [];
+  try {
+    const savedConfig = localStorage.getItem("menuConfig");
+    if (savedConfig) {
+      data = JSON.parse(savedConfig);
+    }
+  } catch (error) {
+    console.warn("Failed to load menu config:", error);
+  }
+
+  if (!data.length)
+    return {
+      baseMenu: [],
+      ortherMenu: [],
+    };
+
+  // baseMenu: chatMenuConfig,
+  // ortherMenu: moreMenuConfig,
+  data[0].map((item) => {
+    if (item.status == "1" || item.status === 1) {
+      let menu: ChatMenuItem = {
+        id: "",
+        name: "",
+        type: "iframe",
+        chatId: "",
+        icon: "",
+      };
+      console.log(item.id);
+      if (item.type === "iframe") {
+        item.path = `iframe/${item.id}`;
+        menu = {
+          id: item.id + "-iframe",
+          name: item.permission_name,
+          type: "iframe",
+          chatId: item.url,
+          icon: item.logo,
+        };
+      } else if (item.type === "chat" || item.type === "assistant") {
+        menu = {
+          id: item.id + "-chat",
+          name: item.permission_name,
+          type: item.type,
+          chatId: item.permission_id,
+          icon: item.logo,
+        };
+      }
+      if (item.category === "1" && menu.id) {
+        baseMenu.push(menu);
+      }
+      if (item.category === "0" && menu.id) {
+        ortherMenu.push(menu);
+      }
+    }
+  });
+
+  return {
+    baseMenu,
+    ortherMenu,
+  };
+};
 
 // 菜单分组配置
 export const menuGroupsConfig: MenuGroupConfig[] = [
@@ -198,7 +263,7 @@ export const menuGroupsConfig: MenuGroupConfig[] = [
     icon: FileText,
     items: [
       // 动态生成聊天菜单项
-      ...chatMenuConfig.map((chat) => ({
+      ...changedatatomenu().baseMenu.map((chat) => ({
         id: chat.id,
         label: chat.name,
         path:
@@ -218,7 +283,7 @@ export const menuGroupsConfig: MenuGroupConfig[] = [
     icon: Settings,
     items: [
       // 动态生成更多功能菜单项
-      ...moreMenuConfig.map((item) => ({
+      ...changedatatomenu().ortherMenu.map((item) => ({
         id: item.id,
         label: item.name,
         path: `iframe/${item.id}`,

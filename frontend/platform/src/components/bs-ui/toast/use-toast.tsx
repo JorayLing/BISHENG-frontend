@@ -153,7 +153,7 @@ function toast({
   const dismiss = () => dispatch({ type: "DISMISS_TOAST", toastId: id });
 
   const description = Array.isArray(descs)
-    ? descs.map((msg) => <p>{msg}</p>)
+    ? descs.map((msg, index) => <p key={`${id}-desc-${index}`}>{msg}</p>)
     : descs;
 
   dispatch({
