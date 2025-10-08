@@ -8,10 +8,12 @@ import { Input } from "../../components/bs-ui/input";
 // import { alertContext } from "../contexts/alertContext";
 import { useToast } from "@/components/bs-ui/toast/use-toast";
 import { locationContext } from "@/contexts/locationContext";
+import { userContext } from "@/contexts/userContext";
 import { ldapLoginApi } from "@/controllers/API/pro";
 import { useNavigate } from "react-router-dom";
 import {
   getCaptchaApi,
+  getUserInfo,
   loginApi,
   registerApi,
 } from "../../controllers/API/user";
@@ -25,8 +27,9 @@ export const LoginPage = () => {
   const { message, toast } = useToast();
   const navigate = useNavigate();
   const { appConfig } = useContext(locationContext);
+  const { user, setUser } = useContext(userContext);
 
-  const isLoading = false;
+  const [isLoading, setIsLoading] = useState(false);
 
   const mailRef = useRef(null);
   const pwdRef = useRef(null);
@@ -46,6 +49,13 @@ export const LoginPage = () => {
   useEffect(() => {
     fetchCaptchaData();
   }, []);
+
+  // 监听用户信息变化
+  useEffect(() => {
+    if (user && user.user_id) {
+      navigate("/adminNew");
+    }
+  }, [user]);
 
   const fetchCaptchaData = () => {
     getCaptchaApi().then(setCaptchaData);
@@ -73,35 +83,61 @@ export const LoginPage = () => {
     const encryptPwd = isLDAP
       ? await handleLdapEncrypt(pwd)
       : await handleEncrypt(pwd);
-    captureAndAlertRequestErrorHoc(
-      (isLDAP
-        ? ldapLoginApi(mail, encryptPwd)
-        : loginApi(
-            mail,
-            encryptPwd,
-            captchaData.captcha_key,
-            captchaRef.current?.value,
-          )
-      ).then((res: any) => {
-        window.self === window.top
-          ? localStorage.removeItem("ws_token")
-          : localStorage.setItem("ws_token", res.access_token);
+    setIsLoading(true);
+    try {
+      // 先登录
+      const loginRes = await captureAndAlertRequestErrorHoc(
+        isLDAP
+          ? ldapLoginApi(mail, encryptPwd)
+          : loginApi(
+              mail,
+              encryptPwd,
+              captchaData.captcha_key,
+              captchaRef.current?.value,
+            )
+      );
+
+      // 处理 token
+      if (window.self === window.top) {
+        localStorage.removeItem("ws_token");
+      } else {
+        localStorage.setItem("ws_token", loginRes.access_token);
+      }
+
+      try {
+        // 获取用户信息
+        const userInfo = await getUserInfo();
+        
+        // 设置登录状态
         localStorage.setItem("isLogin", "1");
-        const path =
-          location.href.indexOf("from=workspace") === -1 ? "" : "/workspace/";
-        // location.href = path ? location.origin + path : location.href;
-        navigate("/adminNew")
-        // router.push("/adminNew")
-        // location.href = __APP_ENV__.BASE_URL + '/'
-      }),
-      (error) => {
-        if (error.indexOf("过期") !== -1) {
-          // 有时间改为 code 判断
-          localStorage.setItem("account", mail);
-          navigate("/reset", { state: { noback: true } });
-        }
-      },
-    );
+        localStorage.setItem("UUR_INFO", String(userInfo.user_id));
+        
+        // 设置用户信息
+        setUser(userInfo);
+      } catch (e) {
+        // 如果获取用户信息失败，清除登录状态
+        localStorage.removeItem("isLogin");
+        localStorage.removeItem("UUR_INFO");
+        message({
+          title: "登录失败",
+          variant: "error",
+          description: ["获取用户信息失败，请重试"],
+        });
+      }
+    } catch (error) {
+      if (typeof error === "string" && error.indexOf("过期") !== -1) {
+        localStorage.setItem("account", mail);
+        navigate("/reset", { state: { noback: true } });
+      } else {
+        message({
+          title: "登录失败",
+          variant: "error",
+          description: [typeof error === "string" ? error : "登录失败，请重试"],
+        });
+      }
+    } finally {
+      setIsLoading(false);
+    }
 
     fetchCaptchaData();
   };
@@ -274,14 +310,25 @@ export const LoginPage = () => {
 
                   <div
                     className=" mt-[22px] flex justify-center relative"
-                    onClick={handleLogin}
+                    onClick={!isLoading ? handleLogin : undefined}
+                    style={{ cursor: isLoading ? 'not-allowed' : 'pointer' }}
                   >
                     <img
                       src={"/src/assets/yellowbtn.png"}
-                      className="w-[261px] h-[90px] absolute   "
+                      className="w-[261px] h-[90px] absolute"
+                      style={{ opacity: isLoading ? 0.7 : 1 }}
                     />
-                    <div className="absolute w-[100%] cursor-pointer flex items-center justify-center " style={{color: '#fff',	fontSize: '32px',lineHeight: '60px',textShadow: '0 2px 6px #DC6D0A'}}>
-                      {t("login.loginButton")}
+                    <div 
+                      className="absolute w-[100%] flex items-center justify-center" 
+                      style={{
+                        color: '#fff',
+                        fontSize: '32px',
+                        lineHeight: '60px',
+                        textShadow: '0 2px 6px #DC6D0A',
+                        opacity: isLoading ? 0.7 : 1
+                      }}
+                    >
+                      {isLoading ? "登录中..." : t("login.loginButton")}
                     </div>
                   </div>
                 </>
