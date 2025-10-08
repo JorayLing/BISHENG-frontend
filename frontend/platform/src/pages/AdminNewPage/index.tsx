@@ -6,7 +6,15 @@ import {
 } from "lucide-react";
 import React, { useContext } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import logoImage from "../../assets/logo.png";
+// 使用相对路径引用公共资源
+const logoImage = '/assets/images/logo.png';
+const menuHomeIcon = '/assets/images/menushouye.png';
+const openGroupIcon = '/assets/images/opengroup.png';
+const tagLeftArrow = '/assets/images/tagleftarrow.png';
+const tagRightArrow = '/assets/images/tagrightarrow.png';
+const tagCloseIcon = '/assets/images/tagcloseicon.png';
+const leftRa = '/assets/images/leftra.png';
+const rightRa = '/assets/images/rightra.png';
 import { bsConfirm } from "../../components/bs-ui/alertDialog/useConfirm";
 import { userContext } from "../../contexts/userContext";
 import { logoutApi } from "../../controllers/API/user";
@@ -289,7 +297,7 @@ export default function AdminNewPage() {
         id: "home",
         label: "首页",
         path: "",
-        icon: "/src/assets/menushouye.png",
+        icon: menuHomeIcon,
         isActive: true,
         component: componentMap.home,
         props: {},
@@ -338,14 +346,14 @@ export default function AdminNewPage() {
             >
               <div>
                 <img
-                  src={"/src/assets/head.png"}
+                  src="/assets/images/head.png"
                   className="w-[46px] h-[46px]"
                   alt="userhead"
                 />
               </div>
             </div>
             <img
-              src={"/src/assets/downarrow.png"}
+              src="/assets/images/downarrow.png"
               className={`w-[12px] h-[8px] ml-2 transition-transform duration-200 ${showUserMenu ? "rotate-180" : ""}`}
               alt="arrow"
             />
@@ -431,11 +439,11 @@ export default function AdminNewPage() {
                       </span>
                     </div>
                     {isCollapsed ? (
-                      <img src={"/src/assets/opengroup.png"} className="w-4 h-4 rotate-[-90deg]" alt="down" />
+                      <img src={openGroupIcon} className="w-4 h-4 rotate-[-90deg]" alt="down" />
 
                     ) : (
                     
-                      <img src={"/src/assets/opengroup.png"} className="w-4 h-4" alt="down" />
+                      <img src={openGroupIcon} className="w-4 h-4" alt="down" />
                     )}
                   </button>
 
@@ -492,7 +500,7 @@ export default function AdminNewPage() {
                 }}
                 className="absolute left-0 z-10 px-1 h-full flex items-center justify-center  "
               >
-                <img src={"/src/assets/tagleftarrow.png"} className="w-8 h-8  " alt="left" />
+                <img src={tagLeftArrow} className="w-8 h-8" alt="left" />
             
               </button>
             )}
@@ -508,7 +516,7 @@ export default function AdminNewPage() {
                 }}
                 className="absolute right-0 z-10 px-1 h-full flex items-center justify-center "
               >
-                <img src={"/src/assets/tagrightarrow.png"} className="w-8 h-8  " alt="right" />
+                <img src={tagRightArrow} className="w-8 h-8" alt="right" />
              
               </button>
             )}
@@ -558,14 +566,14 @@ export default function AdminNewPage() {
                       <>
                         <div className="absolute left-[-10px] bottom-0 w-[10px] h-[10px] ">
                           <img
-                            src={"/src/assets/leftra.png"}
+                            src={leftRa}
                             className="w-[10px] h-[10px]"
                             alt="left"
                           />
                         </div>
                         <div className="absolute right-[-10px] bottom-0 w-[10px] h-[10px]  ">
                           <img
-                            src={"/src/assets/rightra.png"}
+                            src={rightRa}
                             className="w-[10px] h-[10px]"
                             alt="right"
                           />
@@ -584,7 +592,7 @@ export default function AdminNewPage() {
                         className="opacity-0 group-hover:opacity-100 absolute right-0 h-[14px] w-[14px] top-0   transition-all duration-200"
                         title="关闭标签页"
                       >
-                        <img src={"/src/assets/tagcloseicon.png"} className="w-[14px] h-[14px]" alt="close" />
+                        <img src={tagCloseIcon} className="w-[14px] h-[14px]" alt="close" />
                         {/* <span className="text-xs">×</span> */}
                       </button>
                     )}

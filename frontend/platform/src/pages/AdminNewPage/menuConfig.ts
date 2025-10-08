@@ -320,5 +320,5 @@ export const homeMenuConfig = {
   id: "home",
   label: "首页",
   path: "",
-  icon: "/src/assets/menushouye.png",
+  icon: "/assets/images/menushouye.png",
 };

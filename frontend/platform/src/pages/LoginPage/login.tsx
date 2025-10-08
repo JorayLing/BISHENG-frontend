@@ -2,6 +2,13 @@ import { BookOpenIcon } from "@/components/bs-icons/bookOpen";
 import { GithubIcon } from "@/components/bs-icons/github";
 import { useContext, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
+// 使用相对路径引用公共资源
+const loginBodyImage = '/assets/images/loginbody.png';
+const usernameIcon = '/assets/images/username.png';
+const passwordIcon = '/assets/images/pasweord.png';
+const yellowButton = '/assets/images/yellowbtn.png';
+const headIcon = '/assets/images/head.png';
+const downArrowIcon = '/assets/images/downarrow.png';
 import json from "../../../package.json";
 import { Button } from "../../components/bs-ui/button";
 import { Input } from "../../components/bs-ui/input";
@@ -218,7 +225,7 @@ export const LoginPage = () => {
           style={{ paddingTop: "100px" }}
         >
           <img
-            src={"/src/assets/loginbody.png"}
+            src={loginBodyImage}
             alt="logo_picture"
             className="w-full h-full dark:hidden"
           />
@@ -245,7 +252,7 @@ export const LoginPage = () => {
                 />
                 <div className="absolute  top-[25px] left-[-10px] translate-y-[-50%]">
                   <img
-                    src={"/src/assets/username.png"}
+                    src={usernameIcon}
                     alt="username"
                     className="w-[62px] h-[70px] imageShadow"
                   />
@@ -267,7 +274,7 @@ export const LoginPage = () => {
                 />
                 <div className="absolute  top-[25px] left-[-10px] translate-y-[-50%]">
                   <img
-                    src={"/src/assets/pasweord.png"}
+                    src={passwordIcon}
                     alt="password"
                     className="w-[62px] h-[70px] imageShadow"
                   />
@@ -328,7 +335,7 @@ export const LoginPage = () => {
                     style={{ cursor: isLoading ? 'not-allowed' : 'pointer' }}
                   >
                     <img
-                      src={"/src/assets/yellowbtn.png"}
+                      src={yellowButton}
                       className="w-[261px] h-[90px] absolute"
                       style={{ opacity: isLoading ? 0.7 : 1 }}
                     />
