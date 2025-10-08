@@ -114,7 +114,9 @@ export const LoginPage = () => {
           const menuConfig = await menuConfigApi();
           if (Array.isArray(menuConfig)) {
             localStorage.setItem('menuConfig', JSON.stringify(menuConfig));
-            // console.log('Menu config saved:', menuConfig);
+            // 动态更新菜单配置
+            const { updateMenuGroupsConfig } = await import('../../pages/AdminNewPage/menuConfig');
+            updateMenuGroupsConfig();
           }
         } catch (error) {
           console.warn('Failed to load menu config:', error);

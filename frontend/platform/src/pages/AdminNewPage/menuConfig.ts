@@ -291,7 +291,16 @@ export const getMenuGroupsConfig = (): MenuGroupConfig[] => {
   ];
 };
 
-export const menuGroupsConfig = getMenuGroupsConfig();
+// 创建一个函数来获取最新的菜单配置
+export const getMenuGroups = () => getMenuGroupsConfig();
+
+// 导出菜单配置
+export let menuGroupsConfig = getMenuGroups();
+
+// 提供更新菜单配置的方法
+export const updateMenuGroupsConfig = () => {
+  menuGroupsConfig = getMenuGroups();
+};
 
 // 首页特定菜单项列表
 export const homePageMenuList = ["AI创作版", "AI原理学习游戏", "AI对话助手", "心理小屋", "AI绘图（基础）"];

@@ -66,6 +66,7 @@ export default function AdminNewPage() {
         captureAndAlertRequestErrorHoc(logoutApi()).then((_) => {
           setUser(null);
           localStorage.removeItem("isLogin");
+          localStorage.removeItem("menuConfig");
           navigate("/login");
         });
         next();
