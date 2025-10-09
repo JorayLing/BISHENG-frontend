@@ -131,6 +131,22 @@ export default function ChatRoom({
       }, 100);
     }
   };
+  // 监听重置消息事件
+  useEffect(() => {
+    const handleResetMessages = (event: CustomEvent<{ flowId: string }>) => {
+      const { flowId } = event.detail;
+      if (flowId === id) {
+        // 重新初始化
+        init();
+      }
+    };
+
+    document.addEventListener('resetChatMessages', handleResetMessages as EventListener);
+    return () => {
+      document.removeEventListener('resetChatMessages', handleResetMessages as EventListener);
+    };
+  }, [id]);
+
   useEffect(() => {
     if (!id) {
       flowRef.current = null;

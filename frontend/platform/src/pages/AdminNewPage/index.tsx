@@ -267,6 +267,18 @@ export default function AdminNewPage() {
     setActiveTabId(tabId);
     const tab = tabs.find((t) => t.id === tabId);
     if (tab) {
+      // 重置消息存储
+      if (tab.props?.flowId) {
+        // 如果是聊天相关的标签页，重新初始化对应的消息
+        const chatComponent = tab.component;
+        if (chatComponent === ChatAssistantAuthSubRoute || chatComponent === ChatFlowAuthSubRoute) {
+          // 触发重新加载消息
+          const event = new CustomEvent('resetChatMessages', {
+            detail: { flowId: tab.props.flowId }
+          });
+          document.dispatchEvent(event);
+        }
+      }
       navigate(tab.path);
     }
   };
