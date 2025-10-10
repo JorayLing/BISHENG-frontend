@@ -136,6 +136,16 @@ export default function ChatRoom({
     const handleResetMessages = (event: CustomEvent<{ flowId: string }>) => {
       const { flowId } = event.detail;
       if (flowId === id) {
+        // 清除消息
+        if (type === AppNumType.FLOW) {
+          // 使用 Flow 的消息存储
+          const flowStore = useFlowMessageStore.getState();
+          flowStore.clearMsgs();
+          flowStore.changeChatId(chatId);
+        } else if (type === AppNumType.SKILL) {
+          clearMsgs();
+          changeChatId(chatId);
+        }
         // 重新初始化
         init();
       }
@@ -145,7 +155,7 @@ export default function ChatRoom({
     return () => {
       document.removeEventListener('resetChatMessages', handleResetMessages as EventListener);
     };
-  }, [id]);
+  }, [id, type, chatId]);
 
   useEffect(() => {
     if (!id) {
