@@ -3,6 +3,28 @@ import { ROLE, User } from "../../types/api/user";
 import axios from "../request";
 import Axios from "axios";
 
+// 获取 devtoken
+export async function getDevTokenApi(data) {
+  const instance = Axios.create({
+    baseURL: '',
+    timeout: 5000,
+    withCredentials: false,
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/x-www-form-urlencoded'
+    }
+  });
+
+  // 创建 FormData
+  const formData = new URLSearchParams();
+  Object.keys(data).forEach(key => {
+    formData.append(key, data[key]);
+  });
+
+  const response = await instance.post('https://aixuexi.cc/third/bisheng/autologin', formData);
+  return response.data;
+}
+
 // 获取 key
 export const getPublicKeyApi = async (): Promise<{ public_key: string }> => {
   return await axios.get(`/api/v1/user/public_key`);

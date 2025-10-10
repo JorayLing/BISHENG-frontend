@@ -24,6 +24,7 @@ import {
   menuConfigApi,
   loginApi,
   registerApi,
+  getDevTokenApi,
 } from "../../controllers/API/user";
 import { captureAndAlertRequestErrorHoc } from "../../controllers/request";
 import LoginBridge from "./loginBridge";
@@ -115,7 +116,20 @@ export const LoginPage = () => {
       try {
         // 获取用户信息
         const userInfo = await getUserInfo(); 
-       
+
+        // 获取 devtoken
+        try {
+          const devTokenData = await getDevTokenApi({
+            username: mail,
+            pwd: pwd
+          });
+          if (devTokenData.code === 200) {
+            // 存储 devtoken 到 localStorage
+            localStorage.setItem('devtoken', devTokenData.ext.token);
+          }
+        } catch (error) {
+          console.warn('Failed to get devtoken:', error);
+        }
         
         try {
           const menuConfig = await menuConfigApi();

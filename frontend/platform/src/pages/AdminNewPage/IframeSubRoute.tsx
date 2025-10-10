@@ -35,6 +35,13 @@ export default function IframeSubRoute({ url, title = "页面" }: IframeSubRoute
       React.createElement("div", { className: "text-gray-500" }, "未找到指定的页面")
     );
   }
+
+  // 从 localStorage 获取 devtoken
+  const devToken = localStorage.getItem('devtoken'); 
+  // 处理 URL
+  if (devToken && !iframeUrl.includes('?')) {
+    iframeUrl = `${iframeUrl}?TOKEN_DEV=${devToken}`;
+  }
   
   return React.createElement("div", { className: "h-full w-full" },
     React.createElement("div", { className: "h-full w-full" },
