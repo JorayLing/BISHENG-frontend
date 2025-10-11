@@ -119,6 +119,20 @@ export default defineConfig(() => {
       proxy: {
         ...proxyTargets,
       },
+      fs: {
+        strict: false
+      },
+      cors: {
+        origin: '*',
+        methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+        allowedHeaders: '*',
+        credentials: true
+      },
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': '*',
+        'Access-Control-Allow-Headers': '*'
+      } 
     },
   };
 });
