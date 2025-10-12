@@ -302,20 +302,79 @@ export default function AdminNewPage() {
     return menuItem ? menuItem.id : "home";
   };
 
+  // 根据路由获取菜单项
+  const getMenuItemFromRoute = () => {
+    const currentPath = location.pathname;
+    const pathSegments = currentPath.split('/');
+    
+    // 处理 iframe 路由
+    if (pathSegments.includes('iframe')) {
+      const iframeId = pathSegments[pathSegments.length - 1];
+      return allMenuItems.find(item => item.id === iframeId);
+    }
+    
+    // 处理 assistant/auth 路由
+    if (pathSegments.includes('assistant') && pathSegments.includes('auth')) {
+      const assistantId = pathSegments[pathSegments.length - 1];
+      return allMenuItems.find(item => 'chatConfig' in item && item.chatConfig?.chatId === assistantId);
+    }
+
+    // 处理普通路由
+    const relativePath = currentPath.replace("/adminNew/", "");
+    return allMenuItems.find(item => {
+      if (item.path === "") {
+        return relativePath === "/" || relativePath === "";
+      }
+      return relativePath === item.path || relativePath.startsWith(item.path + "/");
+    });
+  };
+
   // 初始化首页标签页和事件监听
   React.useEffect(() => {
+    // 根据当前路由创建标签页
+    const initializeTabFromRoute = () => {
+      const menuItem = getMenuItemFromRoute();
+      
+      if (menuItem) {
+        let props = {};
+        if (menuItem.chatConfig) {
+          if (menuItem.chatConfig.type === "iframe") {
+            props = { url: menuItem.chatConfig.chatId, title: menuItem.chatConfig.name };
+          } else {
+            props = { flowId: menuItem.chatConfig.chatId };
+          }
+        }
+
+        const newTab: TabItem = {
+          id: menuItem.id,
+          label: menuItem.label,
+          path: menuItem.path,
+          icon: menuItem.icon,
+          isActive: true,
+          component: componentMap[menuItem.id],
+          props: props,
+        };
+
+        setTabs([newTab]);
+        setActiveTabId(menuItem.id);
+      } else {
+        // 如果没有匹配的路由，创建首页标签
+        const homeTab: TabItem = {
+          id: "home",
+          label: "首页",
+          path: "",
+          icon: menuHomeIcon,
+          isActive: true,
+          component: componentMap.home,
+          props: {},
+        };
+        setTabs([homeTab]);
+        setActiveTabId("home");
+      }
+    };
+
     if (tabs.length === 0) {
-      const homeTab: TabItem = {
-        id: "home",
-        label: "首页",
-        path: "",
-        icon: menuHomeIcon,
-        isActive: true,
-        component: componentMap.home,
-        props: {},
-      };
-      setTabs([homeTab]);
-      setActiveTabId("home");
+      initializeTabFromRoute();
     }
 
     // 添加自定义菜单点击事件监听
@@ -328,7 +387,7 @@ export default function AdminNewPage() {
     return () => {
       document.removeEventListener('menuclick', handleMenuClickEvent);
     };
-  }, [tabs.length]);
+  }, [tabs.length, location.pathname]);
 
   const currentMenu = allMenuItems.find(
     (item) => getCurrentActiveMenu() === item.id,
