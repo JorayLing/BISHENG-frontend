@@ -40,7 +40,7 @@ export default function IframeSubRoute({ url, title = "页面" }: IframeSubRoute
   const devToken = localStorage.getItem('devtoken'); 
   // 处理 URL
   if (devToken && !iframeUrl.includes('?')) {
-    iframeUrl = `${iframeUrl}?TOKEN_DEV=${devToken}`;
+    iframeUrl = `${iframeUrl}?TOKEN_DEV=${encodeURIComponent(devToken)}`;
   }
   
   return React.createElement("div", { className: "h-full w-full" },
