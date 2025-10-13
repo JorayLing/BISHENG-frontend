@@ -461,7 +461,7 @@ export default function AdminNewPage() {
         {/* 收起/展开按钮 - 绝对定位 */}
         <button
           onClick={() => setSidebarOpen(!sidebarOpen)}
-          className={`absolute top-[50%] z-50 w-[20px] h-[100px] flex items-center justify-center hover:bg-blue-50 rounded-full transition-all duration-300 shadow-md bg-white ${
+          className={`absolute top-[50%] z-[39] w-[20px] h-[100px] flex items-center justify-center hover:bg-blue-50 rounded-full transition-all duration-300 shadow-md bg-white ${
             sidebarOpen ? "left-[250px]" : "left-[0px]"
           }`}
           title={sidebarOpen ? "收起菜单" : "展开菜单"}
