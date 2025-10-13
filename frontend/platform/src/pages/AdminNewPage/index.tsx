@@ -457,16 +457,32 @@ export default function AdminNewPage() {
       </div>
 
       {/* 下方主要内容区域 */}
-      <div className="flex flex-1 overflow-hidden">
+      <div className="flex flex-1 overflow-hidden relative">
+        {/* 收起/展开按钮 - 绝对定位 */}
+        <button
+          onClick={() => setSidebarOpen(!sidebarOpen)}
+          className={`absolute top-[50%] z-50 w-[20px] h-[100px] flex items-center justify-center hover:bg-blue-50 rounded-full transition-all duration-300 shadow-md bg-white ${
+            sidebarOpen ? "left-[250px]" : "left-[0px]"
+          }`}
+          title={sidebarOpen ? "收起菜单" : "展开菜单"}
+        >
+        
+            <img
+            src="/assets/images/downarrow.png"
+            className={`w-[12px]  transition-transform duration-200 ${sidebarOpen ? "rotate-90" : "rotate-[270deg]"}`}
+            alt="arrow"
+          />
+          
+        </button>
+        
         {/* 左侧菜单 */}
         <div
           className={`
-          w-64  transition-transform duration-300 ease-in-out
-          ${sidebarOpen ? "translate-x-0" : "-translate-x-full"}
-          md:translate-x-0 pr-[20px]
+          transition-all duration-300 ease-in-out overflow-hidden
+          ${sidebarOpen ? "w-64 pr-[20px]" : "w-0 pr-0"}
         `}
         >
-          <nav className="h-full py-4">
+          <nav className="h-full py-4 w-64">
             {/* 首页菜单项 */}
             <div className="mb-4">
               <button
