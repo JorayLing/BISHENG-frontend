@@ -37,6 +37,14 @@ import Report from "./pages/Report";
 import SystemPage from "./pages/SystemPage";
 import ResoucePage from "./pages/resoucePage";
 import { AppNumType } from "./types/app";
+import AdminNewPage from "./pages/AdminNewPage/index";
+import HomeSubRoute from "./pages/AdminNewPage/HomeSubRoute";
+import ChatSubRoute from "./pages/AdminNewPage/ChatSubRoute";
+import ChatFlowAuthSubRoute from "./pages/AdminNewPage/ChatFlowAuthSubRoute";
+import ChatAssistantAuthSubRoute from "./pages/AdminNewPage/ChatAssistantAuthSubRoute";
+import IframeSubRoute from "./pages/AdminNewPage/IframeSubRoute";
+import UsersSubRoute from "./pages/AdminNewPage/UsersSubRoute";
+import TestSubRoute from "./pages/AdminNewPage/TestSubRoute";
 
 // react 与 react router dom版本不匹配
 // const FileLibPage = lazy(() => import(/* webpackChunkName: "FileLibPage" */ "./pages/FileLibPage"));
@@ -60,9 +68,13 @@ const baseConfig = {
   basename: __APP_ENV__.BASE_URL,
 };
 
-const privateRouter = [
+export const privateRouter = [
   {
     path: "/",
+    element: <Navigate to="/adminNew" replace />,
+  },
+  {
+    path: "/main",
     element: <MainLayout />,
     children: [
       { path: "", element: <SkillChatPage /> },
@@ -148,10 +160,10 @@ const privateRouter = [
   { path: "/diff/:id/:vid/:cid", element: <ErrorHoc Comp={DiffFlowPage} /> },
   { path: "/reset", element: <ResetPwdPage /> },
   { path: "/403", element: <Page403 /> },
-  { path: "*", element: <Navigate to="/" replace /> },
+  // { path: "*", element: <Navigate to="/adminNew" replace /> },
 ];
 
-export const getPrivateRouter = (permissions) => {
+export const filterRouter = (permissions) => {
   const filterMenuItem = (_privateRouter) => {
     const result = _privateRouter.reduce((res, cur) => {
       // 递归
@@ -170,18 +182,26 @@ export const getPrivateRouter = (permissions) => {
 
     return result;
   };
+  return  permissions ? filterMenuItem(privateRouter) : [];
 
-  return createBrowserRouter(
-    permissions ? filterMenuItem(privateRouter) : [],
-    baseConfig,
-  );
+}
+
+export const getPrivateRouter = (permissions) => {
+  return filterRouter(permissions);
 };
 
+export const createRouter = (routerList) => {
+  return createBrowserRouter(routerList, baseConfig);
+}
 export const getAdminRouter = () => {
-  return createBrowserRouter(privateRouter, baseConfig);
+  return createRouter(privateRouter)
 };
 
-export const publicRouter = createBrowserRouter(
+export const getPublicRouter = () => {
+  return createRouter(publicRouter)
+};
+
+export const publicRouter =
   [
     { path: "/", element: <LoginPage /> },
     { path: "/reset", element: <ResetPwdPage /> },
@@ -191,6 +211,21 @@ export const publicRouter = createBrowserRouter(
     { path: "/resouce/:cid/:mid", element: <ResoucePage /> },
     { path: "/403", element: <Page403 /> },
     { path: "*", element: <LoginPage /> },
-  ],
-  baseConfig,
-);
+    {
+      path: "/adminNew",
+      element: <AdminNewPage />,
+      children: [
+        { path: "", element: <HomeSubRoute /> },
+        { path: "test", element: <TestSubRoute /> },
+        { path: "chat", element: <ChatSubRoute /> },
+        { path: "chat/:id", element: <ChatSubRoute /> },
+        { path: "chat/flow/auth/:id", element: <ChatFlowAuthSubRoute /> },
+        { path: "chat/assistant/auth/:id", element: <ChatAssistantAuthSubRoute /> },
+        { path: "iframe/:id", element: <IframeSubRoute /> },
+        { path: "users", element: <UsersSubRoute /> },
+        { path: "roles", element: <div className="p-6"><h2 className="text-xl font-semibold">角色管理</h2></div> },
+        { path: "docs", element: <div className="p-6"><h2 className="text-xl font-semibold">项目文档</h2></div> },
+        { path: "settings", element: <div className="p-6"><h2 className="text-xl font-semibold">系统设置</h2></div> },
+      ]
+    },
+  ];

@@ -34,6 +34,13 @@ const ChatItem = ({
       } catch (err) {
         title = chat.flow_name;
       }
+    } else if (chat.flow_type === 10) {
+      try {
+        let message = JSON.parse(chat.earliest_message?.message);
+        title = message?.msg;
+      } catch (err) {
+        title = chat.flow_name;
+      }
     } else {
       title = chat.earliest_message?.message;
     }
@@ -66,9 +73,18 @@ const ChatItem = ({
 };
 
 // assistant workflow flow
-export default function NewChatPro({ type = AppNumType.SKILL }) {
+export default function NewChatPro({
+  type = AppNumType.SKILL,
+  flowId: propFlowId,
+}: {
+  type?: AppNumType;
+  flowId?: string;
+}) {
   const { t } = useTranslation();
-  const { id: flowId } = useParams();
+  const { id: routeFlowId } = useParams();
+
+  // 优先使用传入的flowId，如果没有则使用路由参数
+  const flowId = propFlowId || routeFlowId;
   const { user } = useContext(userContext);
 
   // 聊天列表相关状态

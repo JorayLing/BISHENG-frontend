@@ -14,7 +14,7 @@ import { Toaster } from "./components/bs-ui/toast";
 import { alertContext } from "./contexts/alertContext";
 import { locationContext } from "./contexts/locationContext";
 import { userContext } from "./contexts/userContext";
-import { getAdminRouter, getPrivateRouter, publicRouter } from "./routes";
+import {createRouter, filterRouter, getAdminRouter, getPrivateRouter, getPublicRouter, publicRouter} from "./routes";
 
 export default function App() {
   let { setCurrent, setShowSideBar, setIsStackedOpen } =
@@ -179,9 +179,24 @@ export default function App() {
   // 动态路由根据权限
   const router = useMemo(() => {
     // return getAdminRouter()
-    if (user && ["admin", "group_admin"].includes(user.role))
-      return getAdminRouter();
-    return user?.user_id ? getPrivateRouter(user.web_menu) : null;
+    let r ;
+    if (user && ["admin", "group_admin"].includes(user.role)) {
+      r = publicRouter;
+
+    } else {
+      r = user?.user_id ? filterRouter(user.web_menu) : []
+      r = [...r,...publicRouter];
+    }
+    // console.log(r)
+    return createRouter(r);
+    //   return getAdminRouter();
+    // return user?.user_id ? getPrivateRouter(user.web_menu) : null;
+
+
+    // return getAdminRouter()
+    // if (user && ["admin", "group_admin"].includes(user.role))
+    //   return getAdminRouter();
+    // return user?.user_id ? getPrivateRouter(user.web_menu) : null;
   }, [user]);
 
   return (
@@ -194,7 +209,7 @@ export default function App() {
           <LoadingIcon className="size-48 text-primary" />
         </div>
       ) : (
-        <RouterProvider router={publicRouter} />
+        <RouterProvider router={getPublicRouter()} />
       )}
       <div></div>
       <div className="app-div" style={{ zIndex: 1000 }}>

@@ -2,18 +2,29 @@ import { BookOpenIcon } from "@/components/bs-icons/bookOpen";
 import { GithubIcon } from "@/components/bs-icons/github";
 import { useContext, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
+// 使用相对路径引用公共资源
+const loginBodyImage = '/assets/images/loginbody.png';
+const usernameIcon = '/assets/images/username.png';
+const passwordIcon = '/assets/images/pasweord.png';
+const yellowButton = '/assets/images/yellowbtn.png';
+const headIcon = '/assets/images/head.png';
+const downArrowIcon = '/assets/images/downarrow.png';
 import json from "../../../package.json";
 import { Button } from "../../components/bs-ui/button";
 import { Input } from "../../components/bs-ui/input";
 // import { alertContext } from "../contexts/alertContext";
 import { useToast } from "@/components/bs-ui/toast/use-toast";
 import { locationContext } from "@/contexts/locationContext";
+import { userContext } from "@/contexts/userContext";
 import { ldapLoginApi } from "@/controllers/API/pro";
 import { useNavigate } from "react-router-dom";
 import {
   getCaptchaApi,
+  getUserInfo,
+  menuConfigApi,
   loginApi,
   registerApi,
+  getDevTokenApi,
 } from "../../controllers/API/user";
 import { captureAndAlertRequestErrorHoc } from "../../controllers/request";
 import LoginBridge from "./loginBridge";
@@ -25,8 +36,9 @@ export const LoginPage = () => {
   const { message, toast } = useToast();
   const navigate = useNavigate();
   const { appConfig } = useContext(locationContext);
+  const { user, setUser } = useContext(userContext);
 
-  const isLoading = false;
+  const [isLoading, setIsLoading] = useState(false);
 
   const mailRef = useRef(null);
   const pwdRef = useRef(null);
@@ -46,6 +58,13 @@ export const LoginPage = () => {
   useEffect(() => {
     fetchCaptchaData();
   }, []);
+
+  // 监听用户信息变化
+  useEffect(() => {
+    if (user && user.user_id) {
+      navigate("/adminNew");
+    }
+  }, [user]);
 
   const fetchCaptchaData = () => {
     getCaptchaApi().then(setCaptchaData);
@@ -73,33 +92,87 @@ export const LoginPage = () => {
     const encryptPwd = isLDAP
       ? await handleLdapEncrypt(pwd)
       : await handleEncrypt(pwd);
-    captureAndAlertRequestErrorHoc(
-      (isLDAP
-        ? ldapLoginApi(mail, encryptPwd)
-        : loginApi(
-            mail,
-            encryptPwd,
-            captchaData.captcha_key,
-            captchaRef.current?.value,
-          )
-      ).then((res: any) => {
-        window.self === window.top
-          ? localStorage.removeItem("ws_token")
-          : localStorage.setItem("ws_token", res.access_token);
-        localStorage.setItem("isLogin", "1");
-        const path =
-          location.href.indexOf("from=workspace") === -1 ? "" : "/workspace/";
-        location.href = path ? location.origin + path : location.href;
-        // location.href = __APP_ENV__.BASE_URL + '/'
-      }),
-      (error) => {
-        if (error.indexOf("过期") !== -1) {
-          // 有时间改为 code 判断
-          localStorage.setItem("account", mail);
-          navigate("/reset", { state: { noback: true } });
+    setIsLoading(true);
+    try {
+      // 先登录
+      const loginRes = await captureAndAlertRequestErrorHoc(
+        isLDAP
+          ? ldapLoginApi(mail, encryptPwd)
+          : loginApi(
+              mail,
+              encryptPwd,
+              captchaData.captcha_key,
+              captchaRef.current?.value,
+            )
+      );
+
+      // 处理 token
+      if (window.self === window.top) {
+        localStorage.removeItem("ws_token");
+      } else {
+        localStorage.setItem("ws_token", loginRes.access_token);
+      }
+
+      try {
+        // 获取用户信息
+        const userInfo = await getUserInfo(); 
+
+        // 获取 devtoken
+        try {
+          const devTokenData = await getDevTokenApi({
+            username: mail,
+            pwd: pwd
+          });
+          if (devTokenData.code === 200) {
+            // 存储 devtoken 到 localStorage
+            localStorage.setItem('devtoken', devTokenData.ext.token);
+          }
+        } catch (error) {
+          console.warn('Failed to get devtoken:', error);
         }
-      },
-    );
+        
+        try {
+          const menuConfig = await menuConfigApi();
+          if (Array.isArray(menuConfig)) {
+            localStorage.setItem('menuConfig', JSON.stringify(menuConfig));
+            // 动态更新菜单配置
+            const { updateMenuGroupsConfig } = await import('../../pages/AdminNewPage/menuConfig');
+            updateMenuGroupsConfig();
+          }
+        } catch (error) {
+          console.warn('Failed to load menu config:', error);
+          // 菜单配置加载失败不影响登录
+        }
+        // 设置登录状态
+        localStorage.setItem("isLogin", "1");
+        localStorage.setItem("UUR_INFO", String(userInfo.user_id));
+        
+        // 设置用户信息
+        setUser(userInfo);
+      } catch (e) {
+        // 如果获取用户信息失败，清除登录状态
+        localStorage.removeItem("isLogin");
+        localStorage.removeItem("UUR_INFO");
+        message({
+          title: "登录失败",
+          variant: "error",
+          description: ["获取用户信息失败，请重试"],
+        });
+      }
+    } catch (error) {
+      if (typeof error === "string" && error.indexOf("过期") !== -1) {
+        localStorage.setItem("account", mail);
+        navigate("/reset", { state: { noback: true } });
+      } else {
+        message({
+          title: "登录失败",
+          variant: "error",
+          description: [typeof error === "string" ? error : "登录失败，请重试"],
+        });
+      }
+    } finally {
+      setIsLoading(false);
+    }
 
     fetchCaptchaData();
   };
@@ -159,62 +232,67 @@ export const LoginPage = () => {
   };
 
   return (
-    <div className="w-full h-full bg-background-dark">
-      <div className="fixed z-10 sm:w-[1280px] w-full sm:h-[720px] h-full translate-x-[-50%] translate-y-[-50%] left-[50%] top-[50%] border rounded-lg shadow-xl overflow-hidden bg-background-login">
-        <div className="w-[420px] h-[704px] m-[8px] hidden sm:block relative z-20">
+    <div className="w-full h-full   indexbgimage">
+      <div className="fixed z-10 sm:w-[1280px] w-full sm:h-[720px] h-full translate-x-[-50%] translate-y-[-50%] left-[50%] top-[50%]   rounded-lg  overflow-hidden  bg-background-color">
+        <div
+          className="w-[600px]  m-[8px] hidden sm:block relative z-20"
+          style={{ paddingTop: "100px" }}
+        >
           <img
-            src={__APP_ENV__.BASE_URL + "/login-logo-big.png"}
+            src={loginBodyImage}
             alt="logo_picture"
             className="w-full h-full dark:hidden"
           />
-          <img
-            src={__APP_ENV__.BASE_URL + "/login-logo-dark.png"}
-            alt="logo_picture"
-            className="w-full h-full hidden dark:block"
-          />
-          {/* <iframe src={__APP_ENV__.BASE_URL + '/face.html'} className='w-full h-full'></iframe> */}
+
+          {/* <iframe src={__APP_ENV__.BASE_URL + '/face.html'} className='w-full h-full'></iframe>  sm:px-[266px] px-[20px] pyx-[200px]*/}
         </div>
         <div className="absolute w-full h-full z-10 flex justify-end top-0">
-          <div className="w-[852px] sm:px-[266px] px-[20px] pyx-[200px] bg-background-login relative">
-            <div>
-              <img
-                src={__APP_ENV__.BASE_URL + "/login-logo-small.png"}
-                className="block w-[114px] h-[36px] m-auto mt-[140px] dark:w-[124px] dark:pr-[10px] dark:hidden"
-                alt=""
-              />
-              <img
-                src={__APP_ENV__.BASE_URL + "/logo-small-dark.png"}
-                className="w-[114px] h-[36px] m-auto mt-[140px] dark:w-[124px] dark:pr-[10px] dark:block hidden"
-                alt=""
-              />
-              <span className="block w-fit m-auto font-normal text-[14px] text-tx-color mt-[24px]">
-                {t("login.slogen")}
-              </span>
-            </div>
+          <div
+            className="w-[600px] px-[100px]   relative loginbgimgimg"
+            style={{ paddingTop: "200px" }}
+          >
             <div className="grid gap-[12px] mt-[68px]">
-              <div className="grid">
-                <Input
+              <div className="grid" style={{ position: "relative" }}>
+                <input
                   id="email"
-                  className="h-[48px] dark:bg-login-input"
                   ref={mailRef}
+                  style={{ paddingLeft: "140px" }}
                   placeholder={t("login.account")}
                   type="email"
                   autoCapitalize="none"
                   autoComplete="email"
                   autoCorrect="off"
+                  className="h-[48px] w-full rounded-[40px] border border-input bg-search-input px-3 py-1 text-sm text-[#111] dark:text-gray-50 dark:bg-login-input shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
                 />
+                <div className="absolute  top-[25px] left-[-10px] translate-y-[-50%]">
+                  <img
+                    src={usernameIcon}
+                    alt="username"
+                    className="w-[62px] h-[70px] imageShadow"
+                  />
+                </div>
               </div>
-              <div className="grid">
-                <Input
+              <div
+                className="grid"
+                style={{ position: "relative", marginTop: "20px" }}
+              >
+                <input
                   id="pwd"
-                  className="h-[48px] dark:bg-login-input"
                   ref={pwdRef}
                   placeholder={t("login.password")}
                   type="password"
                   onKeyDown={(e) =>
                     e.key === "Enter" && showLogin && handleLogin()
                   }
+                  className="h-[48px] w-full rounded-[40px] border border-input bg-search-input px-3 py-1 text-sm text-[#111] dark:text-gray-50 dark:bg-login-input shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
                 />
+                <div className="absolute  top-[25px] left-[-10px] translate-y-[-50%]">
+                  <img
+                    src={passwordIcon}
+                    alt="password"
+                    className="w-[62px] h-[70px] imageShadow"
+                  />
+                </div>
               </div>
               {!showLogin && (
                 <div className="grid">
@@ -257,13 +335,37 @@ export const LoginPage = () => {
                       </a>
                     )}
                   </div>
-                  <Button
+                  {/**     <Button
                     className="h-[48px] mt-[32px] dark:bg-button"
                     disabled={isLoading}
                     onClick={handleLogin}
                   >
                     {t("login.loginButton")}
-                  </Button>
+                  </Button> */}
+
+                  <div
+                    className=" mt-[22px] flex justify-center relative"
+                    onClick={!isLoading ? handleLogin : undefined}
+                    style={{ cursor: isLoading ? 'not-allowed' : 'pointer' }}
+                  >
+                    <img
+                      src={yellowButton}
+                      className="w-[261px] h-[90px] absolute"
+                      style={{ opacity: isLoading ? 0.7 : 1 }}
+                    />
+                    <div 
+                      className="absolute w-[100%] flex items-center justify-center" 
+                      style={{
+                        color: '#fff',
+                        fontSize: '32px',
+                        lineHeight: '60px',
+                        textShadow: '0 2px 6px #DC6D0A',
+                        opacity: isLoading ? 0.7 : 1
+                      }}
+                    >
+                      {isLoading ? "登录中..." : t("login.loginButton")}
+                    </div>
+                  </div>
                 </>
               ) : (
                 <>

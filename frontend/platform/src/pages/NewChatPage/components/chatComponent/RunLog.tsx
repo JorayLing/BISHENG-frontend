@@ -45,6 +45,13 @@ export default function RunLog({ data }) {
     } else {
       title = data.end ? "完成" : "思考中";
     }
+
+    if (title === "已使用 generateImage") {
+      title = "生成完成";
+    } else if (title === "正在使用 generateImage") {
+      title = "图片生成中";
+    }
+
     return [title, lost];
   }, [assistantState, data]);
 

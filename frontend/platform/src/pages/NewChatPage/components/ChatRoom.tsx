@@ -131,6 +131,32 @@ export default function ChatRoom({
       }, 100);
     }
   };
+  // 监听重置消息事件
+  useEffect(() => {
+    const handleResetMessages = (event: CustomEvent<{ flowId: string }>) => {
+      const { flowId } = event.detail;
+      if (flowId === id) {
+        // 清除消息
+        if (type === AppNumType.FLOW) {
+          // 使用 Flow 的消息存储
+          const flowStore = useFlowMessageStore.getState();
+          flowStore.clearMsgs();
+          flowStore.changeChatId(chatId);
+        } else if (type === AppNumType.SKILL) {
+          clearMsgs();
+          changeChatId(chatId);
+        }
+        // 重新初始化
+        init();
+      }
+    };
+
+    document.addEventListener('resetChatMessages', handleResetMessages as EventListener);
+    return () => {
+      document.removeEventListener('resetChatMessages', handleResetMessages as EventListener);
+    };
+  }, [id, type, chatId]);
+
   useEffect(() => {
     if (!id) {
       flowRef.current = null;
