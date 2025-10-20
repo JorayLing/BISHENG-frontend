@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 24.0.1, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="aaa" xmlns="http://www.w3.org/2000/svg" x="0px"
+     y="0px"
+     viewBox="0 0 278 279" style="enable-background:new 0 0 278 279;" xml:space="preserve">
+<style type="text/css">
+	.st0{fill:#712EEF;}
+	.st1{fill:#FBAA53;}
+	.st2{fill-rule:evenodd;clip-rule:evenodd;fill:#FBAA53;}
+	.st3{fill-rule:evenodd;clip-rule:evenodd;fill:#2AD4C8;}
+	.st4{fill:#2AD4C8;}
+</style>
+    <path id="A" class="st0" d="M68.6,243.6l14-44h48.8l12.2,44h51.9L137.3,44.8c-1-3.5-2.7-6-4.9-7.5s-5.2-2.2-8.9-2.2l0,0H88.8
+	L18.6,243.6H68.6z M118.5,153.8H97l11.5-36.1L118.5,153.8z"/>
+    <path id="A_1_" class="st1" d="M147.5,79.5l-10.2-34.7c-1-3.5-2.7-6-4.9-7.5s-5.2-2.2-8.9-2.2H88.8l-15,44.4H147.5z"/>
+    <polygon id="I" class="st0" points="261.9,243.8 261.9,98.6 215.5,98.6 215.5,243.8 "/>
+    <polygon id="矩形" class="st2" points="215.5,98.6 238.7,98.6 238.7,147.1 215.5,147.1 "/>
+    <rect id="矩形备份-13" x="238.7" y="195.4" class="st3" width="23.2" height="48.5"/>
+    <polygon id="I_1_" class="st4" points="261.9,79.1 261.9,35.2 215.5,35.2 215.5,79.1 "/>
+    <polygon id="路径-3" class="st2" points="108.5,117.6 158.9,117.6 169.1,153.8 118.5,153.8 "/>
+    <polygon id="路径-4" class="st3" points="118.5,153.8 131.4,199.6 33.4,199.6 48.7,153.8 "/>
+    <animateTransform accumulate="none" additive="replace" attributeName="transform" begin="0s" calcMode="linear"
+                      dur="1s" fill="remove" repeatCount="indefinite" restart="always" type="translate"
+                      values="80 125; 80 145 ; 80 125">
+	</animateTransform>
+</svg>

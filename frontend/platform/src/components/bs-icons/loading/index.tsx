@@ -1,7 +1,7 @@
 import React, { forwardRef } from "react";
 import { cname } from "../../bs-ui/utils";
 import Load from "./Load.svg?react";
-import Loading from "./Loading.svg?react";
+import Loading from "./Loading2.svg?react";
 
 export const LoadIcon = forwardRef<
   SVGSVGElement & { className: any },
