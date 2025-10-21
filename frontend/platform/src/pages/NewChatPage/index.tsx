@@ -26,24 +26,29 @@ const ChatItem = ({
   _k,
 }) => {
   let title = "";
-  if (chat.earliest_message && chat.earliest_message.message) {
-    if (chat.flow_type === 5) {
-      try {
-        let message = JSON.parse(chat.earliest_message?.message);
-        title = message?.input || message?.content;
-      } catch (err) {
-        title = chat.flow_name;
-      }
-    } else if (chat.flow_type === 10) {
-      try {
-        let message = JSON.parse(chat.earliest_message?.message);
-        title = message?.msg;
-      } catch (err) {
-        title = chat.flow_name;
-      }
+  if (chat.earliest_message) {
+    if (chat.earliest_message.remark) {
+      title = chat.earliest_message.remark;
     } else {
-      title = chat.earliest_message?.message;
+      title = chat.flow_name;
     }
+    // if (chat.flow_type === 5) {
+    //   try {
+    //     let message = JSON.parse(chat.earliest_message?.message);
+    //     title = message?.input || message?.content;
+    //   } catch (err) {
+    //     title = chat.flow_name;
+    //   }
+    // } else if (chat.flow_type === 10) {
+    //   try {
+    //     let message = JSON.parse(chat.earliest_message?.message);
+    //     title = message?.msg;
+    //   } catch (err) {
+    //     title = chat.flow_name;
+    //   }
+    // } else {
+    //   title = chat.earliest_message?.message;
+    // }
   } else {
     title = chat.flow_name;
   }
