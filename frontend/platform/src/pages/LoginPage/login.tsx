@@ -22,6 +22,7 @@ import {
   getCaptchaApi,
   getUserInfo,
   menuConfigApi,
+  getUserPermissions,
   loginApi,
   registerApi,
   getDevTokenApi,
@@ -147,6 +148,16 @@ export const LoginPage = () => {
         localStorage.setItem("isLogin", "1");
         localStorage.setItem("UUR_INFO", String(userInfo.user_id));
         
+
+        try {
+          const userPermissions = await getUserPermissions({ user_name: userInfo.user_name });
+          // console.log(userPermissions);
+          if (userPermissions) {
+             localStorage.setItem('userPermissions', JSON.stringify(userPermissions[1][0]));
+          }
+        } catch (error) {
+          console.warn('Failed to get user permissions:', error);
+        }
         // 设置用户信息
         setUser(userInfo);
       } catch (e) {

@@ -2,6 +2,7 @@ import { paramsSerializer } from ".";
 import { ROLE, User } from "../../types/api/user";
 import axios from "../request";
 import Axios from "axios";
+import API_CONFIG from "../../config/api";
 
 // 获取 devtoken
 export async function getDevTokenApi(data) {
@@ -21,7 +22,7 @@ export async function getDevTokenApi(data) {
     formData.append(key, data[key]);
   });
 
-  const response = await instance.post('https://aixuexi.cc/third/bisheng/autologin', formData);
+  const response = await instance.post(`${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.AUTO_LOGIN}`, formData);
   return response.data;
 }
 
@@ -38,6 +39,24 @@ export const getCaptchaApi = (): Promise<any> => {
 export async function getUserInfo(): Promise<User> {
   return await axios.get(`/api/v1/user/info`);
 }
+export async function getUserPermissions(data?): Promise<User> {
+  // return await axios.post(`/api/bisheng/permissions`, data);
+  const instance = Axios.create({
+    baseURL: '',
+    timeout: 5000,
+    withCredentials: false,
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json'
+    }
+  });
+
+  const response = await instance.get(`${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.PERMISSIONS}`, {params: data}
+  );
+   return response.data;
+}
+
+
 export async function menuConfigApi(data?) {
   const instance = Axios.create({
     baseURL: '',
@@ -49,7 +68,7 @@ export async function menuConfigApi(data?) {
     }
   });
 
-  const response = await instance.get('https://aixuexi.cc/api/bisheng/menus_copy', {
+  const response = await instance.get(`${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.MENUS}`, {
     ...data
   });
   return response.data;

@@ -55,9 +55,18 @@ interface MenuGroup {
   items: MenuItem[];
   isCollapsed: boolean;
 }
-
+let userInfoshow=''
 export default function AdminNewPage() {
   const { user, setUser } = useContext(userContext);
+  const userPermissions = JSON.parse(localStorage.getItem('userPermissions') || '{}');
+  if(userPermissions) {
+    // console.log(userPermissions);
+    if(userPermissions.school_name) {
+      userInfoshow = userPermissions.school_name+'('+userPermissions.nick_name+')';
+    }else{
+      userInfoshow = userPermissions.nick_name;
+    }
+  }
   const [showUserMenu, setShowUserMenu] = React.useState(false);
   const [showLeftScroll, setShowLeftScroll] = React.useState(false);
   const [showRightScroll, setShowRightScroll] = React.useState(false);
@@ -408,7 +417,7 @@ export default function AdminNewPage() {
         {/* 右侧用户信息 */}
         <div className="flex items-center space-x-4">
           <div className="text-sm" style={{ color: "#5A87FB" }}>
-            你好～{user?.user_name || "未登录"}
+            你好～{userInfoshow  || "未登录"}
           </div>
           <div className="relative user-menu-container flex items-center">
             <div
