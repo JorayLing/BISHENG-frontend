@@ -33,7 +33,7 @@ export default function MessageUser({
     });
     document.dispatchEvent(myEvent);
   };
-
+  console.log("data ==> ", data);
   return (
     <div className="flex justify-end w-full">
       <div className="w-fit group min-h-8 max-w-[90%]">
@@ -55,10 +55,15 @@ export default function MessageUser({
           </div>
           <div className="w-[48px] h-[48px]">
             <img
-              className="w-full h-full"
-              src={__APP_ENV__.BASE_URL + "/user.png"}
-              alt=""
+              src="/assets/images/head.png"
+              className="w-full h-full rounded-[50%] shadow-lg"
+              alt="userhead"
             />
+            {/*<img*/}
+            {/*  className="w-full h-full"*/}
+            {/*  src={__APP_ENV__.BASE_URL + "/user.png"}*/}
+            {/*  alt=""*/}
+            {/*/>*/}
           </div>
         </div>
 

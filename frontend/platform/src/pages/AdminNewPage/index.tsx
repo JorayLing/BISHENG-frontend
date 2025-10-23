@@ -1,20 +1,5 @@
-import {
-  ChevronDown,
-  ChevronRight,
-  CircleChevronLeft,
-  CircleChevronRight,
-} from "lucide-react";
 import React, { useContext } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-// 使用相对路径引用公共资源
-const logoImage = '/assets/images/logo.png';
-const menuHomeIcon = '/assets/images/menushouye.png';
-const openGroupIcon = '/assets/images/opengroup.png';
-const tagLeftArrow = '/assets/images/tagleftarrow.png';
-const tagRightArrow = '/assets/images/tagrightarrow.png';
-const tagCloseIcon = '/assets/images/tagcloseicon.png';
-const leftRa = '/assets/images/leftra.png';
-const rightRa = '/assets/images/rightra.png';
 import { bsConfirm } from "../../components/bs-ui/alertDialog/useConfirm";
 import { userContext } from "../../contexts/userContext";
 import { logoutApi } from "../../controllers/API/user";
@@ -27,6 +12,15 @@ import IframeSubRoute from "./IframeSubRoute";
 import { homeMenuConfig, menuGroupsConfig } from "./menuConfig";
 import TestSubRoute from "./TestSubRoute";
 import UsersSubRoute from "./UsersSubRoute";
+// 使用相对路径引用公共资源
+const logoImage = "/assets/images/logo.png";
+const menuHomeIcon = "/assets/images/menushouye.png";
+const openGroupIcon = "/assets/images/opengroup.png";
+const tagLeftArrow = "/assets/images/tagleftarrow.png";
+const tagRightArrow = "/assets/images/tagrightarrow.png";
+const tagCloseIcon = "/assets/images/tagcloseicon.png";
+const leftRa = "/assets/images/leftra.png";
+const rightRa = "/assets/images/rightra.png";
 
 // 标签页类型定义
 interface TabItem {
@@ -55,15 +49,18 @@ interface MenuGroup {
   items: MenuItem[];
   isCollapsed: boolean;
 }
-let userInfoshow=''
+let userInfoshow = "";
 export default function AdminNewPage() {
   const { user, setUser } = useContext(userContext);
-  const userPermissions = JSON.parse(localStorage.getItem('userPermissions') || '{}');
-  if(userPermissions) {
+  const userPermissions = JSON.parse(
+    localStorage.getItem("userPermissions") || "{}",
+  );
+  if (userPermissions) {
     // console.log(userPermissions);
-    if(userPermissions.school_name) {
-      userInfoshow = userPermissions.school_name+'('+userPermissions.nick_name+')';
-    }else{
+    if (userPermissions.school_name) {
+      userInfoshow =
+        userPermissions.school_name + "(" + userPermissions.nick_name + ")";
+    } else {
       userInfoshow = userPermissions.nick_name;
     }
   }
@@ -280,10 +277,13 @@ export default function AdminNewPage() {
       if (tab.props?.flowId) {
         // 如果是聊天相关的标签页，重新初始化对应的消息
         const chatComponent = tab.component;
-        if (chatComponent === ChatAssistantAuthSubRoute || chatComponent === ChatFlowAuthSubRoute) {
+        if (
+          chatComponent === ChatAssistantAuthSubRoute ||
+          chatComponent === ChatFlowAuthSubRoute
+        ) {
           // 触发重新加载消息
-          const event = new CustomEvent('resetChatMessages', {
-            detail: { flowId: tab.props.flowId }
+          const event = new CustomEvent("resetChatMessages", {
+            detail: { flowId: tab.props.flowId },
           });
           document.dispatchEvent(event);
         }
@@ -314,27 +314,32 @@ export default function AdminNewPage() {
   // 根据路由获取菜单项
   const getMenuItemFromRoute = () => {
     const currentPath = location.pathname;
-    const pathSegments = currentPath.split('/');
-    
+    const pathSegments = currentPath.split("/");
+
     // 处理 iframe 路由
-    if (pathSegments.includes('iframe')) {
+    if (pathSegments.includes("iframe")) {
       const iframeId = pathSegments[pathSegments.length - 1];
-      return allMenuItems.find(item => item.id === iframeId);
+      return allMenuItems.find((item) => item.id === iframeId);
     }
-    
+
     // 处理 assistant/auth 路由
-    if (pathSegments.includes('assistant') && pathSegments.includes('auth')) {
+    if (pathSegments.includes("assistant") && pathSegments.includes("auth")) {
       const assistantId = pathSegments[pathSegments.length - 1];
-      return allMenuItems.find(item => 'chatConfig' in item && item.chatConfig?.chatId === assistantId);
+      return allMenuItems.find(
+        (item) =>
+          "chatConfig" in item && item.chatConfig?.chatId === assistantId,
+      );
     }
 
     // 处理普通路由
     const relativePath = currentPath.replace("/adminNew/", "");
-    return allMenuItems.find(item => {
+    return allMenuItems.find((item) => {
       if (item.path === "") {
         return relativePath === "/" || relativePath === "";
       }
-      return relativePath === item.path || relativePath.startsWith(item.path + "/");
+      return (
+        relativePath === item.path || relativePath.startsWith(item.path + "/")
+      );
     });
   };
 
@@ -343,12 +348,15 @@ export default function AdminNewPage() {
     // 根据当前路由创建标签页
     const initializeTabFromRoute = () => {
       const menuItem = getMenuItemFromRoute();
-      
+
       if (menuItem) {
         let props = {};
         if (menuItem.chatConfig) {
           if (menuItem.chatConfig.type === "iframe") {
-            props = { url: menuItem.chatConfig.chatId, title: menuItem.chatConfig.name };
+            props = {
+              url: menuItem.chatConfig.chatId,
+              title: menuItem.chatConfig.name,
+            };
           } else {
             props = { flowId: menuItem.chatConfig.chatId };
           }
@@ -392,9 +400,9 @@ export default function AdminNewPage() {
       handleMenuClick(item);
     };
 
-    document.addEventListener('menuclick', handleMenuClickEvent);
+    document.addEventListener("menuclick", handleMenuClickEvent);
     return () => {
-      document.removeEventListener('menuclick', handleMenuClickEvent);
+      document.removeEventListener("menuclick", handleMenuClickEvent);
     };
   }, [tabs.length, location.pathname]);
 
@@ -417,7 +425,7 @@ export default function AdminNewPage() {
         {/* 右侧用户信息 */}
         <div className="flex items-center space-x-4">
           <div className="text-sm" style={{ color: "#5A87FB" }}>
-            你好～{userInfoshow  || "未登录"}
+            你好～{userInfoshow || "未登录"}
           </div>
           <div className="relative user-menu-container flex items-center">
             <div
@@ -475,15 +483,13 @@ export default function AdminNewPage() {
           }`}
           title={sidebarOpen ? "收起菜单" : "展开菜单"}
         >
-        
-            <img
+          <img
             src="/assets/images/downarrow.png"
             className={`w-[12px]  transition-transform duration-200 ${sidebarOpen ? "rotate-90" : "rotate-[270deg]"}`}
             alt="arrow"
           />
-          
         </button>
-        
+
         {/* 左侧菜单 */}
         <div
           className={`
@@ -508,7 +514,12 @@ export default function AdminNewPage() {
                   alt="home"
                   className="w-[50px] h-[50px] mr-3"
                 />
-                <span className="font-medium" style={{ color: `${ getCurrentActiveMenu() === homeMenuItem.id ? "#fff" : "#0057FF"}`}}>
+                <span
+                  className="font-medium"
+                  style={{
+                    color: `${getCurrentActiveMenu() === homeMenuItem.id ? "#fff" : "#0057FF"}`,
+                  }}
+                >
                   {homeMenuItem.label}
                 </span>
               </button>
@@ -535,10 +546,12 @@ export default function AdminNewPage() {
                       </span>
                     </div>
                     {isCollapsed ? (
-                      <img src={openGroupIcon} className="w-4 h-4 rotate-[-90deg]" alt="down" />
-
+                      <img
+                        src={openGroupIcon}
+                        className="w-4 h-4 rotate-[-90deg]"
+                        alt="down"
+                      />
                     ) : (
-                    
                       <img src={openGroupIcon} className="w-4 h-4" alt="down" />
                     )}
                   </button>
@@ -597,7 +610,6 @@ export default function AdminNewPage() {
                 className="absolute left-0 z-10 px-1 h-full flex items-center justify-center  "
               >
                 <img src={tagLeftArrow} className="w-8 h-8" alt="left" />
-            
               </button>
             )}
 
@@ -613,7 +625,6 @@ export default function AdminNewPage() {
                 className="absolute right-0 z-10 px-1 h-full flex items-center justify-center "
               >
                 <img src={tagRightArrow} className="w-8 h-8" alt="right" />
-             
               </button>
             )}
 
@@ -688,7 +699,11 @@ export default function AdminNewPage() {
                         className="opacity-0 group-hover:opacity-100 absolute right-0 h-[14px] w-[14px] top-0   transition-all duration-200"
                         title="关闭标签页"
                       >
-                        <img src={tagCloseIcon} className="w-[14px] h-[14px]" alt="close" />
+                        <img
+                          src={tagCloseIcon}
+                          className="w-[14px] h-[14px]"
+                          alt="close"
+                        />
                         {/* <span className="text-xs">×</span> */}
                       </button>
                     )}
@@ -704,12 +719,11 @@ export default function AdminNewPage() {
               const Component = tab.component;
               if (!Component) return null;
 
+              // 只渲染当前激活的标签页
+              if (activeTabId !== tab.id) return null;
+
               return (
-                <div
-                  key={tab.id}
-                  className={`h-full w-full ${activeTabId === tab.id ? "block" : "hidden"}`}
-                  style={{ display: activeTabId === tab.id ? "block" : "none" }}
-                >
+                <div key={tab.id} className="h-full w-full">
                   <Component {...(tab.props || {})} />
                 </div>
               );
