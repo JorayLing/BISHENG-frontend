@@ -8,7 +8,7 @@ import { Button } from "../button";
 import { PasswordInput } from "../input";
 import {
   changePasswordApi,
-  loggedChangePasswordApiReset,
+  loggedChangePasswordApi,
 } from "../../../controllers/API/user";
 import { captureAndAlertRequestErrorHoc } from "../../../controllers/request";
 import { PWD_RULE, handleEncrypt } from "../../../pages/LoginPage/utils";
@@ -72,7 +72,7 @@ function ResetPasswordWrapper() {
     const encryptNewPwd = await handleEncrypt(newPwd);
 
     const res = await captureAndAlertRequestErrorHoc(
-      loggedChangePasswordApiReset(encryptCurrentPwd, encryptNewPwd)
+      loggedChangePasswordApi(encryptCurrentPwd, encryptNewPwd)
     );
 
     if (res === null) {
