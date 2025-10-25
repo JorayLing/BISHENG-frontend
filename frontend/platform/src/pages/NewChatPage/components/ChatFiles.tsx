@@ -168,7 +168,7 @@ export default function ChatFiles({ v, accepts, onChange }) {
     <div className="relative z-10">
       {/* Displaying files */}
       {!!files.length && (
-        <div className="absolute bottom-[4.5rem] left-[-4.5rem] flex flex-wrap gap-2  bg-gray-100 p-2 rounded-xl max-h-96 overflow-y-auto">
+        <div className="absolute bottom-[4.5rem] right-[-4.5rem] flex flex-wrap gap-2  bg-gray-100 p-2 rounded-xl max-h-96 overflow-y-auto">
           {files.map((file, index) => (
             <div
               key={index}

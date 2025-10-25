@@ -31,7 +31,7 @@ export interface MenuGroupConfig {
 // export const chatMenuConfig: ChatMenuItem[] = [
 //   {
 //     id: "chat2",
-//     name: "AI创作版",
+//     name: "AI创作板",
 //     type: "iframe",
 //     chatId: "https://aixuexi.cc/avue-data/priv",
 //     icon: "/src/assets/chuangzuoban.png",
@@ -216,7 +216,7 @@ export const changedatatomenu = () => {
   // console.log('Processing menu data:', menuData);
 
   if (!Array.isArray(menuData)) {
-    console.warn('Invalid menu data format:', menuData);
+    console.warn("Invalid menu data format:", menuData);
     return { baseMenu, ortherMenu };
   }
 
@@ -232,7 +232,7 @@ export const changedatatomenu = () => {
       };
 
       // console.log('Created menu item:', menu);
-      
+
       if (item.category === "1" || item.category === 1) {
         baseMenu.push(menu);
       } else if (item.category === "0" || item.category === 0) {
@@ -303,7 +303,13 @@ export const updateMenuGroupsConfig = () => {
 };
 
 // 首页特定菜单项列表
-export const homePageMenuList = ["AI创作版", "AI原理学习游戏", "AI对话助手", "心理小屋", "AI绘图（基础）"];
+export const homePageMenuList = [
+  "AI创作板",
+  "AI原理学习游戏",
+  "AI对话助手",
+  "心理小屋",
+  "AI绘图（基础）",
+];
 
 // 获取首页菜单项
 export const getHomePageMenuItems = () => {
@@ -311,7 +317,7 @@ export const getHomePageMenuItems = () => {
   const allItems = menuGroupsConfig[0].items;
   // 按照 homePageMenuList 的顺序返回菜单项
   return homePageMenuList
-    .map(name => allItems.find(item => item.label === name))
+    .map((name) => allItems.find((item) => item.label === name))
     .filter(Boolean);
 };
 
