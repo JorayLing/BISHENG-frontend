@@ -460,3 +460,9 @@ border-radius: 0px 0px 100px 100px;
 	background-repeat: no-repeat;
 }
  
+.reset-password-dialog {
+	background-image: url('/assets/images/kuang.png');
+	background-size: cover;
+	background-position: center;
+	background-repeat: no-repeat;
+}

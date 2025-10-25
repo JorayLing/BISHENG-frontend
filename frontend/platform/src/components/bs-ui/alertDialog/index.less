@@ -66,3 +66,69 @@
     }
   }
 }
+
+
+
+.alert-dialog-re{
+  width: 600px;
+  height: 400px;
+  position: relative;
+   
+  .close{
+    width: 50px;
+    height: 50px;
+    position: absolute;
+    right: 0;
+    top: 48px;
+    cursor:pointer;
+    z-index: 52;
+  }
+  .alert-dialog-content{
+    width: 600px;
+    height: 400px;
+    background: url('assets/images/kuang.png') no-repeat;
+    background-size: 100% 100%;
+    position: relative;
+    z-index: 51;
+    padding-top: 1px;
+    .alert-dialog-desc{
+      font-family: PingFangSC-Heavy;
+      font-size: 20px;
+      color: #0D0D0D;
+      letter-spacing: 0;
+      line-height: 28px;
+      font-weight: 400;
+      text-align: center;
+      margin-top: 129px;
+    }
+    .alert-dialog-footer{
+      display: flex;
+      justify-content: center;
+      margin-top: 30px;
+      >div{
+        width: 186px;
+        height: 83px;
+        text-align: center;
+        padding-top: 10px;
+        box-sizing: border-box;
+        font-family: FZLANTY_CUJW--GB1-0;
+        font-size: 24px;
+        color: #FFFFFF;
+        letter-spacing: 4px;
+        font-weight: 400;
+        cursor:pointer;
+      }
+      .alert-dialog-cancel{
+        background: url("./images/cancel.png") no-repeat;
+        background-size: 100% 100%;
+        text-shadow: 0 2px 6px rgba(19,94,189,0.64);
+      }
+      .alert-dialog-ok{
+        width: 260px;
+        background: url("assets/images/yellowbtn.png") no-repeat;
+        background-size: 100% 100%;
+        text-shadow: 0 2px 6px #DC6D0A;
+      }
+    }
+  }
+}

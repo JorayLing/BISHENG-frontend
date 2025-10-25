@@ -6,6 +6,7 @@ import {
 } from "lucide-react";
 import React, { useContext } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { bsResetPassword } from "../../components/bs-ui/alertDialog/useResetPassword";
 // 使用相对路径引用公共资源
 const logoImage = '/assets/images/logo.png';
 const menuHomeIcon = '/assets/images/menushouye.png';
@@ -40,11 +41,18 @@ interface TabItem {
 }
 
 // 菜单项类型定义
+interface ChatMenuItem {
+  type: 'chat' | 'iframe' | 'assistant' | 'flow';
+  chatId: string;
+  name?: string;
+}
+
 interface MenuItem {
   id: string;
   label: string;
   path: string;
   icon: any;
+  chatConfig?: ChatMenuItem;
 }
 
 // 菜单分组类型定义
@@ -94,7 +102,18 @@ export default function AdminNewPage() {
   // 修改密码
   const handleChangePassword = () => {
     localStorage.setItem("account", user.user_name);
-    navigate("/reset");
+    setShowUserMenu(false);
+    bsResetPassword({
+      onSuccess: () => {
+        // 修改密码成功后执行退出登录
+        captureAndAlertRequestErrorHoc(logoutApi()).then((_) => {
+          setUser(null);
+          localStorage.removeItem("isLogin");
+          localStorage.removeItem("menuConfig");
+          navigate("/login");
+        });
+      },
+    });
   };
 
   // 点击其他区域关闭用户菜单
@@ -169,7 +188,7 @@ export default function AdminNewPage() {
   };
 
   const menuGroups = menuGroupsConfig;
-  const homeMenuItem = homeMenuConfig;
+  const homeMenuItem: MenuItem = homeMenuConfig;
   const allMenuItems = [
     homeMenuItem,
     ...menuGroups.flatMap((group) => group.items),

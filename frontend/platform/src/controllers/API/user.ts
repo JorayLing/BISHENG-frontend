@@ -371,13 +371,35 @@ export async function changePasswordApi(
     new_password,
   });
 }
-
 // 已登录状态重置个人密码
 export async function loggedChangePasswordApi(
   password,
   new_password,
 ): Promise<any> {
   return axios.post(`/api/v1/user/change_password`, {
+    password,
+    new_password,
+  });
+}
+
+// 已登录状态重置个人密码
+export async function loggedChangePasswordApiReset(
+  password,
+  new_password,
+): Promise<any> {
+
+  const instance = Axios.create({
+    baseURL: '',
+    timeout: 5000,
+    withCredentials: false,
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/x-www-form-urlencoded'
+    }
+  });
+
+   
+  return instance.post(`https://x.aixuexi.cc/api/v1/user/change_password`, {
     password,
     new_password,
   });
