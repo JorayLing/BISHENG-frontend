@@ -75,6 +75,7 @@
     border-radius: 3px;
     outline: none;
     transition: background 0.2s;
+    background: linear-gradient(to right, rgba(255, 255, 255, 0.8) var(--seek-before-width, 0%), rgba(255, 255, 255, 0.2) 0);
 }
 
 .progress-slider::-webkit-slider-thumb {

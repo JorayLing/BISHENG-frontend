@@ -150,6 +150,11 @@ const ChatMusic: React.FC<ChatMusicProps> = ({ logo, data }) => {
               value={currentTime}
               onChange={handleSeek}
               className="progress-slider"
+              style={
+                {
+                  "--seek-before-width": `${(currentTime / duration) * 100}%`,
+                } as React.CSSProperties
+              }
             />
             <span className="current-time">{formatTime(currentTime)}</span>
           </div>
