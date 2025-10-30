@@ -70,7 +70,7 @@ export default function HomeSubRoute() {
           />
 
           {/* 右侧两个小图 */}
-          <div className="flex flex-col gap-4 w-[50%] h-full">
+          <div className="flex flex-col   gap-4 w-[50%] h-full" style={{alignItems: "flex-end"}}>
               <ImageCard
                 src={aiCreate}
                 alt={menuItems[0]?.label || ""}
