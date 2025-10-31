@@ -1,6 +1,8 @@
 import aiAvatar from "@/pages/NewChatPage/images/aiAvatar.png";
 import checkIcon from "@/pages/NewChatPage/images/check.png";
 import MusicIcon from "@/pages/NewChatPage/images/music-icon.png";
+import MusicPlay from "@/pages/NewChatPage/images/music-play.png";
+import MusicPause from "@/pages/NewChatPage/images/music-pause.png";
 import React, { useEffect, useRef, useState } from "react";
 import "../style/ChatMusic.css";
 
@@ -138,7 +140,13 @@ const ChatMusic: React.FC<ChatMusicProps> = ({ logo, data }) => {
             <div className="music-info">
               <h3>{title}</h3>
             </div>
-            <button className="play-button" onClick={handlePlayPause}></button>
+            <button 
+              className="play-button" 
+              onClick={handlePlayPause}
+              style={{
+                backgroundImage: `url(${isPlaying ? MusicPause : MusicPlay})`
+              }}
+            ></button>
           </div>
 
           {/* 进度条 */}
