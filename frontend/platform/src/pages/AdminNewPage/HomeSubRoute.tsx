@@ -43,7 +43,7 @@ export default function HomeSubRoute() {
   const navigate = useNavigate();
 
   const handleItemClick = (menuItem: any) => {
-    if (!menuItem) return;
+    if (!menuItem || menuItem.status === 0) return;
     
     // 直接使用菜单项数据，因为它已经是正确的格式
     const event = new CustomEvent('menuclick', { 
@@ -55,6 +55,7 @@ export default function HomeSubRoute() {
 
   // 获取首页菜单项
   const menuItems = getHomePageMenuItems();
+  console.log('menuItems', menuItems);
 
   return (
     <div className="p-6 h-full overflow-y-auto shouyebgimage   justify-center flex ">
@@ -75,13 +76,13 @@ export default function HomeSubRoute() {
                 src={aiCreate}
                 alt={menuItems[0]?.label || ""}
                 onClick={() => handleItemClick(menuItems[0])}
-                containerClassName="h-[50%]"
+                containerClassName = {menuItems[0].status === 0 ? 'opactiCss ' : ''} 
               />
               <ImageCard
                 src={aiPrinciple}
                 alt={menuItems[1]?.label || ""}
                 onClick={() => handleItemClick(menuItems[1])}
-                containerClassName="h-[50%]"
+                containerClassName = {menuItems[1].status === 0 ? 'opactiCss ' : ''} 
               />
           </div>
         </div>
@@ -92,19 +93,19 @@ export default function HomeSubRoute() {
               src={aiChat}
               alt={menuItems[2]?.label || ""}
               onClick={() => handleItemClick(menuItems[2])}
-              containerClassName="h-[180px]"
+              containerClassName = {menuItems[2].status === 0 ? 'opactiCss ' : ''} 
             />
             <ImageCard
               src={aiPsych}
               alt={menuItems[3]?.label || ""}
               onClick={() => handleItemClick(menuItems[3])}
-              containerClassName="h-[180px]"
+              containerClassName = {menuItems[3].status === 0 ? 'opactiCss ' : ''} 
             />
             <ImageCard
               src={aiDraw}
               alt={menuItems[4]?.label || ""}
               onClick={() => handleItemClick(menuItems[4])}
-              containerClassName="h-[180px]"
+              containerClassName = {menuItems[4].status === 0 ? 'opactiCss ' : ''} 
           />
         </div>
       </div>

@@ -7,6 +7,7 @@ export interface ChatMenuItem {
   type: "assistant" | "flow" | "iframe" | "chat";
   chatId: string;
   icon?: any;
+  status?: any;
 }
 
 // 菜单分组配置
@@ -20,9 +21,11 @@ export interface MenuGroupConfig {
     path: string;
     icon: any;
     type?: "assistant" | "flow" | "iframe" | "chat";
+    status?: any;
     chatConfig?: ChatMenuItem;
   }>;
   isCollapsed: boolean;
+  status?: any;
 }
 // 聊天菜单配置
 
@@ -222,23 +225,24 @@ export const changedatatomenu = () => {
 
   menuData.forEach((item) => {
     // console.log('Processing menu item:', item);
-    if (item.status === "1" || item.status === 1) {
-      let menu: ChatMenuItem = {
-        id: item.id,
-        name: item.permission_name,
-        type: item.type,
-        chatId: item.type === "iframe" ? item.url : item.permission_id,
-        icon: item.logo,
-      };
+    // if (item.status === "1" || item.status === 1) {
+    let menu: ChatMenuItem = {
+      id: item.id,
+      name: item.permission_name,
+      type: item.type,
+      chatId: item.type === "iframe" ? item.url : item.permission_id,
+      icon: item.logo,
+      status:(item.status === "1" || item.status === 1 )? 1 : 0,
+    };
 
-      // console.log('Created menu item:', menu);
+    // console.log('Created menu item:', menu);
 
-      if (item.category === "1" || item.category === 1) {
-        baseMenu.push(menu);
-      } else if (item.category === "0" || item.category === 0) {
-        ortherMenu.push(menu);
-      }
+    if (item.category === "1" || item.category === 1) {
+      baseMenu.push(menu);
+    } else if (item.category === "0" || item.category === 0) {
+      ortherMenu.push(menu);
     }
+    // }
   });
 
   // console.log("baseMenu", baseMenu);
@@ -267,6 +271,7 @@ export const getMenuGroupsConfig = (): MenuGroupConfig[] => {
               : `chat/flow/auth/${chat.chatId}`,
         icon: chat.icon || MessageCircle,
         type: chat.type,
+        status: chat.status,
         chatConfig: chat,
       })),
       isCollapsed: false,
@@ -284,6 +289,7 @@ export const getMenuGroupsConfig = (): MenuGroupConfig[] => {
             : `chat/${item.type}/auth/${item.chatId}`,
         icon: item.icon || MessageCircle,
         type: item.type,
+        status: item.status,
         chatConfig: item,
       })),
       isCollapsed: true,
@@ -315,10 +321,20 @@ export const homePageMenuList = [
 export const getHomePageMenuItems = () => {
   // 先获取所有匹配的菜单项
   const allItems = menuGroupsConfig[0].items;
+  console.log("allItems", allItems);
   // 按照 homePageMenuList 的顺序返回菜单项
-  return homePageMenuList
-    .map((name) => allItems.find((item) => item.label === name))
-    .filter(Boolean);
+  return homePageMenuList.map(
+    (name) =>
+      allItems.find((item) => item.label === name) || {
+        id: "",
+        label: name,
+        path: "",
+        icon: "",status: 0,
+        chatConfig: {
+          status: 0,
+        } as ChatMenuItem,
+      },
+  );
 };
 
 // 首页菜单项配置

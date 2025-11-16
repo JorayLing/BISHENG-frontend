@@ -38,7 +38,7 @@ interface TabItem {
 
 // 菜单项类型定义
 interface ChatMenuItem {
-  type: 'chat' | 'iframe' | 'assistant' | 'flow';
+  type: "chat" | "iframe" | "assistant" | "flow";
   chatId: string;
   name?: string;
 }
@@ -48,6 +48,7 @@ interface MenuItem {
   label: string;
   path: string;
   icon: any;
+  status?: any;
   chatConfig?: ChatMenuItem;
 }
 
@@ -58,6 +59,7 @@ interface MenuGroup {
   icon: any;
   items: MenuItem[];
   isCollapsed: boolean;
+  status?: any;
 }
 let userInfoshow = "";
 export default function AdminNewPage() {
@@ -217,6 +219,7 @@ export default function AdminNewPage() {
   };
 
   const handleMenuClick = (item: any) => {
+    if (item.status === 0) return;
     // console.log("点击菜单:", item.label, "路径:", item.path);
 
     // 检查标签页是否已存在
@@ -589,7 +592,7 @@ export default function AdminNewPage() {
                             onClick={() => handleMenuClick(item)}
                             className={`w-full flex items-center px-6 py-2 text-left h-[50px] mt-[10px] ${
                               isActive ? "selectmenucss" : "normalmenucss"
-                            }`}
+                            } ${item.status === 0 ? "opactiCss" : ""}`}
                           >
                             <img
                               src={item.icon}
