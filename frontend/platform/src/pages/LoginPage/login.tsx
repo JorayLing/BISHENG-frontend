@@ -133,7 +133,7 @@ export const LoginPage = () => {
         }
         
         try {
-          const menuConfig = await menuConfigApi();
+          const menuConfig = await menuConfigApi({user_name: userInfo.user_name});
           if (Array.isArray(menuConfig)) {
             localStorage.setItem('menuConfig', JSON.stringify(menuConfig));
             // 动态更新菜单配置

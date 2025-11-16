@@ -1,5 +1,5 @@
 export const API_CONFIG = {
-  BASE_URL: 'https://aixuexi.cc',
+  BASE_URL: 'https://xueai.com.cn',
   ENDPOINTS: {
     AUTO_LOGIN: '/third/bisheng/autologin',
     PERMISSIONS: '/api/bisheng/permissions',
