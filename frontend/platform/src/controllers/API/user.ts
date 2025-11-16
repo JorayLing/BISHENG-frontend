@@ -69,7 +69,7 @@ export async function menuConfigApi(data?) {
   });
 
   const response = await instance.get(`${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.MENUS}`, {
-    ...data
+    params: data
   });
   return response.data;
 }
