@@ -19,7 +19,7 @@ export const getAssistantsApi = async (
   name,
   tag_id,
 ): Promise<AssistantItemDB[]> => {
-  return await axios.get(`/api/v1/assistant`, {
+  return await axios.get(`/hjapi/v1/assistant`, {
     params: {
       page,
       limit,
@@ -35,7 +35,7 @@ export const createAssistantsApi = async (name, prompt, url) => {
     // logo保存相对路径
     url = url.replace("/bisheng", "");
   }
-  return await axios.post(`/api/v1/assistant`, { name, prompt, logo: url });
+  return await axios.post(`/hjapi/v1/assistant`, { name, prompt, logo: url });
 };
 
 // 获取助手详情
@@ -43,17 +43,17 @@ export const getAssistantDetailApi = async (
   id,
   version,
 ): Promise<AssistantDetail> => {
-  return await axios.get(`/api/${version}/assistant/info/${id}`);
+  return await axios.get(`/hjapi/${version}/assistant/info/${id}`);
 };
 
 // 获取助手系统模型
 export const getAssistantModelsApi = async (): Promise<any> => {
-  return await axios.get(`/api/v1/assistant/models`);
+  return await axios.get(`/hjapi/v1/assistant/models`);
 };
 
 // 上下线助手
 export const changeAssistantStatusApi = async (id, status) => {
-  return await axios.post(`/api/v1/assistant/status`, { id, status });
+  return await axios.post(`/hjapi/v1/assistant/status`, { id, status });
 };
 
 // 保存助手
@@ -68,17 +68,17 @@ export const saveAssistanttApi = async (
     // logo保存相对路径
     data.logo = data.logo.replace("/bisheng", "");
   }
-  return await axios.put(`/api/v1/assistant`, data);
+  return await axios.put(`/hjapi/v1/assistant`, data);
 };
 
 // 删除助手
 export const deleteAssistantApi = async (id) => {
-  return await axios.post(`/api/v1/assistant/delete?assistant_id=${id}`);
+  return await axios.post(`/hjapi/v1/assistant/delete?assistant_id=${id}`);
 };
 
 // 获取会话选择列表
 export const getChatOnlineApi = async (page, keyword, tag_id) => {
-  return await axios.get(`/api/v1/chat/online`, {
+  return await axios.get(`/hjapi/v1/chat/online`, {
     params: {
       page,
       keyword,
@@ -89,7 +89,7 @@ export const getChatOnlineApi = async (page, keyword, tag_id) => {
 };
 // export const getChatOnlineApi = async (tag_id:-1) => {
 //     const tagStr = tag_id === -1 ? '' : `tag_id=${tag_id}`
-//     return await axios.get(`/api/v1/chat/online?${tagStr}`)
+//     return await axios.get(`/hjapi/v1/chat/online?${tagStr}`)
 // };
 
 // 获取工具集合
@@ -106,7 +106,7 @@ export const getAssistantToolsApi = async (
     custom: "?is_preset=0",
     mcp: "?is_preset=2",
   };
-  return await axios.get(`/api/v1/assistant/tool_list${queryStr[type]}`);
+  return await axios.get(`/hjapi/v1/assistant/tool_list${queryStr[type]}`);
 };
 
 // 获取mcp服务集合
@@ -116,17 +116,17 @@ export const getAssistantMcpApi = async (): Promise<any> => {
 
 // 刷新mcp服务
 export const refreshAssistantMcpApi = async (): Promise<any> => {
-  return await axios.post(`/api/v1/assistant/mcp/refresh`);
+  return await axios.post(`/hjapi/v1/assistant/mcp/refresh`);
 };
 
 // 修改内置工具配置
 export const updateAssistantToolApi = async (tool_id, extra) => {
-  return await axios.post(`/api/v1/assistant/tool/config`, { tool_id, extra });
+  return await axios.post(`/hjapi/v1/assistant/tool/config`, { tool_id, extra });
 };
 
 // 获取自动优化任务taskid
 export const getAssistantOptimizeTaskApi = async (assistant_id, prompt) => {
-  return await axios.post(`/api/v1/assistant/auto/task`, {
+  return await axios.post(`/hjapi/v1/assistant/auto/task`, {
     assistant_id,
     prompt,
   });

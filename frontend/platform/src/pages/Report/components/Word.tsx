@@ -12,8 +12,8 @@ export default function Word({ data, workflow }) {
   // const host = 'http://192.168.106.120:3002'
   const host = `${location.origin}${__APP_ENV__.BASE_URL}`;
   const backUrl = workflow
-    ? `${host}/api/v1/workflow/report/callback`
-    : `${host}/api/v1/report/callback`; // 后端服务地址
+    ? `${host}/hjapi/v1/workflow/report/callback`
+    : `${host}/hjapi/v1/report/callback`; // 后端服务地址
 
   const editorConfig = {
     // 编辑器宽度
@@ -89,7 +89,7 @@ export default function Word({ data, workflow }) {
       createEditor();
     } else {
       const script = document.createElement("script");
-      script.src = wordUrl + "/web-apps/apps/api/documents/api.js"; // 在线编辑服务
+      script.src = wordUrl + "/web-apps/apps/hjapi/documents/api.js"; // 在线编辑服务
       script.onload = createEditor;
       document.head.appendChild(script);
       script.onerror = () => {

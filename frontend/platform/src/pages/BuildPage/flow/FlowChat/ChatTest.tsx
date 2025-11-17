@@ -120,7 +120,7 @@ export const ChatTest = forwardRef((props, ref) => {
           autoRun
           chatId={chatId}
           flow={flow}
-          wsUrl={`${host}${__APP_ENV__.BASE_URL}/api/v1/workflow/chat/${flow?.id}`}
+          wsUrl={`${host}${__APP_ENV__.BASE_URL}/hjapi/v1/workflow/chat/${flow?.id}`}
         />
       </div>
       {!small && (

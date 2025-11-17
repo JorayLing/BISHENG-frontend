@@ -17,7 +17,7 @@ export const getWorkflowNodeTemplate = async (): Promise<any[]> => {
  * 获取某工作流报告模板信息
  */
 export const getWorkflowReportTemplate = async (key: string): Promise<any> => {
-  return await axios.get(`/api/v1/workflow/report/file?version_key=${key}`);
+  return await axios.get(`/hjapi/v1/workflow/report/file?version_key=${key}`);
 };
 
 /**
@@ -34,7 +34,7 @@ export const createWorkflowApi = async (
     url = url.replace("/bisheng", "");
   }
   const data = flow || {};
-  return await axios.post("/api/v1/workflow/create", {
+  return await axios.post("/hjapi/v1/workflow/create", {
     ...data,
     name,
     description: desc,
@@ -53,7 +53,7 @@ export const saveWorkflow = async (
     // logo保存相对路径
     data.logo = data.logo.replace("/bisheng", "");
   }
-  return await axios.put(`/api/v1/workflow/versions/${versionId}`, data);
+  return await axios.put(`/hjapi/v1/workflow/versions/${versionId}`, data);
 };
 
 /** 上线工作流 & 修改信息
@@ -69,7 +69,7 @@ export const onlineWorkflow = async (flow, status = ""): Promise<any> => {
   if (status) {
     data["status"] = status;
   }
-  return await axios.patch(`/api/v1/workflow/update/${flow.id}`, data);
+  return await axios.patch(`/hjapi/v1/workflow/update/${flow.id}`, data);
 };
 
 /**
@@ -80,7 +80,7 @@ export const onlineWorkflowApi = async (data: {
   version_id;
   status;
 }) => {
-  return await axios.patch(`/api/v1/workflow/status`, data);
+  return await axios.patch(`/hjapi/v1/workflow/status`, data);
 };
 
 /**
@@ -88,7 +88,7 @@ export const onlineWorkflowApi = async (data: {
  *
  */
 export const runWorkflowNodeApi = async (node_input, data): Promise<any> => {
-  return await axios.post(`/api/v1/workflow/run_once`, {
+  return await axios.post(`/hjapi/v1/workflow/run_once`, {
     node_input,
     node_data: {
       id: data.id,
@@ -106,7 +106,7 @@ export const copyReportTemplate = async (nodeData): Promise<any> => {
     const { version_key } = nodeData.group_params[0].params[0].value;
     if (version_key) {
       return axios
-        .post(`/api/v1/workflow/report/copy`, {
+        .post(`/hjapi/v1/workflow/report/copy`, {
           version_key,
         })
         .then((res) => {

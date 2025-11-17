@@ -8,7 +8,7 @@ import { useTranslation } from "react-i18next";
 
 export default function TestChat({ assisId, guideQuestion, onClear }) {
   const token = localStorage.getItem("ws_token") || "";
-  const wsUrl = `${location.host}${__APP_ENV__.BASE_URL}/api/v1/assistant/chat/${assisId}?t=${token}`;
+  const wsUrl = `${location.host}${__APP_ENV__.BASE_URL}/hjapi/v1/assistant/chat/${assisId}?t=${token}`;
 
   const { messages, changeChatId } = useMessageStore();
   const { assistantState } = useAssistantStore();

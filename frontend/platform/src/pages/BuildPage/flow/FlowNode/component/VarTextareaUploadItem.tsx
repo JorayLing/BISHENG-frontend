@@ -124,7 +124,7 @@ export const useFileUpload = (_files, onFilesChange) => {
             console.log("Upload Progress:", progress);
           },
           "icon",
-          "/api/v1/upload/workflow/" + flowId,
+          "/hjapi/v1/upload/workflow/" + flowId,
         )
           .then((res) => {
             setLoading(false);

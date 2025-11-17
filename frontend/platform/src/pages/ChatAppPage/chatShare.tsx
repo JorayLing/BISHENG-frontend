@@ -13,7 +13,7 @@ export default function chatShare({ type = AppNumType.SKILL }) {
   const tweak = searchParams.get("tweak");
 
   const wsUrl = useMemo(() => {
-    if (type === AppNumType.FLOW) return `/api/v2/workflow/chat/${flowId}?`;
+    if (type === AppNumType.FLOW) return `/hjapi/v2/workflow/chat/${flowId}?`;
 
     const params = [];
 
@@ -22,7 +22,7 @@ export default function chatShare({ type = AppNumType.SKILL }) {
 
     const paramStr = params.length > 0 ? `${params.join("&")}` : "";
 
-    return `/api/v2/chat/ws/${flowId}?type=L1&${paramStr}`;
+    return `/hjapi/v2/chat/ws/${flowId}?type=L1&${paramStr}`;
   }, [libId, tweak, type]);
 
   const [data] = useState<any>({ id: flowId, chatId: generateUUID(32), type });

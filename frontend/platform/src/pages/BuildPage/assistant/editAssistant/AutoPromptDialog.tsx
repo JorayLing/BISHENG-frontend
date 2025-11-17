@@ -33,7 +33,7 @@ export default function AutoPromptDialog({ onOpenChange }) {
   const init = async () => {
     const prompt = areaRef.current?.value || assistantState.prompt;
     const res = await getAssistantOptimizeTaskApi(id, prompt);
-    const apiUrl = `${__APP_ENV__.BASE_URL}/api/v1/assistant/auto?task_id=${res.task_id}`;
+    const apiUrl = `${__APP_ENV__.BASE_URL}/hjapi/v1/assistant/auto?task_id=${res.task_id}`;
     const eventSource = new EventSource(apiUrl);
     if (areaRef.current) areaRef.current.value = "";
     let queue = LoadType.Prompt;

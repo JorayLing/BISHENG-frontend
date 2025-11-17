@@ -31,7 +31,7 @@ export type Evaluation = {
  * @returns
  */
 export const getEvaluationApi = async (page, limit): Promise<Evaluation[]> => {
-  return await axios.get(`/api/v1/evaluation`, {
+  return await axios.get(`/hjapi/v1/evaluation`, {
     params: {
       page,
       limit,
@@ -43,7 +43,7 @@ export const getEvaluationApi = async (page, limit): Promise<Evaluation[]> => {
  * 创建测评任务
  */
 export const createEvaluationApi = async (data): Promise<any> => {
-  return await axios.post(`/api/v1/evaluation`, data, {
+  return await axios.post(`/hjapi/v1/evaluation`, data, {
     headers: {
       "Content-Type": "multipart/form-data",
     },
@@ -54,7 +54,7 @@ export const createEvaluationApi = async (data): Promise<any> => {
  * 删除测评任务
  */
 export const deleteEvaluationApi = async (id): Promise<any> => {
-  return await axios.delete(`/api/v1/evaluation/${id}`);
+  return await axios.delete(`/hjapi/v1/evaluation/${id}`);
 };
 
 /**
@@ -62,6 +62,6 @@ export const deleteEvaluationApi = async (id): Promise<any> => {
  */
 export const getEvaluationUrlApi = async (id): Promise<{ url: string }> => {
   return await axios.get(
-    `/api/v1/evaluation/result/file/download?file_url=${id}`,
+    `/hjapi/v1/evaluation/result/file/download?file_url=${id}`,
   );
 };

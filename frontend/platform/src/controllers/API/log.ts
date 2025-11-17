@@ -3,7 +3,7 @@ import axios from "../request";
 
 // 获取操作过组下资源的所有用户
 export async function getOperatorsApi(): Promise<[]> {
-  return await axios.get("/api/v1/audit/operators");
+  return await axios.get("/hjapi/v1/audit/operators");
 }
 
 // 分页获取审计列表
@@ -31,7 +31,7 @@ export async function getLogsApi({
   const startStr = start ? `&start_time=${start}` : "";
   const endStr = end ? `&end_time=${end}` : "";
   return await axios.get(
-    `/api/v1/audit?page=${page}&limit=${pageSize}&group_ids=${groupId}${uids}` +
+    `/hjapi/v1/audit?page=${page}&limit=${pageSize}&group_ids=${groupId}${uids}` +
       `&system_id=${moduleId}&event_type=${action}` +
       startStr +
       endStr,
@@ -99,7 +99,7 @@ export async function getActionsByModuleApi(moduleId) {
 export async function getChatLabelsApi(params) {
   const { page, pageSize, keyword } = params;
 
-  return await axios.get("/api/v1/chat/app/list", {
+  return await axios.get("/hjapi/v1/chat/app/list", {
     params: {
       page_num: page,
       page_size: pageSize,
@@ -111,7 +111,7 @@ export async function getChatLabelsApi(params) {
 // 标注任务列表
 export async function getMarksApi({ status, pageSize, page }): Promise<{}> {
   return await axios
-    .get("/api/v1/mark/list", {
+    .get("/hjapi/v1/mark/list", {
       params: {
         page_num: page,
         page_size: pageSize,
@@ -129,12 +129,12 @@ export async function createMarkApi(data: {
   app_list: string[];
   user_list: string[];
 }) {
-  return await axios.post("/api/v1/mark/create_task", data);
+  return await axios.post("/hjapi/v1/mark/create_task", data);
 }
 
 // 删除标注任务
 export async function deleteMarkApi(task_id) {
-  return await axios.delete("/api/v1/mark/del", { params: { task_id } });
+  return await axios.delete("/hjapi/v1/mark/del", { params: { task_id } });
 }
 
 // 标注会话列表
@@ -146,7 +146,7 @@ export async function getMarkChatsApi({
   mark_status,
   mark_user,
 }) {
-  return await axios.get("/api/v1/chat/app/list", {
+  return await axios.get("/hjapi/v1/chat/app/list", {
     params: {
       task_id,
       keyword,
@@ -160,7 +160,7 @@ export async function getMarkChatsApi({
 
 // 获取用户标注权限
 export async function getMarkPermissionApi(): Promise<boolean> {
-  return await axios.get("/api/v1/user/mark");
+  return await axios.get("/hjapi/v1/user/mark");
 }
 
 // 更新标注状态
@@ -169,12 +169,12 @@ export async function updateMarkStatusApi(data: {
   task_id: number;
   status: number;
 }) {
-  return await axios.post("/api/v1/mark/mark", data);
+  return await axios.post("/hjapi/v1/mark/mark", data);
 }
 
 // 获取下一个标注会话
 export async function getNextMarkChatApi({ action, chat_id, task_id }) {
-  return await axios.get("/api/v1/mark/next", {
+  return await axios.get("/hjapi/v1/mark/next", {
     params: {
       action,
       chat_id,
@@ -185,7 +185,7 @@ export async function getNextMarkChatApi({ action, chat_id, task_id }) {
 
 // 获取会话标注状态
 export async function getMarkStatusApi({ chat_id, task_id }) {
-  return await axios.get("/api/v1/mark/get_status", {
+  return await axios.get("/hjapi/v1/mark/get_status", {
     params: {
       chat_id,
       task_id,
@@ -202,7 +202,7 @@ export async function getGroupsApi(
   params: { keyword: string; page: number; page_size: number },
   config?: { signal?: AbortSignal }, // 接收 AbortSignal
 ): Promise<any[]> {
-  return await axios.get("/api/v1/group/manage/resources", {
+  return await axios.get("/hjapi/v1/group/manage/resources", {
     params, // 请求参数
     signal: config?.signal, // 绑定 AbortSignal
   });
@@ -220,7 +220,7 @@ export async function getAuditAppListApi(params: {
   page;
   page_size;
 }) {
-  return await axios.get("/api/v1/audit/session", {
+  return await axios.get("/hjapi/v1/audit/session", {
     params,
     paramsSerializer,
   });
@@ -237,7 +237,7 @@ export async function exportCsvApi(params: {
   feedback;
   sensitive_status;
 }) {
-  return await axios.get("/api/v1/audit/session/export", {
+  return await axios.get("/hjapi/v1/audit/session/export", {
     params,
     paramsSerializer,
   });
@@ -253,7 +253,7 @@ export async function exportCsvDataApi(params: {
   feedback;
   sensitive_status;
 }) {
-  return await axios.get("/api/v1/audit/session/export/data", {
+  return await axios.get("/hjapi/v1/audit/session/export/data", {
     params,
     paramsSerializer,
   });

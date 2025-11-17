@@ -18,7 +18,7 @@ export interface AssistantItemDB {
  * @returns Promise<any> 创建工具的结果
  */
 export const createTool = async (data: any): Promise<any> => {
-  return await axios.post(`/api/v1/assistant/tool_list`, data);
+  return await axios.post(`/hjapi/v1/assistant/tool_list`, data);
 };
 
 /**
@@ -28,7 +28,7 @@ export const createTool = async (data: any): Promise<any> => {
  * @returns Promise<any> 修改工具的结果
  */
 export const updateTool = async (data: any): Promise<any> => {
-  return await axios.put(`/api/v1/assistant/tool_list`, data);
+  return await axios.put(`/hjapi/v1/assistant/tool_list`, data);
 };
 
 /**
@@ -39,7 +39,7 @@ export const updateTool = async (data: any): Promise<any> => {
 export const deleteTool = async (id: number): Promise<any> => {
   return await axios({
     method: "delete",
-    url: "/api/v1/assistant/tool_list",
+    url: "/hjapi/v1/assistant/tool_list",
     data: {
       tool_type_id: id,
     },
@@ -56,7 +56,7 @@ export const deleteTool = async (id: number): Promise<any> => {
 export const downloadToolSchema = async (
   data: { download_url: string } | { file_content: string },
 ): Promise<any> => {
-  return await axios.post(`/api/v1/assistant/tool_schema`, data);
+  return await axios.post(`/hjapi/v1/assistant/tool_schema`, data);
 };
 
 /**
@@ -70,7 +70,7 @@ export const getMcpServeByConfig = async (data: {
     getMcpServeByConfigController.abort();
   }
   getMcpServeByConfigController = new AbortController();
-  const promise = await axios.post(`/api/v1/assistant/mcp/tool_schema`, data, {
+  const promise = await axios.post(`/hjapi/v1/assistant/mcp/tool_schema`, data, {
     signal: getMcpServeByConfigController.signal, // 绑定取消信号
   });
   getMcpServeByConfigController = null;
@@ -83,7 +83,7 @@ export const getMcpServeByConfig = async (data: {
 export const testMcpApi = async (data: { file_content: string }) => {
   return await axios({
     method: "post",
-    url: "/api/v1/assistant/mcp/tool_test",
+    url: "/hjapi/v1/assistant/mcp/tool_test",
     data,
   });
 };
@@ -104,7 +104,7 @@ export const testToolApi = async (data: {
 }): Promise<any> => {
   return await axios({
     method: "post",
-    url: "/api/v1/assistant/tool_test",
+    url: "/hjapi/v1/assistant/tool_test",
     data,
   });
 };

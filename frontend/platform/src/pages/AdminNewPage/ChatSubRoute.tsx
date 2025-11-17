@@ -12,7 +12,7 @@ export default function ChatSubRoute() {
   // console.log('ChatSubRoute - 接收到的ID:', id, '使用的chatId:', chatId);
   
   // 构建 WebSocket URL
-  const wsUrl = `/api/v2/workflow/chat/${chatId}?`;
+  const wsUrl = `/hjapi/v2/workflow/chat/${chatId}?`;
   
   // 创建数据对象
   const data = { 

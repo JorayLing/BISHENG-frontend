@@ -31,7 +31,7 @@ export const getTasksApi = async (params: Tasks_query): Promise<TaskDB[]> => {
         : params.status === "4"
           ? "4,5"
           : params.status;
-  return await axios.get(`/api/v1/finetune/job`, {
+  return await axios.get(`/hjapi/v1/finetune/job`, {
     params: { ...params, server, status },
   });
 };
@@ -53,7 +53,7 @@ export const createTaskApi = async (data: any): Promise<TaskDB> => {
   };
   const train_data = filterData(data.train_data);
   const preset_data = filterData(data.preset_data);
-  return await axios.post(`/api/v1/finetune/job`, {
+  return await axios.post(`/hjapi/v1/finetune/job`, {
     ...data,
     train_data,
     preset_data,
@@ -62,36 +62,36 @@ export const createTaskApi = async (data: any): Promise<TaskDB> => {
 
 // 删除任务
 export const deleteTaskApi = async (taskId: string) => {
-  return await axios.delete(`/api/v1/finetune/job?job_id=${taskId}`);
+  return await axios.delete(`/hjapi/v1/finetune/job?job_id=${taskId}`);
 };
 
 // 取消任务训练
 export const cancelTaskApi = async (taskId: string): Promise<TaskDB> => {
-  return await axios.post(`/api/v1/finetune/job/cancel?job_id=${taskId}`);
+  return await axios.post(`/hjapi/v1/finetune/job/cancel?job_id=${taskId}`);
 };
 
 // 取消发布任务
 export const unPublishTaskApi = async (taskId: string): Promise<TaskDB> => {
   return await axios.post(
-    `/api/v1/finetune/job/publish/cancel?job_id=${taskId}`,
+    `/hjapi/v1/finetune/job/publish/cancel?job_id=${taskId}`,
   );
 };
 
 // 发布任务
 export const publishTaskApi = async (taskId: string): Promise<TaskDB> => {
-  return await axios.post(`/api/v1/finetune/job/publish?job_id=${taskId}`);
+  return await axios.post(`/hjapi/v1/finetune/job/publish?job_id=${taskId}`);
 };
 
 // 获取任务详情
 export const getTaskInfoApi = async (
   taskId: string,
 ): Promise<{ finetune: TaskDB; log: any; report: any; loss_data: any }> => {
-  return await axios.get(`/api/v1/finetune/job/info?job_id=${taskId}`);
+  return await axios.get(`/hjapi/v1/finetune/job/info?job_id=${taskId}`);
 };
 
 // 修改任务名
 export const updataTaskNameApi = async (taskId: string, name: string) => {
-  return await axios.patch(`/api/v1/finetune/job/model`, {
+  return await axios.patch(`/hjapi/v1/finetune/job/model`, {
     id: taskId,
     model_name: name,
   });
@@ -100,7 +100,7 @@ export const updataTaskNameApi = async (taskId: string, name: string) => {
 // 上传文件
 export const uploadTaskFileApi = async (data, config): Promise<FileItem> => {
   return await axios
-    .post(`/api/v1/finetune/job/file`, data, config)
+    .post(`/hjapi/v1/finetune/job/file`, data, config)
     .then((res: any) => {
       if (!res.length) return null;
       const { id, url, name } = res[0];
@@ -121,7 +121,7 @@ export const getPresetFileApi = async (data: {
   keyword: string;
 }): Promise<FileItem[]> => {
   return await (
-    axios.get(`/api/v1/finetune/job/file/preset`, { params: data }) as Promise<
+    axios.get(`/hjapi/v1/finetune/job/file/preset`, { params: data }) as Promise<
       FileDB[]
     >
   ).then((data) => {
@@ -142,13 +142,13 @@ export const getPresetFileApi = async (data: {
 // 获取下载链接
 export const getFileUrlApi = async (urlkey): Promise<{ url: string }> => {
   return await axios.get(
-    `/api/v1/finetune/job/file/download?file_url=${urlkey}`,
+    `/hjapi/v1/finetune/job/file/download?file_url=${urlkey}`,
   );
 };
 
 // 获模型列表
 export const getModelListApi = async (): Promise<any> => {
-  return await axios.get(`/api/v1/llm`);
+  return await axios.get(`/hjapi/v1/llm`);
 };
 
 // 添加模型
@@ -162,7 +162,7 @@ export const addLLmServer = async (data: any) => {
         }
       : item;
   });
-  return await axios.post(`/api/v1/llm`, data);
+  return await axios.post(`/hjapi/v1/llm`, data);
 };
 
 // 修改模型
@@ -176,12 +176,12 @@ export const updateLLmServer = async (data: any) => {
         }
       : item;
   });
-  return await axios.put(`/api/v1/llm`, data);
+  return await axios.put(`/hjapi/v1/llm`, data);
 };
 
 // 删除模型
 export const deleteLLmServer = async (server_id: string) => {
-  return await axios.delete(`/api/v1/llm`, { data: { server_id } });
+  return await axios.delete(`/hjapi/v1/llm`, { data: { server_id } });
 };
 
 // 模型上下线
@@ -189,42 +189,42 @@ export const changeLLmServerStatus = async (
   model_id: string,
   online: number,
 ) => {
-  return await axios.post(`/api/v1/llm/online`, { model_id, online });
+  return await axios.post(`/hjapi/v1/llm/online`, { model_id, online });
 };
 
 // 获取模型详情
 export const getLLmServerDetail = async (server_id: string): Promise<any> => {
-  return await axios.get(`/api/v1/llm/info?server_id=${server_id}`);
+  return await axios.get(`/hjapi/v1/llm/info?server_id=${server_id}`);
 };
 
 // 获取知识库模型配置
 export const getKnowledgeModelConfig = async (): Promise<any> => {
-  return await axios.get(`/api/v1/llm/knowledge`);
+  return await axios.get(`/hjapi/v1/llm/knowledge`);
 };
 
 // 更新知识库模型配置
 export const updateKnowledgeModelConfig = async (data: any): Promise<any> => {
-  return await axios.post(`/api/v1/llm/knowledge`, data);
+  return await axios.post(`/hjapi/v1/llm/knowledge`, data);
 };
 
 // 获取助手模型配置
 export const getAssistantModelConfig = async (): Promise<any> => {
-  return await axios.get(`/api/v1/llm/assistant`);
+  return await axios.get(`/hjapi/v1/llm/assistant`);
 };
 
 // 更新助手模型配置
 export const updateAssistantModelConfig = async (data: any): Promise<any> => {
-  return await axios.post(`/api/v1/llm/assistant`, data);
+  return await axios.post(`/hjapi/v1/llm/assistant`, data);
 };
 
 // 获取评测模型配置
 export const getEvaluationModelConfig = async (): Promise<any> => {
-  return await axios.get(`/api/v1/llm/evaluation`);
+  return await axios.get(`/hjapi/v1/llm/evaluation`);
 };
 
 // 更新评测模型配置
 export const updateEvaluationModelConfig = async (data: any): Promise<any> => {
-  return await axios.post(`/api/v1/llm/evaluation`, data);
+  return await axios.post(`/hjapi/v1/llm/evaluation`, data);
 };
 
 /**
@@ -233,19 +233,19 @@ export const updateEvaluationModelConfig = async (data: any): Promise<any> => {
 export async function setLlmDefaultModel(data: {
   model_id: string;
 }): Promise<any> {
-  return await axios.post(`/api/v1/llm/workflow`, data);
+  return await axios.post(`/hjapi/v1/llm/workflow`, data);
 }
 
 /**
  * llm 助手节点默认模型
  */
 export async function getLlmDefaultModel(): Promise<any> {
-  return await axios.get(`/api/v1/llm/workflow`);
+  return await axios.get(`/hjapi/v1/llm/workflow`);
 }
 
 // 获取助手模型可选列表
 export const getAssistantModelList = async (): Promise<any> => {
-  return await axios.get(`/api/v1/llm/assistant/llm_list`);
+  return await axios.get(`/hjapi/v1/llm/assistant/llm_list`);
 };
 
 // 创建数据集
@@ -254,10 +254,10 @@ export const createDatasetApi = async (data: {
   files: string;
   qa_list: string[];
 }): Promise<any> => {
-  return await axios.post(`/api/v1/finetune/job/file/preset `, data);
+  return await axios.post(`/hjapi/v1/finetune/job/file/preset `, data);
 };
 
 // 删除数据集
 export const deleteDatasetApi = async (id) => {
-  return await axios.delete(`/api/v1/finetune/job/file/preset?file_id=${id}`);
+  return await axios.delete(`/hjapi/v1/finetune/job/file/preset?file_id=${id}`);
 };

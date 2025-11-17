@@ -190,10 +190,10 @@ export default function ChatPanne({
   const host = appConfig.websocketHost || window.location.host;
   let wsUrl =
     type === AppNumType.SKILL
-      ? `${host}${__APP_ENV__.BASE_URL}/api/v1/chat/${id}?type=L1&t=${token}`
+      ? `${host}${__APP_ENV__.BASE_URL}/hjapi/v1/chat/${id}?type=L1&t=${token}`
       : type === AppNumType.ASSISTANT
-        ? `${location.host}${__APP_ENV__.BASE_URL}/api/v1/assistant/chat/${id}?t=${token}`
-        : `${host}${__APP_ENV__.BASE_URL}/api/v1/workflow/chat/${id}?t=${token}&chat_id=${chatId}`;
+        ? `${location.host}${__APP_ENV__.BASE_URL}/hjapi/v1/assistant/chat/${id}?t=${token}`
+        : `${host}${__APP_ENV__.BASE_URL}/hjapi/v1/workflow/chat/${id}?t=${token}&chat_id=${chatId}`;
 
   if (customWsHost) {
     wsUrl = `${host}${__APP_ENV__.BASE_URL}${customWsHost}&t=${token}`;
@@ -356,7 +356,7 @@ const useBuild = () => {
     let validationResults = [];
     let finished = false;
     let buildEnd = false;
-    const apiUrl = `${__APP_ENV__.BASE_URL}/api/v1/build/stream/${flowId}?chat_id=${chatId}`;
+    const apiUrl = `${__APP_ENV__.BASE_URL}/hjapi/v1/build/stream/${flowId}?chat_id=${chatId}`;
     const eventSource = new EventSource(apiUrl);
 
     eventSource.onmessage = (event) => {

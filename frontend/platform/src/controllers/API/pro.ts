@@ -6,7 +6,7 @@ import axios from "../request";
 export const sensitiveSaveApi = async (data: any): Promise<any> => {
   const { id, type, isCheck, words, wordsType, autoReply } = data;
 
-  return await axios.post(`/api/sensitive/saveWords`, {
+  return await axios.post(`/hjapi/sensitive/saveWords`, {
     resource_id: id,
     resource_type: type,
     is_check: isCheck,
@@ -23,7 +23,7 @@ export const getSensitiveApi = async (
   resourceId,
   resourceType,
 ): Promise<any> => {
-  return await axios.get(`/api/sensitive/wordsDetail`, {
+  return await axios.get(`/hjapi/sensitive/wordsDetail`, {
     params: {
       resourceId,
       resourceType,
@@ -42,7 +42,7 @@ export const getGroupFlowsApi = async (
   name: string,
 ): Promise<any> => {
   if (!groupId) return Promise.resolve([{ data: [], total: 0 }]);
-  return await axios.get(`/api/resource/groupFlows`, {
+  return await axios.get(`/hjapi/resource/groupFlows`, {
     params: {
       name,
       page,
@@ -69,7 +69,7 @@ export const saveGroupApi = async (data: any): Promise<any> => {
   } = data;
   // const {resourceId, groupId, resourceLimit} = assistant
 
-  return await axios.post(`/api/group/save`, {
+  return await axios.post(`/hjapi/group/save`, {
     id,
     group_limit,
     admin_user,
@@ -83,21 +83,21 @@ export const saveGroupApi = async (data: any): Promise<any> => {
 
 // 用户组列表
 export function getUserGroupsProApi() {
-  return axios.get(`/api/group/list`);
+  return axios.get(`/hjapi/group/list`);
 }
 
 // GET sso URL
 export function getSSOurlApi() {
   // return Promise.resolve(url)
-  return axios.get(`/api/oauth2/list`);
+  return axios.get(`/hjapi/oauth2/list`);
 }
 
 export async function getKeyApi() {
-  return await axios.get("/api/getkey");
+  return await axios.get("/hjapi/getkey");
 }
 
 export async function ldapLoginApi(username: string, password: string) {
-  return await axios.post("/api/oauth2/ldap", {
+  return await axios.post("/hjapi/oauth2/ldap", {
     username,
     password,
   });

@@ -8,7 +8,7 @@ import ChatPanne from "./components/ChatPanne";
 export default function chatAssitantShare() {
   const { id: assitId } = useParams();
 
-  const wsUrl = `/api/v2/assistant/chat/${assitId}`;
+  const wsUrl = `/hjapi/v2/assistant/chat/${assitId}`;
 
   const [data] = useState<any>({
     id: assitId,

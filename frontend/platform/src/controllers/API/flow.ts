@@ -6,7 +6,7 @@ import axios from "../request";
  * 保存组件 variables 变量
  */
 export function saveVariableApi(data): Promise<{ id: string }> {
-  return axios.post(`/api/v1/variable/`, data);
+  return axios.post(`/hjapi/v1/variable/`, data);
 }
 
 export const enum VariableType {
@@ -37,7 +37,7 @@ export interface Variable {
  */
 export function getVariablesApi(params) {
   return (
-    axios.get(`/api/v1/variable/list`, { params }) as Promise<any[]>
+    axios.get(`/hjapi/v1/variable/list`, { params }) as Promise<any[]>
   ).then((res) => {
     return res.map((item) => {
       const types = [
@@ -68,7 +68,7 @@ export function getVariablesApi(params) {
  * 删除 变量
  */
 export function delVariableApi(id) {
-  return axios.delete(`/api/v1/variable/del`, {
+  return axios.delete(`/hjapi/v1/variable/del`, {
     params: { id },
   });
 }
@@ -107,21 +107,21 @@ export function saveReportFormApi(vid, flowId, data: Variable[]) {
       value: typeInfo.value,
     };
   });
-  return axios.post(`/api/v1/variable/save_all`, _data);
+  return axios.post(`/hjapi/v1/variable/save_all`, _data);
 }
 
 /**
  * 初始化 file key 与 flowId的关系
  */
 // export function initFileKeyApi(flow_id, key) {
-//     return axios.post(`/api/v1/report/save_template`, { key, flow_id });
+//     return axios.post(`/hjapi/v1/report/save_template`, { key, flow_id });
 // }
 
 /**
  * 获取 report表单信息
  */
 export function getReportFormApi(flow_id): Promise<any> {
-  return axios.get(`/api/v1/report/report_temp`, {
+  return axios.get(`/hjapi/v1/report/report_temp`, {
     params: { flow_id },
   });
 }
@@ -137,7 +137,7 @@ export async function getFlowApi(
   flowId: string,
   version: string = "v1",
 ): Promise<FlowType> {
-  return await axios.get(`/api/${version}/flows/${flowId}`);
+  return await axios.get(`/hjapi/${version}/flows/${flowId}`);
 }
 
 /**
@@ -155,7 +155,7 @@ export async function saveFlowToDatabase(newFlow: {
   style?: FlowStyleType;
 }): Promise<FlowType> {
   const id = newFlow.id ? { flow_id: newFlow.id } : {};
-  const response: FlowType = await axios.post("/api/v1/flows/", {
+  const response: FlowType = await axios.post("/hjapi/v1/flows/", {
     ...id,
     name: newFlow.name,
     data: newFlow.data,
@@ -178,7 +178,7 @@ export async function readFlowsFromDatabase(
 ) {
   const tagIdStr = tag_id === -1 ? "" : `&tag_id=${tag_id}`;
   const { data, total }: { data: any[]; total: number } = await axios.get(
-    `/api/v1/flows/?page_num=${page}&page_size=${pageSize}&name=${search}${tagIdStr}`,
+    `/hjapi/v1/flows/?page_num=${page}&page_size=${pageSize}&name=${search}${tagIdStr}`,
   );
   return { data, total };
 }
@@ -195,7 +195,7 @@ export async function getAppsApi({
   const map = { assistant: 5, skill: 1, flow: 10 };
   const flowType = map[type] ? `&flow_type=${map[type]}` : "";
   const { data, total }: { data: any[]; total: number } = await axios.get(
-    `/api/v1/workflow/list?page_num=${page}&page_size=${pageSize}&name=${keyword}${tagIdStr}${flowType}`,
+    `/hjapi/v1/workflow/list?page_num=${page}&page_size=${pageSize}&name=${keyword}${tagIdStr}${flowType}`,
   );
   const newData = data.map((item) => {
     if (item.flow_type !== 5) return item;
@@ -216,7 +216,7 @@ export async function getAppsApi({
  * @throws Will throw an error if deletion fails.
  */
 export async function deleteFlowFromDatabase(flowId: string) {
-  return await axios.delete(`/api/v1/flows/${flowId}`);
+  return await axios.delete(`/hjapi/v1/flows/${flowId}`);
 }
 
 /**
@@ -237,7 +237,7 @@ export const createCustomFlowApi = async (
     // logo保存相对路径
     params.logo = params.logo.match(/(icon.*)\?/)?.[1];
   }
-  const response: FlowType = await axios.post("/api/v1/flows/", {
+  const response: FlowType = await axios.post("/hjapi/v1/flows/", {
     ...params,
     data: null,
   });
@@ -262,7 +262,7 @@ export async function updateFlowApi(updatedFlow: FlowType): Promise<FlowType> {
     // logo保存相对路径
     updatedFlow.logo = updatedFlow.logo.replace("/bisheng", "");
   }
-  return await axios.patch(`/api/v1/flows/${updatedFlow.id}`, {
+  return await axios.patch(`/hjapi/v1/flows/${updatedFlow.id}`, {
     logo: updatedFlow.logo || "",
     name: updatedFlow.name,
     data: updatedFlow.data,
@@ -276,7 +276,7 @@ export async function updateFlowApi(updatedFlow: FlowType): Promise<FlowType> {
  *
  */
 export async function updataOnlineState(id, updatedFlow, open) {
-  return await axios.patch(`/api/v1/flows/${id}`, {
+  return await axios.patch(`/hjapi/v1/flows/${id}`, {
     name: updatedFlow.name,
     description: updatedFlow.description,
     status: open ? 2 : 1,
@@ -294,14 +294,14 @@ export async function readOnlineFlows(
   searchKey: string = "",
 ) {
   const data: { data: any; total: number } = await axios.get(
-    `/api/v1/flows/?page_num=${page}&page_size=${100}&status=2&name=${searchKey}`,
+    `/hjapi/v1/flows/?page_num=${page}&page_size=${100}&status=2&name=${searchKey}`,
   );
   return data;
 }
 
 // 解析 custom 组件节点
 export async function reloadCustom(code): Promise<any> {
-  const response = await axios.post("/api/v1/component/custom_component", {
+  const response = await axios.post("/hjapi/v1/component/custom_component", {
     code,
     field: "",
     frontend_node: {},
@@ -318,7 +318,7 @@ export async function reloadCustom(code): Promise<any> {
 export async function getFlowVersions(
   flow_id,
 ): Promise<{ data: FlowVersionItem[]; total: number }> {
-  return await axios.get(`/api/v1/flows/versions`, {
+  return await axios.get(`/hjapi/v1/flows/versions`, {
     params: { flow_id },
   });
 }
@@ -340,7 +340,7 @@ export async function createFlowVersion(
   },
 ) {
   return await axios.post(
-    `/api/v1/flows/versions?flow_id=${flow_id}`,
+    `/hjapi/v1/flows/versions?flow_id=${flow_id}`,
     versionData,
   );
 }
@@ -353,7 +353,7 @@ export async function createFlowVersion(
  * @throws .
  */
 export async function getVersionDetails(versionId: string) {
-  return await axios.get(`/api/v1/flows/versions/${versionId}`);
+  return await axios.get(`/hjapi/v1/flows/versions/${versionId}`);
 }
 
 /**
@@ -368,7 +368,7 @@ export async function updateVersion(
   versionId: string,
   versionData: { name: string; description: string; data: any },
 ) {
-  return await axios.put(`/api/v1/flows/versions/${versionId}`, versionData);
+  return await axios.put(`/hjapi/v1/flows/versions/${versionId}`, versionData);
 }
 
 /**
@@ -379,7 +379,7 @@ export async function updateVersion(
  * @throws .
  */
 export async function deleteVersion(versionId: string) {
-  return await axios.delete(`/api/v1/flows/versions/${versionId}`);
+  return await axios.delete(`/hjapi/v1/flows/versions/${versionId}`);
 }
 
 /**
@@ -397,7 +397,7 @@ export async function changeCurrentVersion({
   version_id: number;
 }) {
   return await axios.post(
-    `/api/v1/flows/change_version?flow_id=${flow_id}&version_id=${version_id}`,
+    `/hjapi/v1/flows/change_version?flow_id=${flow_id}&version_id=${version_id}`,
   );
 }
 
@@ -410,7 +410,7 @@ export async function runTestCase(data: {
   node_id;
   inputs;
 }): Promise<any[]> {
-  return await axios.post(`/api/v1/flows/compare`, data);
+  return await axios.post(`/hjapi/v1/flows/compare`, data);
 }
 
 /**
@@ -419,7 +419,7 @@ export async function runTestCase(data: {
 export async function uploadChatFile(v, file: File, onProgress): Promise<any> {
   const formData = new FormData();
   formData.append("file", file);
-  return await axios.post(`/api/v1/knowledge/upload`, formData, {
+  return await axios.post(`/hjapi/v1/knowledge/upload`, formData, {
     headers: {
       "Content-Type": "multipart/form-data",
     },

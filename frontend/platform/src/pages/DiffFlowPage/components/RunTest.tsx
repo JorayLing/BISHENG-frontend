@@ -332,7 +332,7 @@ const useBuild = () => {
     let finished = false;
     let buildEnd = false;
     const qstr = flow.id ? `?version_id=${flow.id}` : "";
-    const apiUrl = `${__APP_ENV__.BASE_URL}/api/v1/build/stream/${flowId}${qstr}`;
+    const apiUrl = `${__APP_ENV__.BASE_URL}/hjapi/v1/build/stream/${flowId}${qstr}`;
     const eventSource = new EventSource(apiUrl);
 
     eventSource.onmessage = (event) => {
