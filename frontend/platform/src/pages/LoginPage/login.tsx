@@ -63,7 +63,7 @@ export const LoginPage = () => {
   // 监听用户信息变化
   useEffect(() => {
     if (user && user.user_id) {
-      navigate("/hjfront");
+      navigate("/adminNew");
     }
   }, [user]);
 
