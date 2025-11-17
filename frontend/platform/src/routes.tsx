@@ -71,7 +71,7 @@ const baseConfig = {
 export const privateRouter = [
   {
     path: "/",
-    element: <Navigate to="/adminNew" replace />,
+    element: <Navigate to="/hjfront" replace />,
   },
   {
     path: "/main",
@@ -160,7 +160,7 @@ export const privateRouter = [
   { path: "/diff/:id/:vid/:cid", element: <ErrorHoc Comp={DiffFlowPage} /> },
   { path: "/reset", element: <ResetPwdPage /> },
   { path: "/403", element: <Page403 /> },
-  // { path: "*", element: <Navigate to="/adminNew" replace /> },
+  // { path: "*", element: <Navigate to="/hjfront" replace /> },
 ];
 
 export const filterRouter = (permissions) => {
@@ -203,16 +203,17 @@ export const getPublicRouter = () => {
 
 export const publicRouter =
   [
-    { path: "/", element: <LoginPage /> },
+    { path: "/", element: <Navigate to="/hjfront/login" replace /> },
+    { path: "/hjfront/login", element: <LoginPage /> },
     { path: "/reset", element: <ResetPwdPage /> },
     { path: "/chat/:id/", element: <ChatShare /> },
     { path: "/chat/flow/:id/", element: <ChatShare type={AppNumType.FLOW} /> },
     { path: "/chat/assistant/:id/", element: <ChatAssitantShare /> },
     { path: "/resouce/:cid/:mid", element: <ResoucePage /> },
     { path: "/403", element: <Page403 /> },
-    { path: "*", element: <LoginPage /> },
+    { path: "*", element: <Navigate to="/hjfront/login" replace /> },
     {
-      path: "/adminNew",
+      path: "/hjfront",
       element: <AdminNewPage />,
       children: [
         { path: "", element: <HomeSubRoute /> },

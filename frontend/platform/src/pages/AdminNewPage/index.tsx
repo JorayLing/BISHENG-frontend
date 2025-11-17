@@ -93,7 +93,7 @@ export default function AdminNewPage() {
           setUser(null);
           localStorage.removeItem("isLogin");
           localStorage.removeItem("menuConfig");
-          navigate("/login");
+          navigate("/hjfront/login");
         });
         next();
       },
@@ -111,7 +111,7 @@ export default function AdminNewPage() {
           setUser(null);
           localStorage.removeItem("isLogin");
           localStorage.removeItem("menuConfig");
-          navigate("/login");
+          navigate("/hjfront/login");
         });
       },
     });
@@ -229,9 +229,9 @@ export default function AdminNewPage() {
       // 如果标签页已存在，切换到该标签页
       setActiveTabId(item.id);
       if (item.chatConfig?.type === "iframe") {
-        navigate(`/adminNew/iframe/${item.id}`);
+        navigate(`/hjfront/iframe/${item.id}`);
       } else {
-        navigate(`/adminNew/${item.path}`);
+        navigate(`/hjfront/${item.path}`);
       }
     } else {
       // 如果标签页不存在，创建新标签页
@@ -263,9 +263,9 @@ export default function AdminNewPage() {
       setTabs(updatedTabs);
       setActiveTabId(item.id);
       if (item.chatConfig?.type === "iframe") {
-        navigate(`/adminNew/iframe/${item.id}`);
+        navigate(`/hjfront/iframe/${item.id}`);
       } else {
-        navigate(`/adminNew/${item.path}`);
+        navigate(`/hjfront/${item.path}`);
       }
     }
 
@@ -320,8 +320,8 @@ export default function AdminNewPage() {
     const currentPath = location.pathname;
     // console.log("当前路径:", currentPath);
 
-    // 移除 /adminNew 前缀，获取相对路径
-    const relativePath = currentPath.replace("/adminNew", "") || "/";
+    // 移除 /hjfront 前缀，获取相对路径
+    const relativePath = currentPath.replace("/hjfront", "") || "/";
     // console.log("相对路径:", relativePath);
 
     const menuItem = allMenuItems.find((item) => {
@@ -356,7 +356,7 @@ export default function AdminNewPage() {
     }
 
     // 处理普通路由
-    const relativePath = currentPath.replace("/adminNew/", "");
+    const relativePath = currentPath.replace("/hjfront/", "");
     return allMenuItems.find((item) => {
       if (item.path === "") {
         return relativePath === "/" || relativePath === "";
