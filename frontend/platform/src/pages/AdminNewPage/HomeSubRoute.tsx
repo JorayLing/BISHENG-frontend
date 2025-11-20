@@ -55,7 +55,7 @@ export default function HomeSubRoute() {
 
   // 获取首页菜单项
   const menuItems = getHomePageMenuItems();
-  console.log('menuItems', menuItems);
+  // console.log('menuItems', menuItems);
 
   return (
     <div className="p-6 h-full overflow-y-auto shouyebgimage   justify-center flex ">

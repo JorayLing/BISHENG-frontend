@@ -74,6 +74,24 @@ export async function menuConfigApi(data?) {
   return response.data;
 }
 
+
+export async function getchannellogo(data?) {
+  const instance = Axios.create({
+    baseURL: '',
+    timeout: 5000,
+    withCredentials: false,
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json'
+    }
+  });
+
+  const response = await instance.get(`${API_CONFIG.LOGO_URL}`, {
+    params: data
+  });
+  return response.data[0]?.logo_url || ''  
+}
+
 // 刷新登录状态
 export async function flushLoginApi(username: string, tm: string): Promise<{ code: number; message?: string }> {
   const instance = Axios.create({

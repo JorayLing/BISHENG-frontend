@@ -5,7 +5,7 @@ import { bsResetPassword } from "../../components/bs-ui/alertDialog/useResetPass
 
 import { bsConfirm } from "../../components/bs-ui/alertDialog/useConfirm";
 import { userContext } from "../../contexts/userContext";
-import { logoutApi, flushLoginApi } from "../../controllers/API/user";
+import { logoutApi, flushLoginApi, getchannellogo } from "../../controllers/API/user";
 import { captureAndAlertRequestErrorHoc } from "../../controllers/request";
 import { toast } from "../../components/bs-ui/toast/use-toast";
 import ChatAssistantAuthSubRoute from "./ChatAssistantAuthSubRoute";
@@ -80,6 +80,7 @@ export default function AdminNewPage() {
   const [showUserMenu, setShowUserMenu] = React.useState(false);
   const [showLeftScroll, setShowLeftScroll] = React.useState(false);
   const [showRightScroll, setShowRightScroll] = React.useState(false);
+  const [logoUrl, setLogoUrl] = React.useState('');
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -131,6 +132,21 @@ export default function AdminNewPage() {
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
+  }, []);
+
+  // 获取渠道logo
+  React.useEffect(() => {
+    const getChannelLogo = async () => {
+      try {
+        const imgurl = await getchannellogo({channel: window.location.hostname});
+        if (imgurl) {
+          setLogoUrl(imgurl);
+        }
+      } catch (error) {
+        console.warn('Failed to get channel logo:', error);
+      }
+    };
+    getChannelLogo();
   }, []);
 
   const [sidebarOpen, setSidebarOpen] = React.useState(true);
@@ -521,7 +537,8 @@ export default function AdminNewPage() {
         {/* 左侧 Logo 区域 */}
         <div className="flex items-center">
           <div className="h-8 rounded flex items-center justify-center">
-            <img src={logoImage} alt="logo" className="h-8" />
+            {logoUrl && <img src={logoUrl} alt="logo" className="h-8 mr-4" />}
+            {logoImage && <img src={logoImage} alt="logo" className="h-8" />}
           </div>
           {/* <span className="ml-3 text-xl font-semibold text-gray-800">人工智能学习平台</span> */}
         </div>

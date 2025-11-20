@@ -26,6 +26,7 @@ import {
   loginApi,
   registerApi,
   getDevTokenApi,
+  getchannellogo,
 } from "../../controllers/API/user";
 import { captureAndAlertRequestErrorHoc } from "../../controllers/request";
 import LoginBridge from "./loginBridge";
@@ -50,15 +51,26 @@ export const LoginPage = () => {
 
   // captcha
   const captchaRef = useRef(null);
+  const [logoUrl, setLogoUrl] = useState('');
   const [captchaData, setCaptchaData] = useState({
     captcha_key: "",
     user_capthca: false,
     captcha: "",
   });
-
+  
   useEffect(() => {
     fetchCaptchaData();
+    getChannelLogo();
   }, []);
+
+  const getChannelLogo = async () => {
+    try {
+      const imgurl = await getchannellogo({channel: window.location.hostname});
+      setLogoUrl(imgurl);
+    } catch (error) {
+      console.warn('Failed to get channel logo:', error);
+    }
+  };
 
   // 监听用户信息变化
   useEffect(() => {
@@ -70,8 +82,9 @@ export const LoginPage = () => {
   const fetchCaptchaData = () => {
     getCaptchaApi().then(setCaptchaData);
   };
-
+ 
   const [isLDAP, setIsLDAP] = useState(false);
+
   const handleLogin = async () => {
     const error = [];
     const [mail, pwd] = [mailRef.current.value, pwdRef.current.value];
@@ -246,7 +259,18 @@ export const LoginPage = () => {
 
   return (
     <div className="w-full h-full   indexbgimage">
+     {/* Logo 左上角 */}
+     {logoUrl && (
+      <div className="absolute left-0 top-0 z-30">
+        <img
+          src={logoUrl}
+          alt="channel_logo"
+          className="h-12 w-auto object-contain"
+        />
+      </div>
+    )}
       <div className="fixed z-10 sm:w-[1280px] w-full sm:h-[720px] h-full translate-x-[-50%] translate-y-[-50%] left-[50%] top-[50%]   rounded-lg  overflow-hidden  bg-background-color">
+       
         <div
           className="w-[600px]  m-[8px] hidden sm:block relative z-20"
           style={{ paddingTop: "100px" }}

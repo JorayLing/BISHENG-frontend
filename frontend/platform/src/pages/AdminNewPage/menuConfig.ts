@@ -321,7 +321,7 @@ export const homePageMenuList = [
 export const getHomePageMenuItems = () => {
   // 先获取所有匹配的菜单项
   const allItems = menuGroupsConfig[0].items;
-  console.log("allItems", allItems);
+  // console.log("allItems", allItems);
   // 按照 homePageMenuList 的顺序返回菜单项
   return homePageMenuList.map(
     (name) =>
