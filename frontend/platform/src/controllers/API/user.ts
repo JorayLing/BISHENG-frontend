@@ -73,6 +73,28 @@ export async function menuConfigApi(data?) {
   });
   return response.data;
 }
+
+// 刷新登录状态
+export async function flushLoginApi(username: string, tm: string): Promise<{ code: number; message?: string }> {
+  const instance = Axios.create({
+    baseURL: '',
+    timeout: 5000,
+    withCredentials: true,
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json'
+    }
+  });
+
+  const response = await instance.get(`${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.FLUSH_LOGIN}`, {
+    params: {
+      username,
+      tm
+    }
+  });
+  return response.data;
+}
+
 // 退出登录
 export async function logoutApi() {
   return await axios.post(`/api/v1/user/logout`);

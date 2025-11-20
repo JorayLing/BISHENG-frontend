@@ -3,7 +3,8 @@ export const API_CONFIG = {
   ENDPOINTS: {
     AUTO_LOGIN: '/third/bisheng/autologin',
     PERMISSIONS: '/api/bisheng/permissions',
-    MENUS: '/api/bisheng/menus_copy'
+    MENUS: '/api/bisheng/menus_copy',
+    FLUSH_LOGIN: '/third/bisheng/flushLogin'
   }
 };
 

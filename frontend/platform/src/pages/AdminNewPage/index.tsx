@@ -5,8 +5,9 @@ import { bsResetPassword } from "../../components/bs-ui/alertDialog/useResetPass
 
 import { bsConfirm } from "../../components/bs-ui/alertDialog/useConfirm";
 import { userContext } from "../../contexts/userContext";
-import { logoutApi } from "../../controllers/API/user";
+import { logoutApi, flushLoginApi } from "../../controllers/API/user";
 import { captureAndAlertRequestErrorHoc } from "../../controllers/request";
+import { toast } from "../../components/bs-ui/toast/use-toast";
 import ChatAssistantAuthSubRoute from "./ChatAssistantAuthSubRoute";
 import ChatFlowAuthSubRoute from "./ChatFlowAuthSubRoute";
 import ChatSubRoute from "./ChatSubRoute";
@@ -218,8 +219,87 @@ export default function AdminNewPage() {
     });
   };
 
-  const handleMenuClick = (item: any) => {
+  // 检查登录状态
+  const checkLoginStatus = async (): Promise<boolean> => {
+    const token = localStorage.getItem("TOKEN_DEV");
+    const tm = localStorage.getItem("token_time");
+    
+    // 如果没有 token 或 token_time，跳过检查（可能不是通过第三方登录的）
+    if (!token || !tm) {
+      console.log("跳过登录检查：未找到 TOKEN_DEV 或 token_time");
+      return true;
+    }
+
+    // 检查是否超过12小时
+    const createTime = new Date(Number(tm));
+    const now = new Date();
+    const timeDiff = now.getTime() - createTime.getTime();
+    
+    if (timeDiff > 12 * 3600 * 1000) {
+      toast({
+        title: "登录已过期",
+        description: "您的登录已超过12小时，请重新登录",
+        variant: "error",
+      });
+      await captureAndAlertRequestErrorHoc(logoutApi());
+      setUser(null);
+      localStorage.removeItem("isLogin");
+      localStorage.removeItem("menuConfig");
+      localStorage.removeItem("TOKEN_DEV");
+      localStorage.removeItem("token_time");
+      navigate("/login");
+      return false;
+    }
+
+    // 调用 flushLogin 检查是否在其他设备登录
+    try {
+      const permissionsStr = localStorage.getItem("userPermissions");
+      if (!permissionsStr) {
+        console.warn("未找到 permissions 数据，跳过 flushLogin 检查");
+        return true;
+      }
+      
+      const permissions = JSON.parse(permissionsStr);
+      const username = permissions.user_name;
+      
+      if (!username) {
+        console.warn("未找到用户名，跳过 flushLogin 检查");
+        return true;
+      }
+
+      const resp = await flushLoginApi(username, tm);
+      
+      if (resp.code === 200) {
+        return true;
+      } else {
+        toast({
+          title: "登录状态异常",
+          description: "您已在其他设备登录！",
+          variant: "error",
+        });
+        await captureAndAlertRequestErrorHoc(logoutApi());
+        setUser(null);
+        localStorage.removeItem("isLogin");
+        localStorage.removeItem("menuConfig");
+        localStorage.removeItem("TOKEN_DEV");
+        localStorage.removeItem("token_time");
+        navigate("/login");
+        return false;
+      }
+    } catch (error) {
+      console.error("检查登录状态失败:", error);
+      // 如果检查失败，仍然允许继续（避免网络问题导致无法使用）
+      return true;
+    }
+  };
+
+  const handleMenuClick = async (item: any) => {
     if (item.status === 0) return;
+    
+    // 检查登录状态
+    const isLoggedIn = await checkLoginStatus();
+    if (!isLoggedIn) return;
+
     // console.log("点击菜单:", item.label, "路径:", item.path);
 
     // 检查标签页是否已存在

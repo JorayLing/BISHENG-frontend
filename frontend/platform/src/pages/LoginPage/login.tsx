@@ -126,7 +126,9 @@ export const LoginPage = () => {
           });
           if (devTokenData.code === 200) {
             // 存储 devtoken 到 localStorage
-            localStorage.setItem('devtoken', devTokenData.ext.token);
+            localStorage.setItem('devtoken', devTokenData.ext.token); 
+            localStorage.setItem("TOKEN_DEV",devTokenData.ext.token); 
+            localStorage.setItem("token_time",devTokenData.ext.tm)
           }
         } catch (error) {
           console.warn('Failed to get devtoken:', error);
